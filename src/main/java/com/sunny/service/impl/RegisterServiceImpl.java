@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import java.security.GeneralSecurityException;
+import java.util.Date;
 
 @Service
 public class RegisterServiceImpl implements RegisterService {
@@ -47,9 +48,15 @@ public class RegisterServiceImpl implements RegisterService {
             if (mailCode == null) {
                 throw new RuntimeException("验证码不能为空！");
             }
-            Integer code = sendMailService.getCode(userDTO.getUsername());
-            if (!mailCode.equals(code)) {
+            SendMailServiceImpl.MailCode mailCode1 = sendMailService.getCode(userDTO.getUsername());
+
+            if (!mailCode.equals(mailCode1.getCode())) {
                 throw new RuntimeException("验证码错误，请确认后再试！");
+            }
+
+            // 60秒超时
+            if (new Date().getTime() - mailCode1.getDate().getTime() > 60 * 1000) {
+                throw new RuntimeException("验证码超时，请重新获取");
             }
         }
 

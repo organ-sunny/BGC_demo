@@ -1,6 +1,6 @@
 package com.sunny.service;
 
-import com.sunny.dto.UserDTO;
+import com.sunny.service.impl.SendMailServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +11,6 @@ public interface SendMailService {
     /**
      * 获取保存的验证码
      * */
-    Integer getCode(String mailAddress);
+    SendMailServiceImpl.MailCode getCode(String mailAddress);
 
 }

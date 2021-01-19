@@ -5,6 +5,7 @@ import com.sunny.util.RandomNum;
 import com.sunny.util.RegexUtil;
 import com.sunny.util.SendMailUtil;
 import org.springframework.stereotype.Service;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class SendMailServiceImpl implements SendMailService {
     /**
      * 验证码缓存
      * */
-    private static final Map<String, Integer> MAIL_CODE_MAP = new HashMap<>();
+    private static final Map<String, MailCode> MAIL_CODE_MAP = new HashMap<>();
 
     @Override
     public Integer sendMail(String mailAddress) {
@@ -27,7 +28,7 @@ public class SendMailServiceImpl implements SendMailService {
             }
 
             // 保存
-            MAIL_CODE_MAP.put(mailAddress, mailCode);
+            MAIL_CODE_MAP.put(mailAddress, new MailCode(mailCode, new Date()));
 
             return mailCode;
         }catch (Exception e){
@@ -36,8 +37,26 @@ public class SendMailServiceImpl implements SendMailService {
     }
 
     @Override
-    public Integer getCode(String mailAddress) {
+    public MailCode getCode(String mailAddress) {
         return MAIL_CODE_MAP.get(mailAddress);
+    }
+
+    public static class MailCode {
+        private final Integer code;
+        private final Date date;
+
+        public MailCode(Integer code, Date date) {
+            this.code = code;
+            this.date = date;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public Date getDate() {
+            return date;
+        }
     }
 
 }
