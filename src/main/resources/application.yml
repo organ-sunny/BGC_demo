@@ -1,0 +1,14 @@
+# 端口
+server:
+  port: 1001
+
+# 数据库链接配置
+spring:
+  jpa:
+    show-sql: true # 打印SQL，记录日志
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bgc_demo?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    username: test
+    password: test
