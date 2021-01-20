@@ -1,6 +1,6 @@
 package com.sunny.util;
 
-public class RandomNum {
+public class RandomNumUtil {
 
     public static Integer randomNum() {
         int i;

@@ -5,14 +5,10 @@ import com.sunny.entity.UserEntity;
 import com.sunny.repository.UserRepository;
 import com.sunny.service.RegisterService;
 import com.sunny.service.SendMailService;
-import com.sunny.util.RandomNum;
 import com.sunny.util.RegexUtil;
-import com.sunny.util.SendMailUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import java.security.GeneralSecurityException;
 import java.util.Date;
 
 @Service
@@ -48,15 +44,13 @@ public class RegisterServiceImpl implements RegisterService {
             if (mailCode == null) {
                 throw new RuntimeException("验证码不能为空！");
             }
-            SendMailServiceImpl.MailCode mailCode1 = sendMailService.getCode(userDTO.getUsername());
-
-            if (!mailCode.equals(mailCode1.getCode())) {
+            Integer code = (Integer) sendMailService.getCode(userDTO.getUsername())[0];
+            if (!mailCode.equals(code)) {
                 throw new RuntimeException("验证码错误，请确认后再试！");
             }
-
-            // 60秒超时
-            if (new Date().getTime() - mailCode1.getDate().getTime() > 60 * 1000) {
-                throw new RuntimeException("验证码超时，请重新获取");
+            Date currentTime = (Date) sendMailService.getCode(userDTO.getUsername())[1];
+            if(new Date().getTime()-currentTime.getTime() > 5*60*1000){
+                throw new RuntimeException("验证码失效，请重新获取！");
             }
         }
 
