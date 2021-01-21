@@ -1,0 +1,31 @@
+{
+    "version": "",
+    "description": "kitten",
+    "dependencies": {
+        "vue": "^2.6.12",
+        "vue-router": "^3.4.8"
+    },
+    "devDependencies": {
+        "copy-webpack-plugin": "^6.1.0",
+        "css-loader": "^4.3.0",
+        "html-webpack-plugin": "^4.4.1",
+        "mini-css-extract-plugin": "^0.11.1",
+        "style-loader": "^1.2.1",
+        "url-loader": "^4.1.0",
+        "vue-loader": "^15.9.3",
+        "vue-template-compiler": "^2.6.12",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.12",
+        "webpack-dev-server": "^3.11.0"
+    },
+    "scripts": {
+        "webpack-dev-server": "webpack-dev-server",
+        "build": "webpack --mode production"
+    },
+    "author": "ZJ",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/organ-sunny/BGC_demo.git"
+    }
+}
