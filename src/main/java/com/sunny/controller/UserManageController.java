@@ -11,5 +11,5 @@ import javax.annotation.Resource;
 public class UserManageController {
 
     @Resource
-    private SendMailService bindMailService;
+    private SendMailService sendMailService;
 }
