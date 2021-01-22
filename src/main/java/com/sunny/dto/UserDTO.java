@@ -2,6 +2,7 @@ package com.sunny.dto;
 
 import com.sunny.entity.UserEntity;
 import com.sunny.exception.ParamErrorException;
+import com.sunny.util.StringUtil;
 
 import java.lang.reflect.Field;
 
@@ -67,14 +68,15 @@ public class UserDTO {
      * 入参校验
      */
     public void registerCheckParam() {
-        if (username == null || username.equals("") ||
-                password == null || password.equals(""))
-            throw new ParamErrorException();
+        if (StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
+            throw new ParamErrorException("用户名和密码不能为空！");
+        }
     }
 
     public void loginCheckParam() {
-        if (password == null || password.equals(""))
-            throw new ParamErrorException();
+        if (StringUtil.isEmpty(password)) {
+            throw new ParamErrorException("密码不能为空！");
+        }
     }
 
     /**

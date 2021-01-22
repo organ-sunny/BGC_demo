@@ -9,5 +9,7 @@ public interface UserService {
 
     UserEntity editUser(UserDTO userDTO);
 
-    void deleteUser(String token);
+    void deleteUser();
+
+    UserEntity showUser();
 }

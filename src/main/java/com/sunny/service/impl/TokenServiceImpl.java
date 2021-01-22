@@ -1,6 +1,7 @@
 package com.sunny.service.impl;
 
 import com.sunny.entity.UserEntity;
+import com.sunny.exception.TokenException;
 import com.sunny.repository.UserRepository;
 import com.sunny.service.TokenService;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,16 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public UserEntity getUserByToken(String token) {
+
+        if (token == null){
+            throw new TokenException("未检测到token或token已失效！");
+        }
+
         UserEntity userEntity = userRepository.findByToken(token);
         if (userEntity == null){
-            throw new RuntimeException("用户不存在，请确认后再试！");
+            throw new TokenException("用户不存在，请确认后再试！");
         }
-        if (token == null){
-            throw new RuntimeException("未检测到token或token已失效！");
-        }
+
         return userEntity;
     }
 
