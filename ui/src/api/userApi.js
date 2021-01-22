@@ -9,5 +9,21 @@ export default {
             type: "POST",
             data: data
         });
+    },
+
+    sendMailCode(data) {
+        return baseApi.send({
+            url: `${uri}/sendMailCode`,
+            type: "POST",
+            data: data
+        });
+    },
+
+    register(data) {
+        return baseApi.send({
+            url: `${uri}/register`,
+            type: "POST",
+            data: data
+        });
     }
 };
