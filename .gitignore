@@ -1,3 +1,5 @@
 .idea
 BGC_demo.iml
 target
+ui/node_modules
+ui/package-lock.json
