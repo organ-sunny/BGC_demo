@@ -46,13 +46,13 @@
                         </div>
                         <div style="margin-top: 20px;">
                             <div>
-                                <ep-radio v-model="register.form.type" class="type" label="1">用户名</ep-radio>
-                                <ep-radio v-model="register.form.type" class="type" label="2">电话</ep-radio>
-                                <ep-radio v-model="register.form.type" class="type" label="3">邮箱</ep-radio>
-<!--                                用户名/电话/邮箱-->
+<!--                                <ep-radio v-model="register.form.type" class="type" label="1">用户名</ep-radio>-->
+<!--                                <ep-radio v-model="register.form.type" class="type" label="2">电话</ep-radio>-->
+<!--                                <ep-radio v-model="register.form.type" class="type" label="3">邮箱</ep-radio>-->
+                                用户名/电话/邮箱
                             </div>
                             <div style="margin-top: 10px;">
-                                <ep-input v-model="register.form.username" placeholder=""></ep-input>
+                                <ep-input @change="usernameChange()" v-model="register.form.username" placeholder=""></ep-input>
                             </div>
                         </div>
 
@@ -74,7 +74,7 @@
                             </div>
                         </div>
 
-                        <div v-if="register.form.type === '3'" style="margin-top: 20px;">
+                        <div v-if="register.isMail" style="margin-top: 20px;">
                             <div>
                                 验证码
                             </div>
@@ -123,12 +123,13 @@
                     loading: false,
 
                     form: {
-                        type: "1",
                         username: "",
                         password: "",
                         password2: "",
                         mailCode: ""
-                    }
+                    },
+
+                    isMail: false
                 }
             };
         },
@@ -178,6 +179,12 @@
                 }).finally(() => {
                     this.register.loading = false;
                 });
+            },
+
+            usernameChange() {
+                let reg =/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                let re = new RegExp(reg);
+                this.register.isMail = re.test(this.register.form.username);
             }
         }
     }
