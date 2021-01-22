@@ -7,4 +7,9 @@ import org.springframework.stereotype.Service;
 public interface TokenService {
 
     String createToken(UserEntity userEntity);
+
+    /**
+     * 通过token获取用户
+     */
+    UserEntity getUserByToken(String token);
 }

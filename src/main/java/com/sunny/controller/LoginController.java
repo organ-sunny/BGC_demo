@@ -28,11 +28,13 @@ public class LoginController {
         userDTO.loginCheckParam();
 
         // 进行登录
-        UserEntity userEntity = loginService.login(userDTO);
-
-        // 返回响应
-        UserVO userVO = userEntity.getVO();
-        return ResponseEntity.normalReturn("登录成功", 200, userVO);
-
+        try {
+            UserEntity userEntity = loginService.login(userDTO);
+            // 返回响应
+            UserVO userVO = userEntity.getVO();
+            return ResponseEntity.normalReturn("登录成功", 200, userVO);
+        }catch (Exception e){
+            return ResponseEntity.normalReturn(e.getMessage(), 500, null);
+        }
     }
 }

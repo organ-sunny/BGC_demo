@@ -9,6 +9,4 @@ public class BgcDemoApplication {
     public static void main(String[] args) {
         SpringApplication.run(BgcDemoApplication.class, args);
     }
-
 }
-
