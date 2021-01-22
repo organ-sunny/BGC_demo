@@ -1,14 +1,14 @@
-# ¶Ë¿Ú
+# ç«¯å£
 server:
   port: 1001
 
-# Êı¾İ¿âÁ´½ÓÅäÖÃ
+# æ•°æ®åº“é“¾æ¥é…ç½®
 spring:
   jpa:
-    show-sql: true # ´òÓ¡SQL£¬¼ÇÂ¼ÈÕÖ¾
+    show-sql: true # æ‰“å°SQLï¼Œè®°å½•æ—¥å¿—
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bgc_demo?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://192.168.12.104:3306/bgc_demo?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
     username: test
     password: test
