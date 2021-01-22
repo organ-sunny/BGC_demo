@@ -18,19 +18,19 @@
                             <div style="width: 20%;display: flex;align-items: center;flex-direction: row-reverse;">
                                 用户名
                             </div>
-                            <ep-input style="margin-left: 10px;" placeholder="请输入内容"></ep-input>
+                            <ep-input v-model="username" style="margin-left: 10px;" placeholder="请输入内容"></ep-input>
                         </div>
 
                         <div style="margin-top: 20px;display: flex;">
                             <div style="width: 20%;display: flex;align-items: center;flex-direction: row-reverse;">
                                 密码
                             </div>
-                            <ep-input type="password" style="margin-left: 10px;" placeholder="请输入内容"></ep-input>
+                            <ep-input v-model="password" type="password" style="margin-left: 10px;" placeholder="请输入内容"></ep-input>
                         </div>
 
                         <div style="margin-top: 20px;">
                             <div>
-                                <ep-button style="width: 100%;" type="primary">登录</ep-button>
+                                <ep-button @click="login()" style="width: 100%;" type="primary">登录</ep-button>
                             </div>
                             <div style="margin-top: 10px;">
                                 <ep-button style="width: 100%;">注册</ep-button>
@@ -44,12 +44,30 @@
 </template>
 
 <script>
+    import userApi from "../api/userApi.js";
+    import alter from "../util/alter.js";
+
     export default {
         name: "login",
+
         data() {
             return {
-
+                username: "",
+                password: ""
             };
+        },
+
+        methods: {
+            login() {
+                userApi.login({
+                    username: this.username,
+                    password: this.password
+                }).then(() => {
+                    alter.success("登录成功");
+                }).catch((message) => {
+                    alter.error(message);
+                });
+            }
         }
     }
 </script>
