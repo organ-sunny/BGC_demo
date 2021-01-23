@@ -4,7 +4,8 @@ const vueLoaderPlugin = require("vue-loader/lib/plugin");
 
 module.exports = {
     entry: {
-        index: "./src/index.js"
+        index: "./src/index.js",
+        home: "./src/home.js"
 	},
 
     output: {
@@ -40,6 +41,11 @@ module.exports = {
             filename: "index.html",
             template: "./src/page/index.html",
             chunks: ["index"]
+        }),
+        new htmlWebpackPlugin({
+            filename: "home.html",
+            template: "./src/page/home.html",
+            chunks: ["home"]
         }),
         new vueLoaderPlugin()
     ],

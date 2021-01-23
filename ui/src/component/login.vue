@@ -137,7 +137,7 @@
         methods: {
             loginMethod() {
                 userApi.login(this.login.form).then(() => {
-                    alter.success("登录成功");
+                    window.location.href = "home.html";
                 }).catch((message) => {
                     alter.error(message);
                 });

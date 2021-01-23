@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/api/user")
 public class MailCodeController {
 
     @Resource

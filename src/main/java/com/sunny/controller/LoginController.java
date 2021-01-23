@@ -6,16 +6,14 @@ import com.sunny.entity.ResponseEntity;
 import com.sunny.entity.UserEntity;
 import com.sunny.service.LoginService;
 import com.sunny.vo.UserVO;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/api/user")
 public class LoginController {
 
     @Resource

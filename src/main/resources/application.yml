@@ -6,6 +6,7 @@ server:
 spring:
   jpa:
     show-sql: true # 打印SQL，记录日志
+    open-in-view: false
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver

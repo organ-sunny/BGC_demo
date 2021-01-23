@@ -4,7 +4,7 @@ export default {
     send(option) {
         return new Promise((successCallback, errorCallback) => {
             let type = option.type,
-                url = baseConfig.host + "/" + option.url,
+                url = baseConfig.host + "/api/" + option.url,
                 data = option.data,
                 dataType = option.dataType,
                 sendData = JSON.stringify(data);

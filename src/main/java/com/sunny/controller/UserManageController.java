@@ -1,7 +1,6 @@
 package com.sunny.controller;
 
 import com.sunny.entity.ResponseEntity;
-import com.sunny.entity.UserEntity;
 import com.sunny.service.UserService;
 import com.sunny.vo.UserVO;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("userManage")
+@RequestMapping("/api/userManage")
 public class UserManageController {
 
     @Resource
