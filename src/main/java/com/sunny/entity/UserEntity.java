@@ -1,13 +1,15 @@
 package com.sunny.entity;
 
 import javax.persistence.*;
+
+import com.sunny.vo.LoginVO;
 import com.sunny.vo.UserVO;
 
 import java.lang.reflect.Field;
 
 @Entity
 @Table(name = "Users")
-public class UserEntity {
+public class UserEntity extends ParentEntity<UserVO>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -136,28 +138,28 @@ public class UserEntity {
                 '}';
     }
 
-    /**
-     * Entity转换成VO，定义返回内容
-     */
-    public UserVO getVO(){
-        try {
-            Class<UserVO> userVOClass = UserVO.class;
-            Field[] declaredFields = userVOClass.getDeclaredFields();
-            UserVO userVO = userVOClass.newInstance();
-            for (Field field : declaredFields){
-                Class<UserEntity> userEntityClass = UserEntity.class;
-                Field[] declaredFields1 = userEntityClass.getDeclaredFields();
-                for (Field field1 : declaredFields1){
-                    if(field.getName().equals(field1.getName()) && field.getType() == field1.getType()){
-                        field.setAccessible(true);
-                        field.set(userVO,field1.get(this));
-                    }
-                }
-            }
-            return userVO;
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("转换出错，错误原因：" + e.getMessage());
-        }
-    }
+//    /**
+//     * Entity转换成VO，定义返回内容
+//     */
+//    public UserVO getVO(){
+//        try {
+//            Class<UserVO> userVOClass = UserVO.class;
+//            Field[] declaredFields = userVOClass.getDeclaredFields();
+//            UserVO userVO = userVOClass.newInstance();
+//            for (Field field : declaredFields){
+//                Class<UserEntity> userEntityClass = UserEntity.class;
+//                Field[] declaredFields1 = userEntityClass.getDeclaredFields();
+//                for (Field field1 : declaredFields1){
+//                    if(field.getName().equals(field1.getName()) && field.getType() == field1.getType()){
+//                        field.setAccessible(true);
+//                        field.set(userVO,field1.get(this));
+//                    }
+//                }
+//            }
+//            return userVO;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            throw new RuntimeException("转换出错，错误原因：" + e.getMessage());
+//        }
+//    }
 }
