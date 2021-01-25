@@ -1,4 +1,6 @@
 import baseConfig from "../config/baseConfig.js";
+import token from "../js/token.js";
+import cookieConfig from "../config/cookieConfig.js";
 
 export default {
     send(option) {
@@ -25,6 +27,9 @@ export default {
             if ((type === "post" || type === "POST") && dataType !== "file") {
                 http.setRequestHeader("content-type", "application/json");
             }
+
+            // 设置token
+            http.setRequestHeader(cookieConfig.token, token.get());
 
             http.send(sendData);
 

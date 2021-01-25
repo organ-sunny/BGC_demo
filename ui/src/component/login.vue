@@ -104,6 +104,9 @@
 <script>
     import userApi from "../api/userApi.js";
     import alter from "../util/alter.js";
+    import token from "../js/token.js";
+    import user from "../js/user.js";
+    import pageConfig from "../config/pageConfig.js";
 
     export default {
         name: "login",
@@ -136,8 +139,13 @@
 
         methods: {
             loginMethod() {
-                userApi.login(this.login.form).then(() => {
-                    window.location.href = "home.html";
+                userApi.login(this.login.form).then((data) => {
+                    // 设置token
+                    token.set(data.token);
+                    // 设置用户信息
+                    user.set(data);
+
+                    window.location.href = pageConfig.home;
                 }).catch((message) => {
                     alter.error(message);
                 });
