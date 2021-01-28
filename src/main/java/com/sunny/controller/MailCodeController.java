@@ -23,7 +23,7 @@ public class MailCodeController {
                 throw new ParamErrorException("注册邮箱不能为空！ ");
             }
             Integer mailCode = sendMailService.sendMail(mailAddress);
-            return ResponseEntity.normalReturn("邮箱验证码发送成功",200, mailCode);
+            return ResponseEntity.normalReturn("success",200, mailCode);
         }catch (Exception e){
             return ResponseEntity.normalReturn(e.getMessage(),500, null);
         }

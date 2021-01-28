@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -17,19 +18,19 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String createToken(UserEntity userEntity) {
-        String token = userEntity.getUsername() + userEntity.getPassword();
+        String token = userEntity.getUsername() + userEntity.getPassword() + new Date().getTime();
         return DigestUtils.md5DigestAsHex(token.getBytes());
     }
 
     @Override
     public UserEntity getUserByToken(String token) {
 
-        if (token == null){
+        if (token == null) {
             throw new TokenException("未检测到token或token已失效！");
         }
 
         UserEntity userEntity = userRepository.findByToken(token);
-        if (userEntity == null){
+        if (userEntity == null) {
             throw new TokenException("用户不存在，请确认后再试！");
         }
 

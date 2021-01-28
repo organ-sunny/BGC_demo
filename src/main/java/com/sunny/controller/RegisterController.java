@@ -25,7 +25,7 @@ public class RegisterController {
             // 执行注册方法
             registerService.register(userDTO);
             UserVO userVO = userDTO.getEntity().getVO();
-            return ResponseEntity.normalReturn("注册成功", 200, userVO);
+            return ResponseEntity.normalReturn("success", 200, userVO);
         } catch (Exception e) {
             return ResponseEntity.normalReturn(e.getMessage(), 101, null);
         }

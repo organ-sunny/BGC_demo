@@ -2,6 +2,7 @@ package com.sunny.service.impl;
 
 import com.sunny.dto.UserDTO;
 import com.sunny.entity.UserEntity;
+import com.sunny.exception.ParamErrorException;
 import com.sunny.repository.UserRepository;
 import com.sunny.service.RegisterService;
 import com.sunny.service.SendMailService;
@@ -21,15 +22,21 @@ public class RegisterServiceImpl implements RegisterService {
     private SendMailService sendMailService;
 
     @Override
-    public void register(UserDTO userDTO){
+    public void register(UserDTO userDTO) {
+
         UserEntity userEntity;
+
+        // 密码校验
+        if (!RegexUtil.isPassword(userDTO.getPassword(), userDTO.getUsername())) {
+            throw new ParamErrorException("密码不符合规则！");
+        }
 
         // 手机注册
         if (RegexUtil.isMobileNum(userDTO.getUsername())) {
             userDTO.setTelephoneNum(userDTO.getUsername());
             userEntity = userRepository.findByTelephoneNum(userDTO.getUsername());
             if (userEntity != null) {
-                throw new RuntimeException("该手机号已注册，请去登录！");
+                throw new ParamErrorException("该手机号已注册，请去登录！");
             }
         }
 
@@ -38,19 +45,19 @@ public class RegisterServiceImpl implements RegisterService {
             userDTO.setEmail(userDTO.getUsername());
             userEntity = userRepository.findByEmail(userDTO.getUsername());
             if (userEntity != null) {
-                throw new RuntimeException("该邮箱已注册，请去登录！");
+                throw new ParamErrorException("该邮箱已注册，请去登录！");
             }
             Integer mailCode = userDTO.getMailCode();
             if (mailCode == null) {
-                throw new RuntimeException("验证码不能为空！");
+                throw new ParamErrorException("验证码不能为空！");
             }
             Integer code = (Integer) sendMailService.getCode(userDTO.getUsername())[0];
             if (!mailCode.equals(code)) {
-                throw new RuntimeException("验证码错误，请确认后再试！");
+                throw new ParamErrorException("验证码错误，请确认后再试！");
             }
             Date currentTime = (Date) sendMailService.getCode(userDTO.getUsername())[1];
-            if(new Date().getTime()-currentTime.getTime() > 5*60*1000){
-                throw new RuntimeException("验证码失效，请重新获取！");
+            if (new Date().getTime() - currentTime.getTime() > 5 * 60 * 1000) {
+                throw new ParamErrorException("验证码失效，请重新获取！");
             }
         }
 
@@ -58,12 +65,13 @@ public class RegisterServiceImpl implements RegisterService {
         else {
             UserEntity byUsername = userRepository.findByUsername(userDTO.getUsername());
             if (byUsername != null) {
-                throw new RuntimeException("该用户名已存在，请换用其他用户名注册！");
+                throw new ParamErrorException("该用户名已存在，请换用其他用户名注册！");
             }
         }
 
         // 保存用户入库
         UserEntity userEntity1 = userDTO.getEntity();
         userRepository.save(userEntity1);
+
     }
 }
