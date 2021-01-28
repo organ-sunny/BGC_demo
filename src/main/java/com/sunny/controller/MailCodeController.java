@@ -20,7 +20,7 @@ public class MailCodeController {
         try {
             String mailAddress = RequestBody.get("mailAddress");
             if (StringUtil.isEmpty(mailAddress)) {
-                throw new ParamErrorException("注册邮箱不能为空！");
+                throw new ParamErrorException("注册邮箱不能为空！ ");
             }
             Integer mailCode = sendMailService.sendMail(mailAddress);
             return ResponseEntity.normalReturn("邮箱验证码发送成功",200, mailCode);

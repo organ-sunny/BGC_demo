@@ -42,6 +42,34 @@ public class UserEntity extends ParentEntity<UserVO>{
     @Column(name = "TOKEN")
     private String token;
 
+    @Column(name = "ISSAVEDSEX")
+    private String isSavedSex;
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age=" + age +
+                ", address='" + address + '\'' +
+                ", telephoneNum='" + telephoneNum + '\'' +
+                ", email='" + email + '\'' +
+                ", pet_id='" + pet_id + '\'' +
+                ", token='" + token + '\'' +
+                ", isSavedSex='" + isSavedSex + '\'' +
+                '}';
+    }
+
+    public String getIsSavedSex() {
+        return isSavedSex;
+    }
+
+    public void setIsSavedSex(String isSavedSex) {
+        this.isSavedSex = isSavedSex;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -122,23 +150,7 @@ public class UserEntity extends ParentEntity<UserVO>{
         this.token = token;
     }
 
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", sex='" + sex + '\'' +
-                ", age=" + age +
-                ", address='" + address + '\'' +
-                ", telephoneNum='" + telephoneNum + '\'' +
-                ", email='" + email + '\'' +
-                ", pet_id='" + pet_id + '\'' +
-                ", token='" + token + '\'' +
-                '}';
-    }
-
-//    /**
+    //    /**
 //     * Entity转换成VO，定义返回内容
 //     */
 //    public UserVO getVO(){

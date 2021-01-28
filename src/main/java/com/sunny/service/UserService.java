@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService {
 
-    UserEntity editUser(UserDTO userDTO);
+    void editUser(UserDTO userDTO);
 
     void deleteUser();
 
