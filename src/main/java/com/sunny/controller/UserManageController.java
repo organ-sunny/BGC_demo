@@ -33,8 +33,12 @@ public class UserManageController {
     // 编辑用户信息
     @PostMapping("editUser")
     public ResponseEntity editUser(@RequestBody(required = false) UserDTO userDTO) {
-        userService.editUser(userDTO);
-        return ResponseEntity.normalReturn("success", 200, null);
+        try {
+            userService.editUser(userDTO);
+            return ResponseEntity.normalReturn("success", 200, null);
+        }catch (Exception e){
+            return ResponseEntity.normalReturn(e.getMessage(), 101, null);
+        }
     }
 
 }

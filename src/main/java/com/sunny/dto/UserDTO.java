@@ -110,7 +110,7 @@ public class UserDTO {
      */
     public void registerCheckParam() {
         if (StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
-            throw new ParamErrorException("用户名和密码不能为空！");
+            throw new ParamErrorException("用户名或密码不能为空！");
         }
     }
 

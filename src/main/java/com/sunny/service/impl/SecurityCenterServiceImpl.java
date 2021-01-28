@@ -33,42 +33,37 @@ public class SecurityCenterServiceImpl implements SecurityCenterService {
         /**
          * 邮箱校验
          */
-        // 如果修改过，才进行校验
-        if (!userDTO.getEmail().equals(user.getEmail())) {
-            // 邮箱不能为空
-            if (StringUtil.isEmpty(userDTO.getEmail())) {
-                throw new ParamErrorException("邮箱不能为空！");
-            }
-            // 邮箱符合正则
-            if (!RegexUtil.isMailAddress(userDTO.getEmail())) {
-                throw new ParamErrorException("请正确填写邮箱！");
-            }
-            // 邮箱已存在
-            if (!userDTO.getEmail().equals(user.getEmail()) && userRepository.findByEmail(userDTO.getEmail()) != null) {
-                throw new ParamErrorException("邮箱已绑定！");
-            }
-            // 校验邮箱验证码
-            Integer mailCode = userDTO.getMailCode();
-            if (mailCode == null) {
-                throw new ParamErrorException("验证码不能为空！");
-            }
-            if (sendMailService.getCode(userDTO.getEmail()) == null) { // 校验是否发送验证码
-                throw new ParamErrorException("未获取验证码");
-            }
-            Integer code = (Integer) sendMailService.getCode(userDTO.getEmail())[0];
-            if (!mailCode.equals(code)) {
-                throw new ParamErrorException("验证码错误，请确认后再试！");
-            }
-            Date currentTime = (Date) sendMailService.getCode(userDTO.getEmail())[1];
-            if (new Date().getTime() - currentTime.getTime() > 5 * 60 * 1000) {
-                throw new ParamErrorException("验证码失效，请重新获取！");
-            }
+        // 邮箱不能为空
+        if (StringUtil.isEmpty(userDTO.getEmail())) {
+            throw new ParamErrorException("邮箱不能为空！");
+        }
+        // 邮箱符合正则
+        if (!RegexUtil.isMailAddress(userDTO.getEmail())) {
+            throw new ParamErrorException("请正确填写邮箱！");
+        }
+        // 邮箱已存在
+        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
+            throw new ParamErrorException("邮箱已绑定！");
+        }
+        // 校验邮箱验证码
+        Integer mailCode = userDTO.getMailCode();
+        if (mailCode == null) {
+            throw new ParamErrorException("验证码不能为空！");
+        }
+        if (sendMailService.getCode(userDTO.getEmail()) == null) { // 校验是否发送验证码
+            throw new ParamErrorException("未获取验证码！");
+        }
+        Integer code = (Integer) sendMailService.getCode(userDTO.getEmail())[0];
+        if (!mailCode.equals(code)) {
+            throw new ParamErrorException("验证码错误，请确认后再试！");
+        }
+        Date currentTime = (Date) sendMailService.getCode(userDTO.getEmail())[1];
+        if (new Date().getTime() - currentTime.getTime() > 5 * 60 * 1000) {
+            throw new ParamErrorException("验证码失效，请重新获取！");
         }
 
         user.setEmail(userDTO.getEmail());
-
         userRepository.save(user);
-
     }
 
     @Override

@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService {
         if (StringUtil.isEmpty(userDTO.getUsername())) {
             throw new ParamErrorException("用户名不能为空");
         }
+        if (!RegexUtil.isUsername(userDTO.getUsername())){
+            throw new ParamErrorException("用户名不符合规则！规则如下：长度为6-16位且不能含有空格。");
+        }
         // 用户名已存在
         if (!userDTO.getUsername().equals(user.getUsername()) && userRepository.findByUsername(userDTO.getUsername()) != null) {
             throw new ParamErrorException("用户名已存在");
@@ -96,7 +99,6 @@ public class UserServiceImpl implements UserService {
     public void deleteUser() {
         // 定位当前用户
         UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
-
         // 用户执行注销操作
         userRepository.deleteByUsername(user.getUsername());
     }

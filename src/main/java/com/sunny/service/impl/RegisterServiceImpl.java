@@ -28,7 +28,7 @@ public class RegisterServiceImpl implements RegisterService {
 
         // 密码校验
         if (!RegexUtil.isPassword(userDTO.getPassword(), userDTO.getUsername())) {
-            throw new ParamErrorException("密码不符合规则！");
+            throw new ParamErrorException("密码不符合规则！规则如下：数字、字母、特殊字符三选二且不能包含用户名，长度为6-16位！");
         }
 
         // 手机注册
@@ -63,10 +63,14 @@ public class RegisterServiceImpl implements RegisterService {
 
         // 用户名注册
         else {
+            if (!RegexUtil.isUsername(userDTO.getUsername())){
+                throw new ParamErrorException("用户名不符合规则！规则如下：长度为6-16位且不能含有空格。");
+            }
             UserEntity byUsername = userRepository.findByUsername(userDTO.getUsername());
             if (byUsername != null) {
                 throw new ParamErrorException("该用户名已存在，请换用其他用户名注册！");
             }
+
         }
 
         // 保存用户入库
