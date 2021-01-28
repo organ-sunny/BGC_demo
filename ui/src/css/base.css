@@ -30,3 +30,9 @@ html, body, #main {
     color: rgba(0,0,0,.54);
     font-weight: 700;
 }
+
+.panel {
+    border: 1px #0000001f solid;
+    padding: 20px;
+    border-radius: 5px;
+}

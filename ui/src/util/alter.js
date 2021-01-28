@@ -31,16 +31,14 @@ export default {
     },
 
     confirm(message) {
-        return new Promise((s, e) => {
+        return new Promise((s) => {
             Vue.prototype.$confirm(message, "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
-                type: 'warning'
+                type: "warning"
             }).then(() => {
                 s();
-            }).catch(() => {
-                e();
-            });
+            }).catch(() => {});
         });
     }
 };
