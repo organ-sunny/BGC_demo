@@ -18,3 +18,15 @@ html, body, #main {
 * {
     font-size: 14px;
 }
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #546E7A;
+}
+
+.font {
+    font-size: 14px;
+    color: rgba(0,0,0,.54);
+    font-weight: 700;
+}

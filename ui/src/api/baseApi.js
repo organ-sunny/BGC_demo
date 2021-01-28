@@ -1,4 +1,7 @@
 import baseConfig from "../config/baseConfig.js";
+import token from "../js/token.js";
+import cookieConfig from "../config/cookieConfig.js";
+import pageConfig from "../config/pageConfig.js";
 
 export default {
     send(option) {
@@ -26,12 +29,22 @@ export default {
                 http.setRequestHeader("content-type", "application/json");
             }
 
+            // 设置token
+            http.setRequestHeader(cookieConfig.token, token.get());
+
             http.send(sendData);
 
             http.onreadystatechange = function () {
                 if (http.status === 200 && http.readyState === 4) {
                     let response = JSON.parse(http.response);
                     console.log(response);
+
+                    // token失效
+                    if (response.code === 505) {
+                        window.location.href = pageConfig.index;
+                        return;
+                    }
+
                     if (response.code === 200) {
                         successCallback(response.data);
                     } else {

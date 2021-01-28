@@ -2,6 +2,7 @@
     "version": "1.0.0",
     "description": "BGC_demo",
     "dependencies": {
+        "element-ui": "^2.15.0",
         "ep-ui": "^2.3.5",
         "vue": "^2.6.12",
         "vue-router": "^3.4.8",
