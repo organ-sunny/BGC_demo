@@ -45,7 +45,7 @@ public class RegexUtil {
         // 用户名长度6-16
         int len = username.length();
         // 用户名不能有空格
-        boolean contains = username.contains("");
+        boolean contains = username.contains(" ");
 
         if (len < 6 || len > 16 || contains) {
             return false;
