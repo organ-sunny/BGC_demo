@@ -15,5 +15,13 @@ export default {
             url: `${uri}/deleteUser`,
             type: "POST"
         });
+    },
+
+    editUser(data) {
+        return baseApi.send({
+            url: `${uri}/editUser`,
+            type: "POST",
+            data: data
+        });
     }
 };
