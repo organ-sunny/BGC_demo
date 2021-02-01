@@ -2,7 +2,8 @@ import "./js/base.js";
 import Vue from "vue/dist/vue.esm.js";
 import VueRouter from "vue-router";
 import homeIndex from "./component/home/index.vue";
-import userInfo from "./component/home/userInfo.vue";
+import baseUserInfo from "./component/home/user/baseUserInfo.vue";
+import securityUserInfo from "./component/home/user/securityUserInfo.vue";
 
 // 路由
 let vueRouter = new VueRouter({
@@ -19,10 +20,17 @@ let vueRouter = new VueRouter({
             }
         },
         {
-            path: "/userInfo",
-            component: userInfo,
+            path: "/baseUserInfo",
+            component: baseUserInfo,
             meta: {
-                title: `用户信息`
+                title: `基础信息`
+            }
+        },
+        {
+            path: "/securityUserInfo",
+            component: securityUserInfo,
+            meta: {
+                title: `安全中心`
             }
         }
     ]
