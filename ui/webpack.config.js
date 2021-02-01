@@ -1,6 +1,7 @@
 const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const vueLoaderPlugin = require("vue-loader/lib/plugin");
+const copyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
@@ -47,7 +48,15 @@ module.exports = {
             template: "./src/page/home.html",
             chunks: ["home"]
         }),
-        new vueLoaderPlugin()
+        new vueLoaderPlugin(),
+        new copyWebpackPlugin({
+            patterns: [
+                {
+                    from: "./src/favicon.ico",
+                    to: "favicon.ico"
+                }
+            ]
+        })
     ],
 
     devServer: {

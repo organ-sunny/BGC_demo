@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 import homeIndex from "./component/home/index.vue";
 import baseUserInfo from "./component/home/user/baseUserInfo.vue";
 import securityUserInfo from "./component/home/user/securityUserInfo.vue";
+import system from "./component/home/system.vue";
 
 // 路由
 let vueRouter = new VueRouter({
@@ -17,6 +18,13 @@ let vueRouter = new VueRouter({
             component: homeIndex,
             meta: {
                 title: `首页`
+            }
+        },
+        {
+            path: "/system",
+            component: system,
+            meta: {
+                title: `系统管理`
             }
         },
         {

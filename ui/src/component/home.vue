@@ -19,6 +19,13 @@
             <div style="width: 10%;height: 100%;box-shadow: 0 1px 5px rgba(0,0,0,.2), 0 2px 2px rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12);background-color: #001529;">
                 <ep-menu :default-index="currentRoute" class="ep-menu-demo-vertical" theme="dark">
                     <ep-menu-item @click="switchRouter('/index')" index="/index" icon="ios-home">首页</ep-menu-item>
+
+                    <ep-menu-item @click="switchRouter('/system')" index="/system" icon="grid">系统管理</ep-menu-item>
+
+                    <ep-submenu icon="code" title="接口测试">
+
+                    </ep-submenu>
+
                     <ep-submenu icon="person" title="信息维护">
                         <ep-menu-item icon="information" @click="switchRouter('/baseUserInfo')" index="/baseUserInfo">基础信息</ep-menu-item>
                         <ep-menu-item icon="information" @click="switchRouter('/securityUserInfo')" index="/securityUserInfo">安全中心</ep-menu-item>
