@@ -20,9 +20,6 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserRepository userRepository;
 
-    @Resource
-    private SendMailService sendMailService;
-
     /**
      * 当前请求
      */
@@ -42,7 +39,7 @@ public class UserServiceImpl implements UserService {
         if (StringUtil.isEmpty(userDTO.getUsername())) {
             throw new ParamErrorException("用户名不能为空");
         }
-        if (!RegexUtil.isUsername(userDTO.getUsername())){
+        if (!RegexUtil.isUsername(userDTO.getUsername())) {
             throw new ParamErrorException("用户名不符合规则！规则如下：长度为6-16位且不能含有空格。");
         }
         // 用户名已存在

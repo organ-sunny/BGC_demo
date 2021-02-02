@@ -63,7 +63,7 @@ public class RegisterServiceImpl implements RegisterService {
 
         // 用户名注册
         else {
-            if (!RegexUtil.isUsername(userDTO.getUsername())){
+            if (!RegexUtil.isUsername(userDTO.getUsername())) {
                 throw new ParamErrorException("用户名不符合规则！规则如下：长度为6-16位且不能含有空格。");
             }
             UserEntity byUsername = userRepository.findByUsername(userDTO.getUsername());

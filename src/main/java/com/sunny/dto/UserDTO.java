@@ -4,9 +4,7 @@ import com.sunny.entity.UserEntity;
 import com.sunny.exception.ParamErrorException;
 import com.sunny.util.StringUtil;
 
-import java.lang.reflect.Field;
-
-public class UserDTO {
+public class UserDTO extends ParentDTO<UserEntity>{
     private String username;
     private String password;
 
@@ -120,30 +118,30 @@ public class UserDTO {
         }
     }
 
-    /**
-     * 将入参DTO转换为Entity
-     */
-    public UserEntity getEntity() {
-        try {
-            Class<UserEntity> userEntityClass = UserEntity.class;
-            Field[] declaredFields = userEntityClass.getDeclaredFields();
-            UserEntity userEntity = userEntityClass.newInstance();
-
-            for (Field field : declaredFields) {
-                Class<UserDTO> userDTOClass = UserDTO.class;
-                Field[] declaredFields1 = userDTOClass.getDeclaredFields();
-                for (Field field1 : declaredFields1) {
-                    if (field.getName().equals(field1.getName())
-                            && field.getType() == field1.getType()) {
-                        field.setAccessible(true);
-                        field.set(userEntity, field1.get(this));
-                    }
-                }
-            }
-            return userEntity;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("转换出错，错误原因：" + e.getMessage());
-        }
-    }
+//    /**
+//     * 将入参DTO转换为Entity
+//     */
+//    public UserEntity getEntity() {
+//        try {
+//            Class<UserEntity> userEntityClass = UserEntity.class;
+//            Field[] declaredFields = userEntityClass.getDeclaredFields();
+//            UserEntity userEntity = userEntityClass.newInstance();
+//
+//            for (Field field : declaredFields) {
+//                Class<UserDTO> userDTOClass = UserDTO.class;
+//                Field[] declaredFields1 = userDTOClass.getDeclaredFields();
+//                for (Field field1 : declaredFields1) {
+//                    if (field.getName().equals(field1.getName())
+//                            && field.getType() == field1.getType()) {
+//                        field.setAccessible(true);
+//                        field.set(userEntity, field1.get(this));
+//                    }
+//                }
+//            }
+//            return userEntity;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("转换出错，错误原因：" + e.getMessage());
+//        }
+//    }
 }

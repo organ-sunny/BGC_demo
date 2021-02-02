@@ -54,7 +54,7 @@ public class SendMailServiceImpl implements SendMailService {
         Integer mailCode = RandomNumUtil.randomNum();
         try {
             SendMailUtil.sendCode(mailAddress, "邮箱验证邮件", "欢迎使用邮箱登录/注册", mailCode);
-        } catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("邮箱验证码发送失败，失败原因：" + e.getMessage());
         }
 

@@ -1,6 +1,6 @@
 package com.sunny.vo;
 
-public class LoginVO extends UserVO{
+public class LoginVO extends UserVO {
     private String token;
 
     @Override

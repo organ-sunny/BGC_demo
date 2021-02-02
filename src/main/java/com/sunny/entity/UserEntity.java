@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 
 @Entity
 @Table(name = "Users")
-public class UserEntity extends ParentEntity<UserVO>{
+public class UserEntity extends ParentEntity<UserVO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

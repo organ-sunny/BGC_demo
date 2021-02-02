@@ -23,25 +23,25 @@ public class ClassUtil {
 
     /**
      * 公共转换
-     * */
+     */
     public static <T> T transformation(Object o, Class<T> tClass) {
         try {
             T t = tClass.newInstance();
             List<Field> declaredFields = getAllFields(tClass);
 
-            for (Field field : declaredFields){
+            for (Field field : declaredFields) {
                 Class<?> aClass = o.getClass();
                 Field[] declaredFields1 = aClass.getDeclaredFields();
-                for (Field field1: declaredFields1){
+                for (Field field1 : declaredFields1) {
                     field1.setAccessible(true);
-                    if(field.getName().equals(field1.getName()) && field.getType() == field1.getType()){
+                    if (field.getName().equals(field1.getName()) && field.getType() == field1.getType()) {
                         field.setAccessible(true);
-                        field.set(t , field1.get(o));
+                        field.set(t, field1.get(o));
                     }
                 }
             }
             return t;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("转换VO出错：" + e.getMessage());
         }
@@ -49,7 +49,7 @@ public class ClassUtil {
 
     /**
      * 获取类的所有字段，包括父类
-     * */
+     */
     public static List<Field> getAllFields(Class<?> tClass) {
         Field[] declaredFields = tClass.getDeclaredFields();
         List<Field> result = new ArrayList<>(Arrays.asList(declaredFields));

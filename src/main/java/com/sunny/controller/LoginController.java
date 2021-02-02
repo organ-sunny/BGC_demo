@@ -8,7 +8,6 @@ import com.sunny.entity.UserEntity;
 import com.sunny.service.LoginService;
 import com.sunny.util.ClassUtil;
 import com.sunny.vo.LoginVO;
-import com.sunny.vo.UserVO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,7 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("login")
-    public ResponseEntity login(@RequestBody UserDTO userDTO){
+    public ResponseEntity login(@RequestBody UserDTO userDTO) {
 
         // 参数校验
         userDTO.loginCheckParam();
@@ -34,7 +33,7 @@ public class LoginController {
             // 返回响应
             LoginVO loginVO = ClassUtil.transformation(userEntity, LoginVO.class);
             return ResponseEntity.normalReturn("success", 200, loginVO);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.normalReturn(e.getMessage(), 500, null);
         }
     }

@@ -36,7 +36,7 @@ public class UserManageController {
         try {
             userService.editUser(userDTO);
             return ResponseEntity.normalReturn("success", 200, null);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.normalReturn(e.getMessage(), 101, null);
         }
     }

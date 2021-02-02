@@ -23,9 +23,9 @@ public class MailCodeController {
                 throw new ParamErrorException("注册邮箱不能为空！ ");
             }
             Integer mailCode = sendMailService.sendMail(mailAddress);
-            return ResponseEntity.normalReturn("success",200, mailCode);
-        }catch (Exception e){
-            return ResponseEntity.normalReturn(e.getMessage(),500, null);
+            return ResponseEntity.normalReturn("success", 200, mailCode);
+        } catch (Exception e) {
+            return ResponseEntity.normalReturn(e.getMessage(), 500, null);
         }
     }
 

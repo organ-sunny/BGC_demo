@@ -42,7 +42,7 @@ public class ResponseEntity {
     /**
      * 定义静态方法以便调用，省的每次都要new ResponseEntity()；
      */
-    public static ResponseEntity normalReturn(String message,Integer code,Object data){
+    public static ResponseEntity normalReturn(String message, Integer code, Object data) {
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setMessage(message);
         responseEntity.setCode(code);
