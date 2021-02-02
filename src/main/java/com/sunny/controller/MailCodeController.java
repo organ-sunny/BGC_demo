@@ -5,6 +5,7 @@ import com.sunny.exception.ParamErrorException;
 import com.sunny.service.SendMailService;
 import com.sunny.util.StringUtil;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.Map;
 

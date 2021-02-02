@@ -20,14 +20,12 @@ public class ObjectSystemEntity {
     private String creator;
 
     @Column(name = "CREATEDTIME")
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 
     @Column(name = "UPDATEDBY")
     private String updatedBy;
 
     @Column(name = "UPDATEDTIME")
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 
     @Override
@@ -89,7 +87,6 @@ public class ObjectSystemEntity {
     public void setObjectSystem(String objectSystem) {
         this.objectSystem = objectSystem;
     }
-
 
 
 }

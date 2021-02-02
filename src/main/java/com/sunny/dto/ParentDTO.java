@@ -8,25 +8,25 @@ import static com.sunny.util.ClassUtil.getGenericSuperclass;
 
 public class ParentDTO<T> {
 
-    public T getEntity(){
+    public T getEntity() {
         try {
             @SuppressWarnings("unchecked")
             Class<T> genericSuperclass = (Class<T>) getGenericSuperclass(this.getClass(), 0);
             Field[] declaredFields = genericSuperclass.getDeclaredFields();
             T t = genericSuperclass.newInstance();
-            for (Field field : declaredFields){
+            for (Field field : declaredFields) {
                 Class<?> aClass = this.getClass();
                 Field[] declaredFields1 = aClass.getDeclaredFields();
-                for (Field field1: declaredFields1){
+                for (Field field1 : declaredFields1) {
                     field1.setAccessible(true);
-                    if(field.getName().equals(field1.getName()) && field.getType() == field1.getType()){
+                    if (field.getName().equals(field1.getName()) && field.getType() == field1.getType()) {
                         field.setAccessible(true);
-                        field.set(t , field1.get(this));
+                        field.set(t, field1.get(this));
                     }
                 }
             }
             return t;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
@@ -34,7 +34,7 @@ public class ParentDTO<T> {
 
     /**
      * 校验
-     * */
+     */
     public void check() {
         try {
             // 遍历所有字段，找到字段上面的@NotNull注解
@@ -57,5 +57,4 @@ public class ParentDTO<T> {
             throw new RuntimeException("没有访问权限！");
         }
     }
-
 }

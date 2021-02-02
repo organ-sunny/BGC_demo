@@ -50,7 +50,7 @@ public class ObjectSystemSerivceImpl implements ObjectSystemService {
 
         if (objectSystemDTO.getObjectSystem() != null) {
             objectSystemEntity = objectSystemRepository.findByObjectSystem(objectSystemDTO.getObjectSystem());
-        }else {
+        } else {
             objectSystemEntity = objectSystemRepository.findAll();
         }
 

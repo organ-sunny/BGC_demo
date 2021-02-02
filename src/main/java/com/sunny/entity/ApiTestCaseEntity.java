@@ -1,6 +1,7 @@
 package com.sunny.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "api_test_case")
@@ -38,6 +39,18 @@ public class ApiTestCaseEntity {
 
     @Column(name = "API_TESTCASE_ACTUALRESULT")
     private String api_testcase_actualResult;
+
+    @Column(name = "CREATEOR")
+    private String creator;
+
+    @Column(name = "CREATEDTIME")
+    private Date createdTime;
+
+    @Column(name = "UPDATEDBY")
+    private String updatedBy;
+
+    @Column(name = "UPDATEDTIME")
+    private Date updatedTime;
 
     @Column(name = "API_TESTCASE_REMARK")
     private String api_testcase_remark;

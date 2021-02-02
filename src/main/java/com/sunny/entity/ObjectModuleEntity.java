@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "api_module")
-public class ApiTestModuleEntity {
+public class ObjectModuleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

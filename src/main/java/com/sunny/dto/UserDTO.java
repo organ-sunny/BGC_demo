@@ -4,7 +4,7 @@ import com.sunny.entity.UserEntity;
 import com.sunny.exception.ParamErrorException;
 import com.sunny.util.StringUtil;
 
-public class UserDTO extends ParentDTO<UserEntity>{
+public class UserDTO extends ParentDTO<UserEntity> {
     private String username;
     private String password;
 
