@@ -1,5 +1,4 @@
 import baseApi from "./baseApi.js";
-import variableUtil from "../util/variableUtil.js";
 
 let uri = "apiTestCase";
 
@@ -12,12 +11,11 @@ export default {
         });
     },
 
-    query(apiCaseNum) {
-        let p = variableUtil.isEmpty(apiCaseNum) ? "" : `?apiCaseNum=${apiCaseNum}`;
-
+    query(data) {
         return baseApi.send({
-            url: `${uri}/query${p}`,
-            type: "GET"
+            url: `${uri}/query`,
+            type: "GET",
+            data: data
         });
     }
 };
