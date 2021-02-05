@@ -1,5 +1,6 @@
 package com.sunny.dto;
 
+import com.sunny.dto.annotation.NotNull;
 import com.sunny.entity.ObjectSystemEntity;
 
 public class ObjectSystemDTO extends ParentDTO<ObjectSystemEntity> {

@@ -3,28 +3,28 @@ package com.sunny.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "api_module")
+@Table(name = "object_module")
 public class ObjectModuleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "OBJSYSTEM_ID")
-    private Integer getObjsystem_id;
+    private Integer objsystemId;
 
-    @Column(name = "API_NAME")
-    private String api_name;
+    @Column(name = "MODULE_NAME")
+    private String moduleName;
 
     @Column(name = "PERCENTOFPASS")
-    private String percent_of_pass;
+    private String percentOfPass;
 
     @Override
     public String toString() {
-        return "ApiTestModuleEntity{" +
+        return "ObjectModuleEntity{" +
                 "id=" + id +
-                ", getObjsystem_id=" + getObjsystem_id +
-                ", api_name='" + api_name + '\'' +
-                ", percent_of_pass='" + percent_of_pass + '\'' +
+                ", objsystemId=" + objsystemId +
+                ", moduleName='" + moduleName + '\'' +
+                ", percentOfPass='" + percentOfPass + '\'' +
                 '}';
     }
 
@@ -36,27 +36,27 @@ public class ObjectModuleEntity {
         this.id = id;
     }
 
-    public Integer getGetObjsystem_id() {
-        return getObjsystem_id;
+    public Integer getObjsystemId() {
+        return objsystemId;
     }
 
-    public void setGetObjsystem_id(Integer getObjsystem_id) {
-        this.getObjsystem_id = getObjsystem_id;
+    public void setObjsystemId(Integer objsystemId) {
+        this.objsystemId = objsystemId;
     }
 
-    public String getApi_name() {
-        return api_name;
+    public String getModuleName() {
+        return moduleName;
     }
 
-    public void setApi_name(String api_name) {
-        this.api_name = api_name;
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
-    public String getPercent_of_pass() {
-        return percent_of_pass;
+    public String getPercentOfPass() {
+        return percentOfPass;
     }
 
-    public void setPercent_of_pass(String percent_of_pass) {
-        this.percent_of_pass = percent_of_pass;
+    public void setPercentOfPass(String percentOfPass) {
+        this.percentOfPass = percentOfPass;
     }
 }

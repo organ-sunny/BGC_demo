@@ -1,4 +1,4 @@
-package com.sunny.dto;
+package com.sunny.dto.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

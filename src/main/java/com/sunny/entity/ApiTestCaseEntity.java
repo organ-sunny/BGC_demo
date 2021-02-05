@@ -10,35 +10,44 @@ public class ApiTestCaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "API_MODULE_ID")
-    private Integer api_module_id;
+    @Column(name = "OBJECT_SYSTEM_NAME")
+    private String objectSystemName;
 
-    @Column(name = "API_MODULE_NAME")
-    private String api_module_name;
+    @Column(name = "OBJECT_SYSTEM_ID")
+    private Integer objectSystemId;
 
-    @Column(name = "API_TESTCASE_ID")
-    private String api_testcase_id;
+    @Column(name = "OBJECT_MODULE_NAME")
+    private String objectModuleName;
+
+    @Column(name = "OBJECT_MODULE_ID")
+    private Integer objectModuleId;
+
+    @Column(name = "API_TESTCASE_NUM")
+    private String apiCaseNum;
 
     @Column(name = "API_TESTCASE_NAME")
-    private String api_testcase_name;
+    private String apiCaseName;
 
     @Column(name = "API_TESTCASE_DESCRIPTION")
-    private String api_testcase_description;
+    private String apiCaseDescription;
 
     @Column(name = "API_TESTCASE_REQUESTADDRESS")
-    private String api_testcase_requestAddress;
+    private String apiCaseRequestAddress;
 
     @Column(name = "API_TESTCASE_REQUESTMETHOD")
-    private String api_testcase_requestMethod;
+    private String apiCaseRequestMethod;
 
     @Column(name = "API_TESTCASE_REQUESTPARA")
-    private String api_testcase_requestParam;
+    private String apiCaseRequestParam;
 
     @Column(name = "API_TESTCASE_EXPECTEDRESULT")
-    private String api_testcase_expectedResult;
+    private String apiCaseExpectedResult;
 
     @Column(name = "API_TESTCASE_ACTUALRESULT")
-    private String api_testcase_actualResult;
+    private String apiCaseActualResult;
+
+    @Column(name = "ISPASSED")
+    private String isPassed;
 
     @Column(name = "CREATEOR")
     private String creator;
@@ -53,23 +62,30 @@ public class ApiTestCaseEntity {
     private Date updatedTime;
 
     @Column(name = "API_TESTCASE_REMARK")
-    private String api_testcase_remark;
+    private String apiCaseRemark;
 
     @Override
     public String toString() {
         return "ApiTestCaseEntity{" +
                 "id=" + id +
-                ", api_module_id=" + api_module_id +
-                ", api_module_name='" + api_module_name + '\'' +
-                ", api_testcase_id='" + api_testcase_id + '\'' +
-                ", api_testcase_name='" + api_testcase_name + '\'' +
-                ", api_testcase_description='" + api_testcase_description + '\'' +
-                ", api_testcase_requestAddress='" + api_testcase_requestAddress + '\'' +
-                ", api_testcase_requestMethod='" + api_testcase_requestMethod + '\'' +
-                ", api_testcase_requestParam='" + api_testcase_requestParam + '\'' +
-                ", api_testcase_expectedResult='" + api_testcase_expectedResult + '\'' +
-                ", api_testcase_actualResult='" + api_testcase_actualResult + '\'' +
-                ", api_testcase_remark='" + api_testcase_remark + '\'' +
+                ", objectSystemName='" + objectSystemName + '\'' +
+                ", objectSystemId=" + objectSystemId +
+                ", objectModuleName='" + objectModuleName + '\'' +
+                ", objectModuleId='" + objectModuleId + '\'' +
+                ", apiCaseNum='" + apiCaseNum + '\'' +
+                ", apiCaseName='" + apiCaseName + '\'' +
+                ", apiCaseDescription='" + apiCaseDescription + '\'' +
+                ", apiCaseRequestAddress='" + apiCaseRequestAddress + '\'' +
+                ", apiCaseRequestMethod='" + apiCaseRequestMethod + '\'' +
+                ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
+                ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
+                ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
+                ", isPassed='" + isPassed + '\'' +
+                ", creator='" + creator + '\'' +
+                ", createdTime=" + createdTime +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedTime=" + updatedTime +
+                ", api_testcase_remark='" + apiCaseRemark + '\'' +
                 '}';
     }
 
@@ -81,35 +97,147 @@ public class ApiTestCaseEntity {
         this.id = id;
     }
 
-    public Integer getApi_module_id() {
-        return api_module_id;
+    public String getObjectSystemName() {
+        return objectSystemName;
     }
 
-    public void setApi_module_id(Integer api_module_id) {
-        this.api_module_id = api_module_id;
+    public void setObjectSystemName(String objectSystemName) {
+        this.objectSystemName = objectSystemName;
     }
 
-    public String getApi_module_name() {
-        return api_module_name;
+    public Integer getObjectSystemId() {
+        return objectSystemId;
     }
 
-    public void setApi_module_name(String api_module_name) {
-        this.api_module_name = api_module_name;
+    public void setObjectSystemId(Integer objectSystemId) {
+        this.objectSystemId = objectSystemId;
     }
 
-    public String getApi_testcase_id() {
-        return api_testcase_id;
+    public String getObjectModuleName() {
+        return objectModuleName;
     }
 
-    public void setApi_testcase_id(String api_testcase_id) {
-        this.api_testcase_id = api_testcase_id;
+    public void setObjectModuleName(String objectModuleName) {
+        this.objectModuleName = objectModuleName;
     }
 
-    public String getApi_testcase_name() {
-        return api_testcase_name;
+    public Integer getObjectModuleId() {
+        return objectModuleId;
     }
 
-    public void setApi_testcase_name(String api_testcase_name) {
-        this.api_testcase_name = api_testcase_name;
+    public void setObjectModuleId(Integer objectModuleId) {
+        this.objectModuleId = objectModuleId;
+    }
+
+    public String getApiCaseNum() {
+        return apiCaseNum;
+    }
+
+    public void setApiCaseNum(String apiCaseNum) {
+        this.apiCaseNum = apiCaseNum;
+    }
+
+    public String getApiCaseName() {
+        return apiCaseName;
+    }
+
+    public void setApiCaseName(String apiCaseName) {
+        this.apiCaseName = apiCaseName;
+    }
+
+    public String getApiCaseDescription() {
+        return apiCaseDescription;
+    }
+
+    public void setApiCaseDescription(String apiCaseDescription) {
+        this.apiCaseDescription = apiCaseDescription;
+    }
+
+    public String getApiCaseRequestAddress() {
+        return apiCaseRequestAddress;
+    }
+
+    public void setApiCaseRequestAddress(String apiCaseRequestAddress) {
+        this.apiCaseRequestAddress = apiCaseRequestAddress;
+    }
+
+    public String getApiCaseRequestMethod() {
+        return apiCaseRequestMethod;
+    }
+
+    public void setApiCaseRequestMethod(String apiCaseRequestMethod) {
+        this.apiCaseRequestMethod = apiCaseRequestMethod;
+    }
+
+    public String getApiCaseRequestParam() {
+        return apiCaseRequestParam;
+    }
+
+    public void setApiCaseRequestParam(String apiCaseRequestParam) {
+        this.apiCaseRequestParam = apiCaseRequestParam;
+    }
+
+    public String getApiCaseExpectedResult() {
+        return apiCaseExpectedResult;
+    }
+
+    public void setApiCaseExpectedResult(String apiCaseExpectedResult) {
+        this.apiCaseExpectedResult = apiCaseExpectedResult;
+    }
+
+    public String getApiCaseActualResult() {
+        return apiCaseActualResult;
+    }
+
+    public void setApiCaseActualResult(String apiCaseActualResult) {
+        this.apiCaseActualResult = apiCaseActualResult;
+    }
+
+    public String getIsPassed() {
+        return isPassed;
+    }
+
+    public void setIsPassed(String isPassed) {
+        this.isPassed = isPassed;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    public String getApi_testcase_remark() {
+        return apiCaseRemark;
+    }
+
+    public void setApi_testcase_remark(String api_testcase_remark) {
+        this.apiCaseRemark = api_testcase_remark;
     }
 }
