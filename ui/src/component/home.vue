@@ -23,7 +23,7 @@
                     <ep-menu-item @click="switchRouter('/system')" index="/system" icon="grid">系统管理</ep-menu-item>
 
                     <ep-submenu icon="code" title="接口测试">
-
+                        <ep-menu-item icon="document" @click="switchRouter('/apiTestcase')" index="/apiTestcase">用例管理</ep-menu-item>
                     </ep-submenu>
 
                     <ep-submenu icon="person" title="信息维护">
