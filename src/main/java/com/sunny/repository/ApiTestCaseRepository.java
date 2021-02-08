@@ -8,4 +8,10 @@ import java.util.List;
 
 public interface ApiTestCaseRepository extends JpaRepository<ApiTestCaseEntity, Integer> {
     List<ApiTestCaseEntity> findByApiCaseNum(String apiCaseNum);
+
+    List<ApiTestCaseEntity> findByObjectSystemName(String objectSystemName);
+
+    List<ApiTestCaseEntity> findByObjectModuleName(String objectModuleName);
+
+    List<ApiTestCaseEntity> findByObjectModuleNameAndObjectSystemName(String objectModuleName, String objectSystemName);
 }

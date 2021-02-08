@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface ObjectSystemService {
 
-    void addObjectSystem(ObjectSystemDTO objectSystemDTO);
+    ObjectSystemEntity addObjectSystem(ObjectSystemDTO objectSystemDTO);
 
     List<ObjectSystemEntity> queryObjectSystem(ObjectSystemDTO objectSystemDTO);
 }

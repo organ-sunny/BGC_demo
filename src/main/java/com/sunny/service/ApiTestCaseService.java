@@ -12,4 +12,6 @@ public interface ApiTestCaseService {
     void addApiCase(ApiTestCaseDTO apiTestCaseDTO);
 
     List<ApiTestCaseEntity> queryApiCase(ApiTestCaseDTO apiTestCaseDTO);
+
+    void editApiCase(ApiTestCaseDTO apiTestCaseDTO);
 }

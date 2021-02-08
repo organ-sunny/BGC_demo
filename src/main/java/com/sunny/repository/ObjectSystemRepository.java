@@ -10,5 +10,4 @@ import java.util.List;
 public interface ObjectSystemRepository extends JpaRepository<ObjectSystemEntity, Integer> {
 
     List<ObjectSystemEntity> findByObjectSystem(String objectSystem);
-
 }

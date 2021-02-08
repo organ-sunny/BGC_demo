@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface ObjectModuleService {
 
-    void addModule(ObjectModuleDTO objectModuleDTO);
+    ObjectModuleEntity addModule(ObjectModuleDTO objectModuleDTO);
 
     List<ObjectModuleEntity> queryModule(ObjectModuleDTO objectModuleDTO);
 }

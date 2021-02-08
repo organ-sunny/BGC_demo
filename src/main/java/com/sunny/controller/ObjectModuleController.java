@@ -17,12 +17,14 @@ public class ObjectModuleController {
 
     @GetMapping("query")
     public ResponseEntity queryModule(ObjectModuleDTO objectModuleDTO) {
+
         List<ObjectModuleEntity> result = objectModuleService.queryModule(objectModuleDTO);
         return ResponseEntity.normalReturn("success", 200, result);
     }
 
     @PostMapping("add")
     public ResponseEntity addModule(@RequestBody(required = false) ObjectModuleDTO objectModuleDTO) {
+
         objectModuleDTO.check();
 
         objectModuleService.addModule(objectModuleDTO);

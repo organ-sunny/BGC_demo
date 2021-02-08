@@ -9,7 +9,9 @@ import java.util.List;
 @Repository
 public interface ObjectModuleRepositiry extends JpaRepository<ObjectModuleEntity, Integer> {
 
-    ObjectModuleEntity findByModuleNameAndAndObjsystemId(String moduleName, Integer objsystemId);
+    List<ObjectModuleEntity> findByModuleNameAndAndObjsystemId(String moduleName, Integer objsystemId);
 
     List<ObjectModuleEntity> findByModuleName(String moduleName);
+
+    List<ObjectModuleEntity> findByObjsystemId(Integer objsystemId);
 }

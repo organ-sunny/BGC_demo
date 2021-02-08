@@ -13,9 +13,6 @@ public class ApiTestCaseEntity {
     @Column(name = "OBJECT_SYSTEM_NAME")
     private String objectSystemName;
 
-    @Column(name = "OBJECT_SYSTEM_ID")
-    private Integer objectSystemId;
-
     @Column(name = "OBJECT_MODULE_NAME")
     private String objectModuleName;
 
@@ -69,7 +66,6 @@ public class ApiTestCaseEntity {
         return "ApiTestCaseEntity{" +
                 "id=" + id +
                 ", objectSystemName='" + objectSystemName + '\'' +
-                ", objectSystemId=" + objectSystemId +
                 ", objectModuleName='" + objectModuleName + '\'' +
                 ", objectModuleId='" + objectModuleId + '\'' +
                 ", apiCaseNum='" + apiCaseNum + '\'' +
@@ -103,14 +99,6 @@ public class ApiTestCaseEntity {
 
     public void setObjectSystemName(String objectSystemName) {
         this.objectSystemName = objectSystemName;
-    }
-
-    public Integer getObjectSystemId() {
-        return objectSystemId;
-    }
-
-    public void setObjectSystemId(Integer objectSystemId) {
-        this.objectSystemId = objectSystemId;
     }
 
     public String getObjectModuleName() {

@@ -7,7 +7,6 @@ import com.sunny.exception.BusinessException;
 import com.sunny.repository.ObjectSystemRepository;
 import com.sunny.service.ObjectSystemService;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -23,7 +22,7 @@ public class ObjectSystemSerivceImpl implements ObjectSystemService {
     private HttpServletRequest httpServletRequest;
 
     @Override
-    public void addObjectSystem(ObjectSystemDTO objectSystemDTO) {
+    public ObjectSystemEntity addObjectSystem(ObjectSystemDTO objectSystemDTO) {
 
         List<ObjectSystemEntity> objSystem = objectSystemRepository.findByObjectSystem(objectSystemDTO.getObjectSystem());
         if (objSystem.size() != 0) {
@@ -40,7 +39,7 @@ public class ObjectSystemSerivceImpl implements ObjectSystemService {
         objectSystemEntity.setUpdatedTime(new Date());
         objectSystemEntity.setUpdatedBy(user.getUsername());
 
-        objectSystemRepository.save(objectSystemEntity);
+        return objectSystemRepository.save(objectSystemEntity);
     }
 
     @Override
