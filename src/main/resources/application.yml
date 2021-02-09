@@ -3,8 +3,12 @@ server:
   port: 1001
 
 # 数据库链接配置
+
 spring:
   jpa:
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
     show-sql: true # 打印SQL，记录日志
     open-in-view: false
   datasource:

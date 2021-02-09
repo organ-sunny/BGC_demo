@@ -3,9 +3,11 @@ package com.sunny.repository;
 
 import com.sunny.entity.ApiTestCaseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ApiTestCaseRepository extends JpaRepository<ApiTestCaseEntity, Integer> {
     List<ApiTestCaseEntity> findByApiCaseNum(String apiCaseNum);
 
