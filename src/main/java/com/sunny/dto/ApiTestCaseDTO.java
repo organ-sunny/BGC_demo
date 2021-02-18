@@ -5,33 +5,7 @@ import com.sunny.entity.ApiTestCaseEntity;
 
 public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     private Integer id;
-
-    @Override
-    public String toString() {
-        return "ApiTestCaseDTO{" +
-                "id='" + id + '\'' +
-                ", objectSystemName='" + objectSystemName + '\'' +
-                ", objectModuleName='" + objectModuleName + '\'' +
-                ", apiCaseNum='" + apiCaseNum + '\'' +
-                ", apiCaseName='" + apiCaseName + '\'' +
-                ", apiCaseDescription='" + apiCaseDescription + '\'' +
-                ", apiCaseRequestAddress='" + apiCaseRequestAddress + '\'' +
-                ", apiCaseRequestMethod='" + apiCaseRequestMethod + '\'' +
-                ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
-                ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
-                ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
-                ", apiCaseRemark='" + apiCaseRemark + '\'' +
-                '}';
-    }
 
     @NotNull
     private String objectSystemName;
@@ -51,6 +25,8 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
 
     private String apiCaseRequestMethod;
 
+    private String apiCaseRequestHeader;
+
     private String apiCaseRequestParam;
 
     private String apiCaseExpectedResult;
@@ -58,6 +34,33 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
     private String apiCaseActualResult;
 
     private String apiCaseRemark;
+
+    @Override
+    public String toString() {
+        return "ApiTestCaseDTO{" +
+                "id=" + id +
+                ", objectSystemName='" + objectSystemName + '\'' +
+                ", objectModuleName='" + objectModuleName + '\'' +
+                ", apiCaseNum='" + apiCaseNum + '\'' +
+                ", apiCaseName='" + apiCaseName + '\'' +
+                ", apiCaseDescription='" + apiCaseDescription + '\'' +
+                ", apiCaseRequestAddress='" + apiCaseRequestAddress + '\'' +
+                ", apiCaseRequestMethod='" + apiCaseRequestMethod + '\'' +
+                ", apiCaseRequestHeader='" + apiCaseRequestHeader + '\'' +
+                ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
+                ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
+                ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
+                ", apiCaseRemark='" + apiCaseRemark + '\'' +
+                '}';
+    }
+
+    public String getApiCaseRequestHeader() {
+        return apiCaseRequestHeader;
+    }
+
+    public void setApiCaseRequestHeader(String apiCaseRequestHeader) {
+        this.apiCaseRequestHeader = apiCaseRequestHeader;
+    }
 
     public String getObjectSystemName() {
         return objectSystemName;
@@ -147,4 +150,11 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
         this.apiCaseRemark = apiCaseRemark;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

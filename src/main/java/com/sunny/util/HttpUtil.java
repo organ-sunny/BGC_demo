@@ -66,7 +66,7 @@ public final class HttpUtil {
      * @param data 请求数据
      * @return 响应结果
      */
-    public String send(String data) {
+    public String send(String data) throws IOException {
         HttpURLConnection httpURLConnection = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -97,13 +97,14 @@ public final class HttpUtil {
             // 获取响应数据
             inputStream = httpURLConnection.getInputStream();
             byte[] bytes = new byte[inputStream.available()];
-            int read = inputStream.read(bytes);
-            System.out.println(read);
+            inputStream.read(bytes);
+//            System.out.println(read);
 
             return new String(bytes);
         } catch (IOException e) {
+            // 接口请求失败
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw e;
         } finally {
             try {
                 if (inputStream != null) {
@@ -121,7 +122,7 @@ public final class HttpUtil {
         }
     }
 
-    public String send() {
+    public String send() throws IOException {
         return this.send(null);
     }
 

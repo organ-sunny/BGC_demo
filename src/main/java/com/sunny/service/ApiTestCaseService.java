@@ -16,4 +16,7 @@ public interface ApiTestCaseService {
 //    void editApiCase(ApiTestCaseDTO apiTestCaseDTO);
 
     void runApiCase(Integer apiCaseId);
+
+    void runApiCase(List<Integer> apiCaseIds);
+
 }

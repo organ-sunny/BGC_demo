@@ -2,7 +2,6 @@ package com.sunny.controller;
 
 
 import com.sunny.dto.UserDTO;
-import com.sunny.entity.ParentEntity;
 import com.sunny.entity.ResponseEntity;
 import com.sunny.entity.UserEntity;
 import com.sunny.service.LoginService;
@@ -24,6 +23,11 @@ public class LoginController {
 
     @PostMapping("login")
     public ResponseEntity login(@RequestBody UserDTO userDTO) {
+
+//        if (true) {
+//            // 测试500
+//            throw new Error("测试500");
+//        }
 
         // 参数校验
         userDTO.loginCheckParam();

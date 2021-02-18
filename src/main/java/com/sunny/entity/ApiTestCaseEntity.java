@@ -34,6 +34,9 @@ public class ApiTestCaseEntity {
     @Column(name = "API_TESTCASE_REQUESTMETHOD")
     private String apiCaseRequestMethod;
 
+    @Column(name = "API_TESTCASE_REQUESTHEADER")
+    private String apiCaseRequestHeader;
+
     @Column(name = "API_TESTCASE_REQUESTPARA")
     private String apiCaseRequestParam;
 
@@ -67,12 +70,13 @@ public class ApiTestCaseEntity {
                 "id=" + id +
                 ", objectSystemName='" + objectSystemName + '\'' +
                 ", objectModuleName='" + objectModuleName + '\'' +
-                ", objectModuleId='" + objectModuleId + '\'' +
+                ", objectModuleId=" + objectModuleId +
                 ", apiCaseNum='" + apiCaseNum + '\'' +
                 ", apiCaseName='" + apiCaseName + '\'' +
                 ", apiCaseDescription='" + apiCaseDescription + '\'' +
                 ", apiCaseRequestAddress='" + apiCaseRequestAddress + '\'' +
                 ", apiCaseRequestMethod='" + apiCaseRequestMethod + '\'' +
+                ", apiCaseRequestHeader='" + apiCaseRequestHeader + '\'' +
                 ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
                 ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
                 ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
@@ -81,8 +85,24 @@ public class ApiTestCaseEntity {
                 ", createdTime=" + createdTime +
                 ", updatedBy='" + updatedBy + '\'' +
                 ", updatedTime=" + updatedTime +
-                ", api_testcase_remark='" + apiCaseRemark + '\'' +
+                ", apiCaseRemark='" + apiCaseRemark + '\'' +
                 '}';
+    }
+
+    public String getApiCaseRequestHeader() {
+        return apiCaseRequestHeader;
+    }
+
+    public void setApiCaseRequestHeader(String apiCaseRequestHeader) {
+        this.apiCaseRequestHeader = apiCaseRequestHeader;
+    }
+
+    public String getApiCaseRemark() {
+        return apiCaseRemark;
+    }
+
+    public void setApiCaseRemark(String apiCaseRemark) {
+        this.apiCaseRemark = apiCaseRemark;
     }
 
     public Integer getId() {

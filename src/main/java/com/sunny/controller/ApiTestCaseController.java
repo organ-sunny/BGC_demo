@@ -45,9 +45,15 @@ public class ApiTestCaseController {
 //        return ResponseEntity.normalReturn("success", 200, null);
 //    }
 
+//    @PostMapping("runApiCase")
+//    public ResponseEntity runApiCase(Integer apiCaseId) {
+//        apiTestCaseService.runApiCase(apiCaseId);
+//        return ResponseEntity.normalReturn("success", 200, null);
+//    }
+
     @PostMapping("runApiCase")
-    public ResponseEntity runApiCase(Integer apiCaseId) {
-        apiTestCaseService.runApiCase(apiCaseId);
+    public ResponseEntity runApiCase(@RequestBody(required = false) List<Integer> integerList) {
+        apiTestCaseService.runApiCase(integerList);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 }

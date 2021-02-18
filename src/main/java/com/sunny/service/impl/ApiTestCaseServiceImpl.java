@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,24 +48,31 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
 
     /**
      * 入参：
-     *     objectSystemName":"系统名称",
-     *     objectModuleName":"模块名称",
-     *     apiCaseNum":"接口用例编号",
-     *     apiCaseName":"接口用例名称",
-     *     apiCaseDescription":"用例描述",
-     *     apiCaseRequestAddress":"接口请求地址",
-     *     apiCaseRequestMethod":"接口请求方式",
-     *     apiCaseRequestParam":"接口请求入参",
-     *     apiCaseExpectedResult":"预期结果",
-     *     apiCaseActualResult":"实际结果",
-     *     creator":"",
-     *     createdTime":"",
-     *     updatedBy":"",
-     *     updatedTime":"",
-     *     apiCaseRemark":"备注"
+     * objectSystemName":"系统名称",
+     * objectModuleName":"模块名称",
+     * apiCaseNum":"接口用例编号",
+     * apiCaseName":"接口用例名称",
+     * apiCaseDescription":"用例描述",
+     * apiCaseRequestAddress":"接口请求地址",
+     * apiCaseRequestMethod":"接口请求方式",
+     * apiCaseRequestParam":"接口请求入参",
+     * apiCaseExpectedResult":"预期结果",
+     * apiCaseActualResult":"实际结果",
+     * creator":"",
+     * createdTime":"",
+     * updatedBy":"",
+     * updatedTime":"",
+     * apiCaseRemark":"备注"
      */
     @Override
     public void addApiCase(ApiTestCaseDTO apiTestCaseDTO) {
+
+        // 校验用例编号
+        List<ApiTestCaseEntity> byApiCaseNum = apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum());
+        if (byApiCaseNum.size() != 0) {
+            throw new BusinessException("该用例编号已存在！");
+        }
+
         ApiTestCaseEntity apiCaseEntity = apiTestCaseDTO.getEntity();
         Date nowTime = new Date();
         UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
@@ -106,7 +114,8 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
             objectModuleEntity = objectModuleEntityList.get(0);
         }
 
-        // 新加用例
+        // 添加用例
+
         apiCaseEntity.setObjectModuleId(objectModuleEntity.getId());
         apiCaseEntity.setCreatedTime(nowTime);
         apiCaseEntity.setUpdatedTime(nowTime);
@@ -219,18 +228,58 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
     @Override
     public void runApiCase(Integer apiCaseId) {
         ApiTestCaseEntity apiTestCaseEntity = apiTestCaseRepository.getOne(apiCaseId);
+        try {
 
-        HttpUtil httpUtil = new HttpUtil(apiTestCaseEntity.getApiCaseRequestAddress(), apiTestCaseEntity.getApiCaseRequestMethod());
-        String send = httpUtil.send(apiTestCaseEntity.getApiCaseRequestParam());
-        Map<String, Object> actualResult = StringUtil.toMap(send);
-        Map<String, Object> expectedResult = StringUtil.toMap(apiTestCaseEntity.getApiCaseExpectedResult());
-        if (actualResult.get("message").equals(expectedResult.get("message")) && actualResult.get("code").equals(expectedResult.get("code"))) {
-            apiTestCaseEntity.setIsPassed("Pass");
-        } else {
+            HttpUtil httpUtil = new HttpUtil(apiTestCaseEntity.getApiCaseRequestAddress(), apiTestCaseEntity.getApiCaseRequestMethod());
+            // 设置请求头
+            String apiCaseRequestHeader = apiTestCaseEntity.getApiCaseRequestHeader();
+            if (!StringUtil.isEmpty(apiCaseRequestHeader)) {
+                Map<String, Object> requestHeader = StringUtil.toMap(apiCaseRequestHeader);
+                for (String key : requestHeader.keySet()) {
+                    httpUtil.setHeader(key, (String) requestHeader.get(key));
+                }
+            }
+
+            String send = httpUtil.send(apiTestCaseEntity.getApiCaseRequestParam());
+            Map<String, Object> actualResult = StringUtil.toMap(send);
+            Map<String, Object> expectedResult = StringUtil.toMap(apiTestCaseEntity.getApiCaseExpectedResult());
+
+
+            // 比对结果
+            String isPass = "Pass";
+            for (String key : expectedResult.keySet()) {
+                if (!actualResult.containsKey(key) || !actualResult.get(key).equals(expectedResult.get(key))) {
+                    isPass = "Failed";
+                    break;
+                }
+            }
+            apiTestCaseEntity.setIsPassed(isPass);
+            apiTestCaseEntity.setApiCaseActualResult(send);
+        } catch (Exception e) {
             apiTestCaseEntity.setIsPassed("Failed");
+
+            // 404
+            if (e.getClass() == FileNotFoundException.class) {
+                apiTestCaseEntity.setApiCaseActualResult("404");
+            } else {
+                apiTestCaseEntity.setApiCaseActualResult(e.getMessage());
+            }
+        } finally {
+            apiTestCaseRepository.save(apiTestCaseEntity);
         }
-        apiTestCaseEntity.setApiCaseActualResult(send);
-        apiTestCaseRepository.save(apiTestCaseEntity);
+
+        apiTestCaseRepository.save(new ApiTestCaseEntity());
     }
+
+    @Override
+    public void runApiCase(List<Integer> apiCaseIds) {
+        for (Integer integer : apiCaseIds) {
+            if (integer == null) {
+                continue;
+            }
+            runApiCase(integer);
+        }
+    }
+
 }
 
