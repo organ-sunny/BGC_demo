@@ -1,7 +1,6 @@
 package com.sunny.service.impl;
 
 import com.sunny.constant.ConfigConstant;
-import com.sunny.entity.ConfigEntity;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ConfigRepository;
 import com.sunny.service.ConfigService;
@@ -24,6 +23,7 @@ public class ConfigServiceImpl implements ConfigService {
 //        configRepository.save(configEntity);
 //    }
 
+    // 查config表获取excel上传路径
     @Override
     public String getUploadExcelPath(ConfigConstant configConstant) {
         try {

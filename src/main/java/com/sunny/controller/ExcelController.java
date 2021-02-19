@@ -18,7 +18,6 @@ public class ExcelController {
 
     @PostMapping("upload")
     public ResponseEntity uploadExcel(@RequestParam(required = false, name = "file") MultipartFile file) {
-        // 执行上传
         excelService.uploadExcel(file);
         return ResponseEntity.normalReturn("success", 200, null);
     }

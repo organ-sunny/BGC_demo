@@ -55,13 +55,10 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
      * apiCaseDescription":"用例描述",
      * apiCaseRequestAddress":"接口请求地址",
      * apiCaseRequestMethod":"接口请求方式",
+     * apiCaseRequestHeader":"接口请求头",
      * apiCaseRequestParam":"接口请求入参",
      * apiCaseExpectedResult":"预期结果",
      * apiCaseActualResult":"实际结果",
-     * creator":"",
-     * createdTime":"",
-     * updatedBy":"",
-     * updatedTime":"",
      * apiCaseRemark":"备注"
      */
     @Override
@@ -70,7 +67,7 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         // 校验用例编号
         List<ApiTestCaseEntity> byApiCaseNum = apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum());
         if (byApiCaseNum.size() != 0) {
-            throw new BusinessException("该用例编号已存在！");
+            throw new BusinessException("该用例编号:"  + byApiCaseNum.get(0).getApiCaseNum() + "已存在！");
         }
 
         ApiTestCaseEntity apiCaseEntity = apiTestCaseDTO.getEntity();
