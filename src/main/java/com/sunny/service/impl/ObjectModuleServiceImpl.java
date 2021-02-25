@@ -2,6 +2,7 @@ package com.sunny.service.impl;
 
 import com.sunny.dto.ObjectModuleDTO;
 import com.sunny.entity.ObjectModuleEntity;
+import com.sunny.entity.UserEntity;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ObjectModuleRepositiry;
 import com.sunny.repository.ObjectSystemRepository;
@@ -9,7 +10,9 @@ import com.sunny.service.ObjectModuleService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,6 +22,9 @@ public class ObjectModuleServiceImpl implements ObjectModuleService {
 
     @Resource
     private ObjectSystemRepository objectSystemRepository;
+
+    @Resource
+    private HttpServletRequest httpServletRequest;
 
     /**
      * 入参：moduleName、systemId
@@ -32,6 +38,9 @@ public class ObjectModuleServiceImpl implements ObjectModuleService {
     @Override
     public ObjectModuleEntity addModule(ObjectModuleDTO objectModuleDTO) {
 
+        // 定位当前用户
+        UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
+
         Integer objsystemId = objectModuleDTO.getObjsystemId();
         // 如果系统存在
         if (objectSystemRepository.findById(objsystemId) != null) {
@@ -41,9 +50,16 @@ public class ObjectModuleServiceImpl implements ObjectModuleService {
             if (objectModuleEntityList.size() != 0) {
                 throw new BusinessException("该模块已存在！");
             }
-            // 模块不存在
+
             ObjectModuleEntity objectModuleEntity = objectModuleDTO.getEntity();
+
+            objectModuleEntity.setCreator(user.getUsername());
+            objectModuleEntity.setCreatedTime(new Date());
+            objectModuleEntity.setUpdatedBy(user.getUsername());
+            objectModuleEntity.setUpdatedTime(new Date());
+
             return objectModuleRepositiry.save(objectModuleEntity);
+
         } else {
             throw new BusinessException("系统不存在！");
         }

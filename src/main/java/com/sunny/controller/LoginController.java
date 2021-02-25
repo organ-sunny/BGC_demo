@@ -7,10 +7,7 @@ import com.sunny.entity.UserEntity;
 import com.sunny.service.LoginService;
 import com.sunny.util.ClassUtil;
 import com.sunny.vo.LoginVO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -42,4 +39,10 @@ public class LoginController {
             return ResponseEntity.normalReturn(e.getMessage(), 500, null);
         }
     }
+
+    @GetMapping("test/{city}")
+    public String test(@PathVariable(required = false, name = "city") String city) {
+        return city;
+    }
+
 }

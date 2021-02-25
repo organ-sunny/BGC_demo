@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "object_system")
+@Table(name = "t_object_system")
 public class ObjectSystemEntity {
 
     @Id

@@ -3,7 +3,7 @@ package com.sunny.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "config")
+@Table(name = "t_config")
 public class ConfigEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

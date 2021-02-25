@@ -19,16 +19,21 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
     @NotNull
     private String apiCaseName;
 
+    @NotNull
     private String apiCaseDescription;
 
+    @NotNull
     private String apiCaseRequestAddress;
 
+    @NotNull
     private String apiCaseRequestMethod;
 
     private String apiCaseRequestHeader;
 
+    @NotNull
     private String apiCaseRequestParam;
 
+    @NotNull
     private String apiCaseExpectedResult;
 
     private String apiCaseActualResult;

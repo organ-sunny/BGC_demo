@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -133,4 +135,59 @@ public class ExcelServiceImpl implements ExcelService {
             apiTestCaseService.addApiCase(apiTestCaseDTO);
         }
     }
+
+    @Override
+    public void downloadExcel(HttpServletResponse httpServletResponse) {
+        /**
+         * 下载文件
+         *
+         * @param filePath 文件路径
+         * @param httpServletResponse 响应
+         * @param fileName 文件名
+         * */
+        String filePath = configService.getDownloadExcelPath(ConfigConstant.DOWNLOAD_EXCEL_PATH);
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new BusinessException("文件不存在");
+        }
+
+        try {
+            httpServletResponse.setContentType("application/octet-stream");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file.getName(), "UTF-8"));
+            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+        } catch (Exception e) {
+            throw new BusinessException("设置响应内容错误：" + e.getMessage());
+        }
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            inputStream = new FileInputStream(filePath);
+            httpServletResponse.setHeader("Content-Length", String.valueOf(inputStream.available()));
+            outputStream = httpServletResponse.getOutputStream();
+            byte[] bytes = new byte[2048];
+            int read = inputStream.read(bytes);
+            while (read != -1) {
+                outputStream.write(bytes);
+                read = inputStream.read(bytes);
+            }
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage());
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new BusinessException("关闭文件流出错！");
+            }
+        }
+    }
+
 }

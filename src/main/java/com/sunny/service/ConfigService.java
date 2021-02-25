@@ -10,4 +10,6 @@ public interface ConfigService {
 //    void addUploadExcelPath(ConfigEntity configEntity);
 
     String getUploadExcelPath(ConfigConstant configConstant);
+
+    String getDownloadExcelPath(ConfigConstant configConstant);
 }

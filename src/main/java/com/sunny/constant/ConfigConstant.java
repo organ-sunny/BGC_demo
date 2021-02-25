@@ -2,7 +2,9 @@ package com.sunny.constant;
 
 public enum ConfigConstant {
 
-    UPLOAD_EXCEL_PATH("UPLOAD_EXCEL_PATH");
+    UPLOAD_EXCEL_PATH("UPLOAD_EXCEL_PATH"),
+
+    DOWNLOAD_EXCEL_PATH("DOWNLOAD_EXCEL_PATH");
 
     private final String value;
 

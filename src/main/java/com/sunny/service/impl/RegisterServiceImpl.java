@@ -75,6 +75,8 @@ public class RegisterServiceImpl implements RegisterService {
 
         // 保存用户入库
         UserEntity userEntity1 = userDTO.getEntity();
+        userEntity1.setCreatedTime(new Date());
+        userEntity1.setUpdatedTime(new Date());
         userRepository.save(userEntity1);
 
     }

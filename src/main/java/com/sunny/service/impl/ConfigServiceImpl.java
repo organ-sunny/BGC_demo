@@ -32,4 +32,13 @@ public class ConfigServiceImpl implements ConfigService {
             throw new BusinessException("无该路径的属性！");
         }
     }
+
+    @Override
+    public String getDownloadExcelPath(ConfigConstant configConstant) {
+        try {
+            return configRepository.findByProperty(configConstant.getValue()).getValue();
+        }catch (Exception e){
+            throw new BusinessException("无该路径的属性！");
+        }
+    }
 }

@@ -4,22 +4,26 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "t_object_module")
-public class ObjectModuleEntity {
+@Table(name = "t_object_api")
+public class ObjectApiEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "OBJSYSTEM_ID")
-    private Integer objsystemId;
+    @Column(name = "MODULE_ID")
+    private Integer moduleId;
 
-    @Column(name = "MODULE_NAME")
-    private String moduleName;
+    @Column(name = "API_NAME")
+    private String apiName;
 
-    @Column(name = "PERCENTOFPASS")
-    private String percentOfPass;
+    @Column(name = "API_ADDRESS")
+    private String apiAddress;
 
-    @Column(name = "CREATEOR")
+    @Column(name = "API_METHOD")
+    private String apiMethod;
+
+    @Column(name = "CREATOR")
     private String creator;
 
     @Column(name = "CREATEDTIME")
@@ -33,11 +37,12 @@ public class ObjectModuleEntity {
 
     @Override
     public String toString() {
-        return "ObjectModuleEntity{" +
+        return "ObjectApiEntity{" +
                 "id=" + id +
-                ", objsystemId=" + objsystemId +
-                ", moduleName='" + moduleName + '\'' +
-                ", percentOfPass='" + percentOfPass + '\'' +
+                ", moduleId=" + moduleId +
+                ", apiName='" + apiName + '\'' +
+                ", apiAddress='" + apiAddress + '\'' +
+                ", apiMethod='" + apiMethod + '\'' +
                 ", creator='" + creator + '\'' +
                 ", createdTime=" + createdTime +
                 ", updatedBy='" + updatedBy + '\'' +
@@ -53,28 +58,36 @@ public class ObjectModuleEntity {
         this.id = id;
     }
 
-    public Integer getObjsystemId() {
-        return objsystemId;
+    public Integer getModuleId() {
+        return moduleId;
     }
 
-    public void setObjsystemId(Integer objsystemId) {
-        this.objsystemId = objsystemId;
+    public void setModuleId(Integer moduleId) {
+        this.moduleId = moduleId;
     }
 
-    public String getModuleName() {
-        return moduleName;
+    public String getApiName() {
+        return apiName;
     }
 
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
+    public void setApiName(String apiName) {
+        this.apiName = apiName;
     }
 
-    public String getPercentOfPass() {
-        return percentOfPass;
+    public String getApiAddress() {
+        return apiAddress;
     }
 
-    public void setPercentOfPass(String percentOfPass) {
-        this.percentOfPass = percentOfPass;
+    public void setApiAddress(String apiAddress) {
+        this.apiAddress = apiAddress;
+    }
+
+    public String getApiMethod() {
+        return apiMethod;
+    }
+
+    public void setApiMethod(String apiMethod) {
+        this.apiMethod = apiMethod;
     }
 
     public String getCreator() {

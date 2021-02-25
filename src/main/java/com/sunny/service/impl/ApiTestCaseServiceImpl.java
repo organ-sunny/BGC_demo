@@ -15,6 +15,7 @@ import com.sunny.service.ApiTestCaseService;
 import com.sunny.service.ObjectModuleService;
 import com.sunny.service.ObjectSystemService;
 import com.sunny.util.HttpUtil;
+import com.sunny.util.RegexUtil;
 import com.sunny.util.StringUtil;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +64,11 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
      */
     @Override
     public void addApiCase(ApiTestCaseDTO apiTestCaseDTO) {
+
+        // 校验请求方法是否正确
+        if(!RegexUtil.isRequestMethodRight(apiTestCaseDTO.getApiCaseRequestMethod())){
+            throw new BusinessException("请求方法填写错误：请填写POST、GET、PUT、DELETE中的一个，并注意大小写！");
+        }
 
         // 校验用例编号
         List<ApiTestCaseEntity> byApiCaseNum = apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum());
@@ -144,7 +150,7 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
 
             return apiTestCaseEntityList;
         } else {
-            throw new BusinessException("未查询出结果！");
+            throw new BusinessException("未查询到相关记录！");
         }
     }
 

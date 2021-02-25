@@ -6,9 +6,10 @@ import com.sunny.vo.LoginVO;
 import com.sunny.vo.UserVO;
 
 import java.lang.reflect.Field;
+import java.util.Date;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "t_users")
 public class UserEntity extends ParentEntity<UserVO> {
 
     @Id
@@ -36,14 +37,14 @@ public class UserEntity extends ParentEntity<UserVO> {
     @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "PET_ID")
-    private String pet_id;
-
     @Column(name = "TOKEN")
     private String token;
 
-    @Column(name = "ISSAVEDSEX")
-    private String isSavedSex;
+    @Column(name = "CREATEDTIME")
+    private Date createdTime;
+
+    @Column(name = "UPDATEDTIME")
+    private Date updatedTime;
 
     @Override
     public String toString() {
@@ -56,18 +57,10 @@ public class UserEntity extends ParentEntity<UserVO> {
                 ", address='" + address + '\'' +
                 ", telephoneNum='" + telephoneNum + '\'' +
                 ", email='" + email + '\'' +
-                ", pet_id='" + pet_id + '\'' +
                 ", token='" + token + '\'' +
-                ", isSavedSex='" + isSavedSex + '\'' +
+                ", createdTime='" + createdTime + '\'' +
+                ", updatedTime='" + updatedTime + '\'' +
                 '}';
-    }
-
-    public String getIsSavedSex() {
-        return isSavedSex;
-    }
-
-    public void setIsSavedSex(String isSavedSex) {
-        this.isSavedSex = isSavedSex;
     }
 
     public Integer getId() {
@@ -134,14 +127,6 @@ public class UserEntity extends ParentEntity<UserVO> {
         this.email = email;
     }
 
-    public String getPet_id() {
-        return pet_id;
-    }
-
-    public void setPet_id(String pet_id) {
-        this.pet_id = pet_id;
-    }
-
     public String getToken() {
         return token;
     }
@@ -150,7 +135,23 @@ public class UserEntity extends ParentEntity<UserVO> {
         this.token = token;
     }
 
-    //    /**
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+//    /**
 //     * Entity转换成VO，定义返回内容
 //     */
 //    public UserVO getVO(){

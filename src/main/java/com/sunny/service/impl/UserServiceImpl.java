@@ -4,7 +4,6 @@ import com.sunny.dto.UserDTO;
 import com.sunny.entity.UserEntity;
 import com.sunny.exception.ParamErrorException;
 import com.sunny.repository.UserRepository;
-import com.sunny.service.SendMailService;
 import com.sunny.service.UserService;
 import com.sunny.util.RegexUtil;
 import com.sunny.util.StringUtil;
@@ -87,6 +86,7 @@ public class UserServiceImpl implements UserService {
         user.setAge(userDTO.getAge());
         user.setTelephoneNum(userDTO.getTelephoneNum());
         user.setAddress(userDTO.getAddress());
+        user.setUpdatedTime(new Date());
 
         // 保存用户信息
         userRepository.save(user);

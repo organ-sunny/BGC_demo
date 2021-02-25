@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "api_test_case")
+@Table(name = "t_api_test_case")
 public class ApiTestCaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

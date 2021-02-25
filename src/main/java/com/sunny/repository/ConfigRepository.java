@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfigRepository extends JpaRepository<ConfigEntity,Integer> {
 
+    // 配置excel案例上传路径相关的
     ConfigEntity findByProperty(String property);
 }
