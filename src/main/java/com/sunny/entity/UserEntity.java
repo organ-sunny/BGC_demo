@@ -1,11 +1,8 @@
 package com.sunny.entity;
 
+import com.sunny.dto.vo.UserVO;
+
 import javax.persistence.*;
-
-import com.sunny.vo.LoginVO;
-import com.sunny.vo.UserVO;
-
-import java.lang.reflect.Field;
 import java.util.Date;
 
 @Entity

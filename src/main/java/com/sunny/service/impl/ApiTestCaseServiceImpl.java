@@ -1,17 +1,17 @@
 package com.sunny.service.impl;
 
 import com.sunny.dto.ApiTestCaseDTO;
+import com.sunny.dto.ObjectApiDTO;
 import com.sunny.dto.ObjectModuleDTO;
 import com.sunny.dto.ObjectSystemDTO;
-import com.sunny.entity.ApiTestCaseEntity;
-import com.sunny.entity.ObjectModuleEntity;
-import com.sunny.entity.ObjectSystemEntity;
-import com.sunny.entity.UserEntity;
+import com.sunny.entity.*;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ApiTestCaseRepository;
+import com.sunny.repository.ObjectApiRepository;
 import com.sunny.repository.ObjectModuleRepositiry;
 import com.sunny.repository.ObjectSystemRepository;
 import com.sunny.service.ApiTestCaseService;
+import com.sunny.service.ObjectApiService;
 import com.sunny.service.ObjectModuleService;
 import com.sunny.service.ObjectSystemService;
 import com.sunny.util.HttpUtil;
@@ -29,6 +29,10 @@ import java.util.Map;
 
 @Service
 public class ApiTestCaseServiceImpl implements ApiTestCaseService {
+
+    @Resource
+    private ObjectApiRepository objectApiRepository;
+
     @Resource
     private HttpServletRequest httpServletRequest;
 
@@ -47,10 +51,14 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
     @Resource
     private ObjectModuleService objectModuleService;
 
+    @Resource
+    private ObjectApiService objectApiService;
+
     /**
      * 入参：
      * objectSystemName":"系统名称",
      * objectModuleName":"模块名称",
+     * objectApiName":"接口名称",
      * apiCaseNum":"接口用例编号",
      * apiCaseName":"接口用例名称",
      * apiCaseDescription":"用例描述",
@@ -66,14 +74,14 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
     public void addApiCase(ApiTestCaseDTO apiTestCaseDTO) {
 
         // 校验请求方法是否正确
-        if(!RegexUtil.isRequestMethodRight(apiTestCaseDTO.getApiCaseRequestMethod())){
+        if (!RegexUtil.isRequestMethodRight(apiTestCaseDTO.getApiCaseRequestMethod())) {
             throw new BusinessException("请求方法填写错误：请填写POST、GET、PUT、DELETE中的一个，并注意大小写！");
         }
 
         // 校验用例编号
         List<ApiTestCaseEntity> byApiCaseNum = apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum());
         if (byApiCaseNum.size() != 0) {
-            throw new BusinessException("该用例编号:"  + byApiCaseNum.get(0).getApiCaseNum() + "已存在！");
+            throw new BusinessException("该用例编号:" + byApiCaseNum.get(0).getApiCaseNum() + "已存在！");
         }
 
         ApiTestCaseEntity apiCaseEntity = apiTestCaseDTO.getEntity();
@@ -83,9 +91,11 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         /**
          * 业务逻辑：先判断系统是否存在
          *          系统存在：再判断模块是否存在
-         *              模块存在：先拿到模块编号，再去新增case
-         *              模块不存在：先拿到系统编号，去新增模块，然后拿到新增后的模块编号，再去新增case
-         *          系统不存在：拿到case传的系统名去新增系统，然后拿到系统编号，去新增模块，最后拿到新增后的模块编号，再去新增case
+         *              模块存在：再判断接口是否存在
+         *                  接口存在：拿到接口编号，塞给case，保存入库
+         *                  接口不存在：先新增接口，然后拿到接口编号，塞给case，再保存入库
+         *              模块不存在：先拿到系统编号，去新增模块，然后拿到新增后的模块编号，再去新增接口，再拿到接口编号，最后去新增case
+         *          系统不存在：拿到case传的系统名去新增系统，然后拿到系统编号，去新增模块，最后拿到新增后的模块编号，再去新增接口，再拿到接口编号，最后去新增case
          */
 
         String objectSystemName = apiTestCaseDTO.getObjectSystemName();
@@ -117,9 +127,25 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
             objectModuleEntity = objectModuleEntityList.get(0);
         }
 
-        // 添加用例
+        // 判断接口表记录是否存在
+        String objectApiName = apiTestCaseDTO.getObjectApiName();
+        List<ObjectApiEntity> objectApiEntityList = objectApiRepository.findByModuleIdAndApiName(objectModuleEntity.getId(), objectApiName);
+        ObjectApiEntity objectApiEntity;
+        // 如果接口表记录不存在
+        if (objectApiEntityList.size() == 0) {
+            // 添加接口表记录
+            ObjectApiDTO objectApiDTO = new ObjectApiDTO();
+            objectApiDTO.setApiName(objectApiName);
+            objectApiDTO.setApiAddress(apiTestCaseDTO.getApiCaseRequestAddress());
+            objectApiDTO.setApiMethod(apiTestCaseDTO.getApiCaseRequestMethod());
+            objectApiDTO.setModuleId(objectModuleEntity.getId());
+            objectApiEntity = objectApiService.addObjectApi(objectApiDTO);
+        } else {
+            objectApiEntity = objectApiEntityList.get(0);
+        }
 
-        apiCaseEntity.setObjectModuleId(objectModuleEntity.getId());
+        // 添加用例
+        apiCaseEntity.setObjectApiId(objectApiEntity.getId());
         apiCaseEntity.setCreatedTime(nowTime);
         apiCaseEntity.setUpdatedTime(nowTime);
         apiCaseEntity.setCreator(user.getUsername());
@@ -127,113 +153,92 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         apiTestCaseRepository.save(apiCaseEntity);
     }
 
+
+    /**
+     * 入参-查询条件：系统名、模块名、接口名、案例名
+     */
     @Override
     public List<ApiTestCaseEntity> queryApiCase(ApiTestCaseDTO apiTestCaseDTO) {
 
-        List<ApiTestCaseEntity> apiTestCaseEntityList = new ArrayList<>();
         String systemName = apiTestCaseDTO.getObjectSystemName();
         String moduleName = apiTestCaseDTO.getObjectModuleName();
+        String objectApiName = apiTestCaseDTO.getObjectApiName();
+        String apiCaseName = apiTestCaseDTO.getApiCaseName();
 
-        if (StringUtil.isEmpty(systemName) && StringUtil.isEmpty(moduleName)) {
+        List<ApiTestCaseEntity> apiTestCaseEntityList = new ArrayList<>();
+        if (StringUtil.isEmpty(systemName) && StringUtil.isEmpty(moduleName) && StringUtil.isEmpty(objectApiName) && StringUtil.isEmpty(apiCaseName)) {
             apiTestCaseEntityList = apiTestCaseRepository.findAll();
         }
-        if (!StringUtil.isEmpty(systemName) && StringUtil.isEmpty(moduleName)) {
-            apiTestCaseEntityList = apiTestCaseRepository.findByObjectSystemName(systemName);
-        }
-        if (StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName)) {
-            apiTestCaseEntityList = apiTestCaseRepository.findByObjectModuleName(moduleName);
-        }
-        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName)) {
-            apiTestCaseEntityList = apiTestCaseRepository.findByObjectModuleNameAndObjectSystemName(moduleName, systemName);
-        }
-        if (apiTestCaseEntityList.size() != 0) {
+        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
+            if (objectSystemRepository.findByObjectSystem(systemName).size() == 0){
+                throw new BusinessException("未查询到相关结果1！");
+            }
+            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
+            if (objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).size() == 0){
+                throw new BusinessException("未查询到相关结果2！");
+            }
+            Integer moduleId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).get(0).getId();
+            if (objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName).size() == 0){
+                throw new BusinessException("未查询到相关结果3！");
+            }
+            Integer apiId = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName).get(0).getId();
+            apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndObjectApiId(apiCaseName, apiId);
 
-            return apiTestCaseEntityList;
-        } else {
-            throw new BusinessException("未查询到相关记录！");
         }
+        return apiTestCaseEntityList;
+
+//        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && StringUtil.isEmpty(apiCaseName)) {
+//            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
+//            Integer moduleId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).get(0).getId();
+//            Integer apiId = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName).get(0).getId();
+//            apiTestCaseEntityList = apiTestCaseRepository.myFindById(apiId);
+//
+//        }
+//        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
+//            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
+//            Integer moduleId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).get(0).getId();
+//            List<ObjectApiEntity> byModuleId = objectApiRepository.findByModuleId(moduleId);
+//            for (ObjectApiEntity objectApiEntity : byModuleId) {
+//                Integer apiId = objectApiEntity.getId();
+//                apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndId(apiCaseName, apiId);
+//            }
+//        }
+//        if (!StringUtil.isEmpty(systemName) && StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
+//            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
+//            List<ObjectModuleEntity> byObjsystemId = objectModuleRepositiry.findByObjsystemId(systemId);
+//            for (ObjectModuleEntity objectModuleEntity : byObjsystemId){
+//                Integer moduleId = objectModuleEntity.getId();
+//                List<ObjectApiEntity> byModuleIdAndApiName = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName);
+//                for (ObjectApiEntity objectApiEntity :byModuleIdAndApiName){
+//                    Integer apiId = objectApiEntity.getId();
+//                    apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndId(apiCaseName, apiId);
+//                }
+//            }
+//        }
+//
+//        if (StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
+//            List<ObjectModuleEntity> byModuleName = objectModuleRepositiry.findByModuleName(moduleName);
+//            for (ObjectModuleEntity objectModuleEntity : byModuleName){
+//                Integer moduleId = objectModuleEntity.getId();
+//                List<ObjectApiEntity> byModuleIdAndApiName = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName);
+//                for (ObjectApiEntity objectApiEntity :byModuleIdAndApiName){
+//                    Integer apiId = objectApiEntity.getId();
+//                    apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndId(apiCaseName, apiId);
+//                }
+//            }
+//        }
+
+
     }
-
-//    @Override
-//    public void editApiCase(ApiTestCaseDTO apiTestCaseDTO) {
-//
-//        UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
-//
-//        ApiTestCaseEntity caseEntity = apiTestCaseRepository.getOne(apiTestCaseDTO.getId());
-//        caseEntity.setApiCaseName(apiTestCaseDTO.getApiCaseName());
-//        caseEntity.setApiCaseNum(apiTestCaseDTO.getApiCaseNum());
-//        caseEntity.setObjectModuleName(apiTestCaseDTO.getObjectModuleName());
-//        caseEntity.setObjectSystemName(apiTestCaseDTO.getObjectSystemName());
-//        caseEntity.setUpdatedBy(user.getUsername());
-//        caseEntity.setUpdatedTime(new Date());
-//        caseEntity.setApiCaseDescription(apiTestCaseDTO.getApiCaseDescription());
-//        caseEntity.setApiCaseRequestParam(apiTestCaseDTO.getApiCaseRequestParam());
-//        caseEntity.setApiCaseRequestAddress(apiTestCaseDTO.getApiCaseRequestAddress());
-//        caseEntity.setApiCaseRequestMethod(apiTestCaseDTO.getApiCaseRequestMethod());
-//        caseEntity.setApiCaseExpectedResult(apiTestCaseDTO.getApiCaseExpectedResult());
-//        caseEntity.setApiCaseActualResult(apiTestCaseDTO.getApiCaseActualResult());
-//        caseEntity.setApi_testcase_remark(apiTestCaseDTO.getApiCaseRemark());
-//
-//        /**
-//         * 根据传来的模块名和系统名，判断这2张表里是不是有记录：
-//         *                                  如果系统表有记录，
-//         *                                          模块表有记录，直接根据模块名拿到模块id，塞给case表
-//         *                                          模块表没记录，则先新增模块表，然后拿到模块id，塞给case表
-//         *                                  如果系统表没记录，则对应的模块表应该也是没记录的，则需要新增系统，再新增模块，最后拿到模块id
-//         */
-//        // 系统表有记录
-//        List<ObjectSystemEntity> systemEntityList = objectSystemRepository.findByObjectSystem(apiTestCaseDTO.getObjectSystemName());
-//        if(systemEntityList.size() != 0){
-//            List<ObjectModuleEntity> moduleEntityList = objectModuleRepositiry.findByModuleName(apiTestCaseDTO.getObjectModuleName());
-//            // 模块表无记录
-//            if (moduleEntityList.size() == 0){
-//                Integer systemId = systemEntityList.get(0).getId();
-//                ObjectModuleDTO objectModuleDTO = new ObjectModuleDTO();
-//                objectModuleDTO.setModuleName(apiTestCaseDTO.getObjectModuleName());
-//                objectModuleDTO.setObjsystemId(systemId);
-//                objectModuleService.addModule(objectModuleDTO);
-//
-//                // 拿到模块id塞给case表
-//                List<ObjectModuleEntity> byModuleNameAndAndObjsystemId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(apiTestCaseDTO.getObjectModuleName(), systemId);
-//                Integer moduleId = byModuleNameAndAndObjsystemId.get(0).getId();
-//                caseEntity.setObjectModuleId(moduleId);
-//            }
-//            // 如果模块表有记录
-//            if(moduleEntityList.size() != 0){
-//                Integer systemId = systemEntityList.get(0).getId();
-//                List<ObjectModuleEntity> byModuleNameAndAndObjsystemId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(apiTestCaseDTO.getObjectModuleName(), systemId);
-//                Integer moduleId = byModuleNameAndAndObjsystemId.get(0).getId();
-//                caseEntity.setObjectModuleId(moduleId);
-//            }
-//        }
-//        // 如果系统表无记录
-//        if (systemEntityList.size() == 0){
-//            // 先新增系统
-//            ObjectSystemDTO objectSystemDTO = new ObjectSystemDTO();
-//            objectSystemDTO.setObjectSystem(apiTestCaseDTO.getObjectSystemName());
-//            objectSystemService.addObjectSystem(objectSystemDTO);
-//            // 拿到系统id
-//            systemEntityList = objectSystemRepository.findByObjectSystem(apiTestCaseDTO.getObjectSystemName());
-//            Integer systemId = systemEntityList.get(0).getId();
-//            // 新增模块
-//            ObjectModuleDTO objectModuleDTO = new ObjectModuleDTO();
-//            objectModuleDTO.setModuleName(apiTestCaseDTO.getObjectModuleName());
-//            objectModuleDTO.setObjsystemId(systemId);
-//            objectModuleService.addModule(objectModuleDTO);
-//            // 拿到模块id塞给case表
-//            List<ObjectModuleEntity> byModuleNameAndAndObjsystemId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(apiTestCaseDTO.getObjectModuleName(), systemId);
-//            Integer moduleId = byModuleNameAndAndObjsystemId.get(0).getId();
-//            caseEntity.setObjectModuleId(moduleId);
-//        }
-//        apiTestCaseRepository.save(caseEntity);
-//    }
 
     @Override
     public void runApiCase(Integer apiCaseId) {
         ApiTestCaseEntity apiTestCaseEntity = apiTestCaseRepository.getOne(apiCaseId);
+        Integer objectApiId = apiTestCaseEntity.getObjectApiId();
+        ObjectApiEntity objectApiEntity = objectApiRepository.getOne(objectApiId);
         try {
 
-            HttpUtil httpUtil = new HttpUtil(apiTestCaseEntity.getApiCaseRequestAddress(), apiTestCaseEntity.getApiCaseRequestMethod());
+            HttpUtil httpUtil = new HttpUtil(objectApiEntity.getApiAddress(), objectApiEntity.getApiMethod());
             // 设置请求头
             String apiCaseRequestHeader = apiTestCaseEntity.getApiCaseRequestHeader();
             if (!StringUtil.isEmpty(apiCaseRequestHeader)) {

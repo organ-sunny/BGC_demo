@@ -6,7 +6,7 @@ import com.sunny.entity.ResponseEntity;
 import com.sunny.entity.UserEntity;
 import com.sunny.service.LoginService;
 import com.sunny.util.ClassUtil;
-import com.sunny.vo.LoginVO;
+import com.sunny.dto.vo.LoginVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -20,11 +20,6 @@ public class LoginController {
 
     @PostMapping("login")
     public ResponseEntity login(@RequestBody UserDTO userDTO) {
-
-//        if (true) {
-//            // 测试500
-//            throw new Error("测试500");
-//        }
 
         // 参数校验
         userDTO.loginCheckParam();

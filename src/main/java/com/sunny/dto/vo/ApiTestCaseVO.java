@@ -1,55 +1,28 @@
-package com.sunny.dto;
+package com.sunny.dto.vo;
 
-import com.sunny.dto.annotation.NotNull;
-import com.sunny.entity.ApiTestCaseEntity;
-
-public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
-
+public class ApiTestCaseVO {
     private Integer id;
-
-    @NotNull
     private String objectSystemName;
-
-    @NotNull
     private String objectModuleName;
-
-    @NotNull
     private String objectApiName;
-
-    @NotNull
     private String apiCaseNum;
-
-    @NotNull
     private String apiCaseName;
-
-    @NotNull
     private String apiCaseDescription;
-
-    @NotNull
     private String apiCaseRequestAddress;
-
-    @NotNull
     private String apiCaseRequestMethod;
-
     private String apiCaseRequestHeader;
-
-    @NotNull
     private String apiCaseRequestParam;
-
-    @NotNull
     private String apiCaseExpectedResult;
-
     private String apiCaseActualResult;
-
     private String apiCaseRemark;
 
     @Override
     public String toString() {
-        return "ApiTestCaseDTO{" +
+        return "ApiTestCaseVO{" +
                 "id=" + id +
                 ", objectSystemName='" + objectSystemName + '\'' +
                 ", objectModuleName='" + objectModuleName + '\'' +
-                ", objectModuleName='" + objectApiName + '\'' +
+                ", objectApiName='" + objectApiName + '\'' +
                 ", apiCaseNum='" + apiCaseNum + '\'' +
                 ", apiCaseName='" + apiCaseName + '\'' +
                 ", apiCaseDescription='" + apiCaseDescription + '\'' +

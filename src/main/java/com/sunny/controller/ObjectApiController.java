@@ -1,12 +1,14 @@
 package com.sunny.controller;
 
 import com.sunny.dto.ObjectApiDTO;
+import com.sunny.dto.vo.ApiVO;
 import com.sunny.entity.ObjectApiEntity;
 import com.sunny.entity.ResponseEntity;
 import com.sunny.service.ObjectApiService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,8 +53,14 @@ public class ObjectApiController {
 
     // 查询接口
     @GetMapping
-    public ResponseEntity queryObjectApi(@RequestBody(required = false) ObjectApiDTO objectApiDTO) {
-        List<ObjectApiEntity> objectApiEntities = objectApiService.queryObjectApi(objectApiDTO);
-        return ResponseEntity.normalReturn("success", 200, objectApiEntities);
+    public ResponseEntity queryObjectApi(ObjectApiDTO objectApiDTO) {
+        List<ObjectApiEntity> objectApiEntityList = objectApiService.queryObjectApi(objectApiDTO);
+        List<ApiVO> result = new ArrayList<>();
+
+        for (ObjectApiEntity objectApiEntity : objectApiEntityList) {
+            ApiVO apiVO = objectApiEntity.getVO();
+            result.add(apiVO);
+        }
+        return ResponseEntity.normalReturn("success", 200, result);
     }
 }

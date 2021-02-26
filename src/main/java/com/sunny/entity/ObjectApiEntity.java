@@ -1,11 +1,13 @@
 package com.sunny.entity;
 
+import com.sunny.dto.vo.ApiVO;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "t_object_api")
-public class ObjectApiEntity {
+public class ObjectApiEntity extends ParentEntity<ApiVO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

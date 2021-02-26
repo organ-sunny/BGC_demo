@@ -3,7 +3,7 @@ package com.sunny.controller;
 import com.sunny.dto.UserDTO;
 import com.sunny.entity.ResponseEntity;
 import com.sunny.service.UserService;
-import com.sunny.vo.UserVO;
+import com.sunny.dto.vo.UserVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

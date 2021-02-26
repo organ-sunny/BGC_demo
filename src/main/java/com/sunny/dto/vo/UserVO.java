@@ -1,4 +1,4 @@
-package com.sunny.vo;
+package com.sunny.dto.vo;
 
 public class UserVO {
     private String username;

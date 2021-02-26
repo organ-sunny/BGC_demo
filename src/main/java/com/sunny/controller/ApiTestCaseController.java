@@ -35,16 +35,6 @@ public class ApiTestCaseController {
         return ResponseEntity.normalReturn("success", 200, apiTestCaseEntityList);
     }
 
-//    @PostMapping("edit")
-//    public ResponseEntity editApiCase(@RequestBody(required = false) ApiTestCaseDTO apiTestCaseDTO) {
-//        // 参数校验
-//        apiTestCaseDTO.check();
-//
-//        // 进行编辑
-//        apiTestCaseService.editApiCase(apiTestCaseDTO);
-//        return ResponseEntity.normalReturn("success", 200, null);
-//    }
-
 //    @PostMapping("runApiCase")
 //    public ResponseEntity runApiCase(Integer apiCaseId) {
 //        apiTestCaseService.runApiCase(apiCaseId);

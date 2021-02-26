@@ -10,29 +10,17 @@ public class ApiTestCaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "OBJECT_SYSTEM_NAME")
-    private String objectSystemName;
-
-    @Column(name = "OBJECT_MODULE_NAME")
-    private String objectModuleName;
-
-    @Column(name = "OBJECT_MODULE_ID")
-    private Integer objectModuleId;
-
-    @Column(name = "API_TESTCASE_NUM")
-    private String apiCaseNum;
+    @Column(name = "OBJECT_API_ID")
+    private Integer objectApiId;
 
     @Column(name = "API_TESTCASE_NAME")
     private String apiCaseName;
 
+    @Column(name = "API_TESTCASE_NUM")
+    private String apiCaseNum;
+
     @Column(name = "API_TESTCASE_DESCRIPTION")
     private String apiCaseDescription;
-
-    @Column(name = "API_TESTCASE_REQUESTADDRESS")
-    private String apiCaseRequestAddress;
-
-    @Column(name = "API_TESTCASE_REQUESTMETHOD")
-    private String apiCaseRequestMethod;
 
     @Column(name = "API_TESTCASE_REQUESTHEADER")
     private String apiCaseRequestHeader;
@@ -49,6 +37,9 @@ public class ApiTestCaseEntity {
     @Column(name = "ISPASSED")
     private String isPassed;
 
+    @Column(name = "API_TESTCASE_REMARK")
+    private String apiCaseRemark;
+
     @Column(name = "CREATEOR")
     private String creator;
 
@@ -61,50 +52,6 @@ public class ApiTestCaseEntity {
     @Column(name = "UPDATEDTIME")
     private Date updatedTime;
 
-    @Column(name = "API_TESTCASE_REMARK")
-    private String apiCaseRemark;
-
-    @Override
-    public String toString() {
-        return "ApiTestCaseEntity{" +
-                "id=" + id +
-                ", objectSystemName='" + objectSystemName + '\'' +
-                ", objectModuleName='" + objectModuleName + '\'' +
-                ", objectModuleId=" + objectModuleId +
-                ", apiCaseNum='" + apiCaseNum + '\'' +
-                ", apiCaseName='" + apiCaseName + '\'' +
-                ", apiCaseDescription='" + apiCaseDescription + '\'' +
-                ", apiCaseRequestAddress='" + apiCaseRequestAddress + '\'' +
-                ", apiCaseRequestMethod='" + apiCaseRequestMethod + '\'' +
-                ", apiCaseRequestHeader='" + apiCaseRequestHeader + '\'' +
-                ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
-                ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
-                ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
-                ", isPassed='" + isPassed + '\'' +
-                ", creator='" + creator + '\'' +
-                ", createdTime=" + createdTime +
-                ", updatedBy='" + updatedBy + '\'' +
-                ", updatedTime=" + updatedTime +
-                ", apiCaseRemark='" + apiCaseRemark + '\'' +
-                '}';
-    }
-
-    public String getApiCaseRequestHeader() {
-        return apiCaseRequestHeader;
-    }
-
-    public void setApiCaseRequestHeader(String apiCaseRequestHeader) {
-        this.apiCaseRequestHeader = apiCaseRequestHeader;
-    }
-
-    public String getApiCaseRemark() {
-        return apiCaseRemark;
-    }
-
-    public void setApiCaseRemark(String apiCaseRemark) {
-        this.apiCaseRemark = apiCaseRemark;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -113,36 +60,12 @@ public class ApiTestCaseEntity {
         this.id = id;
     }
 
-    public String getObjectSystemName() {
-        return objectSystemName;
+    public Integer getObjectApiId() {
+        return objectApiId;
     }
 
-    public void setObjectSystemName(String objectSystemName) {
-        this.objectSystemName = objectSystemName;
-    }
-
-    public String getObjectModuleName() {
-        return objectModuleName;
-    }
-
-    public void setObjectModuleName(String objectModuleName) {
-        this.objectModuleName = objectModuleName;
-    }
-
-    public Integer getObjectModuleId() {
-        return objectModuleId;
-    }
-
-    public void setObjectModuleId(Integer objectModuleId) {
-        this.objectModuleId = objectModuleId;
-    }
-
-    public String getApiCaseNum() {
-        return apiCaseNum;
-    }
-
-    public void setApiCaseNum(String apiCaseNum) {
-        this.apiCaseNum = apiCaseNum;
+    public void setObjectApiId(Integer objectApiId) {
+        this.objectApiId = objectApiId;
     }
 
     public String getApiCaseName() {
@@ -153,6 +76,14 @@ public class ApiTestCaseEntity {
         this.apiCaseName = apiCaseName;
     }
 
+    public String getApiCaseNum() {
+        return apiCaseNum;
+    }
+
+    public void setApiCaseNum(String apiCaseNum) {
+        this.apiCaseNum = apiCaseNum;
+    }
+
     public String getApiCaseDescription() {
         return apiCaseDescription;
     }
@@ -161,20 +92,12 @@ public class ApiTestCaseEntity {
         this.apiCaseDescription = apiCaseDescription;
     }
 
-    public String getApiCaseRequestAddress() {
-        return apiCaseRequestAddress;
+    public String getApiCaseRequestHeader() {
+        return apiCaseRequestHeader;
     }
 
-    public void setApiCaseRequestAddress(String apiCaseRequestAddress) {
-        this.apiCaseRequestAddress = apiCaseRequestAddress;
-    }
-
-    public String getApiCaseRequestMethod() {
-        return apiCaseRequestMethod;
-    }
-
-    public void setApiCaseRequestMethod(String apiCaseRequestMethod) {
-        this.apiCaseRequestMethod = apiCaseRequestMethod;
+    public void setApiCaseRequestHeader(String apiCaseRequestHeader) {
+        this.apiCaseRequestHeader = apiCaseRequestHeader;
     }
 
     public String getApiCaseRequestParam() {
@@ -209,6 +132,14 @@ public class ApiTestCaseEntity {
         this.isPassed = isPassed;
     }
 
+    public String getApiCaseRemark() {
+        return apiCaseRemark;
+    }
+
+    public void setApiCaseRemark(String apiCaseRemark) {
+        this.apiCaseRemark = apiCaseRemark;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -241,11 +172,25 @@ public class ApiTestCaseEntity {
         this.updatedTime = updatedTime;
     }
 
-    public String getApi_testcase_remark() {
-        return apiCaseRemark;
+    @Override
+    public String toString() {
+        return "ApiTestCaseEntity{" +
+                "id=" + id +
+                ", apiId=" + objectApiId +
+                ", apiCaseName='" + apiCaseName + '\'' +
+                ", apiCaseNum='" + apiCaseNum + '\'' +
+                ", apiCaseDescription='" + apiCaseDescription + '\'' +
+                ", apiCaseRequestHeader='" + apiCaseRequestHeader + '\'' +
+                ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
+                ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
+                ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
+                ", isPassed='" + isPassed + '\'' +
+                ", apiCaseRemark='" + apiCaseRemark + '\'' +
+                ", creator='" + creator + '\'' +
+                ", createdTime=" + createdTime +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedTime=" + updatedTime +
+                '}';
     }
 
-    public void setApi_testcase_remark(String api_testcase_remark) {
-        this.apiCaseRemark = api_testcase_remark;
-    }
 }

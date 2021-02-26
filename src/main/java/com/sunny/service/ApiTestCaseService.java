@@ -13,8 +13,6 @@ public interface ApiTestCaseService {
 
     List<ApiTestCaseEntity> queryApiCase(ApiTestCaseDTO apiTestCaseDTO);
 
-//    void editApiCase(ApiTestCaseDTO apiTestCaseDTO);
-
     void runApiCase(Integer apiCaseId);
 
     void runApiCase(List<Integer> apiCaseIds);

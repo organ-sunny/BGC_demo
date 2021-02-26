@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface ObjectApiService {
 
-    void addObjectApi(ObjectApiDTO objectApiDTO);
+    ObjectApiEntity addObjectApi(ObjectApiDTO objectApiDTO);
 
     void deleteObjectApi(ObjectApiDTO objectApiDTO);
 
