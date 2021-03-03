@@ -12,4 +12,7 @@ public interface ObjectModuleService {
     ObjectModuleEntity addModule(ObjectModuleDTO objectModuleDTO);
 
     List<ObjectModuleEntity> queryModule(ObjectModuleDTO objectModuleDTO);
+
+    List<ObjectModuleEntity> getBySystemId(Integer systemId);
+
 }

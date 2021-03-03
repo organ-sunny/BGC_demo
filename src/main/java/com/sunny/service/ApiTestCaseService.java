@@ -5,13 +5,14 @@ import com.sunny.entity.ApiTestCaseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface ApiTestCaseService {
 
     void addApiCase(ApiTestCaseDTO apiTestCaseDTO);
 
-    List<ApiTestCaseEntity> queryApiCase(ApiTestCaseDTO apiTestCaseDTO);
+    List<ApiTestCaseEntity> queryApiCase(Map<String, Object> map);
 
     void runApiCase(Integer apiCaseId);
 

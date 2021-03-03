@@ -122,4 +122,10 @@ public class ObjectApiServiceImpl implements ObjectApiService {
 
         return objectApiEntityList;
     }
+
+    @Override
+    public List<ObjectApiEntity> getByModuleId(Integer moduleId) {
+        return objectApiRepository.findByModuleId(moduleId);
+    }
+
 }

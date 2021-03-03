@@ -12,4 +12,7 @@ public interface ObjectSystemService {
     ObjectSystemEntity addObjectSystem(ObjectSystemDTO objectSystemDTO);
 
     List<ObjectSystemEntity> queryObjectSystem(ObjectSystemDTO objectSystemDTO);
+
+    ObjectSystemEntity getById(Integer id);
+
 }

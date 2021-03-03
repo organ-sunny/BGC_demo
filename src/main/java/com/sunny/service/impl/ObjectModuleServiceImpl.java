@@ -96,11 +96,17 @@ public class ObjectModuleServiceImpl implements ObjectModuleService {
             objectModuleEntityList = objectModuleRepositiry.findAll();
         }
 
-        if (objectModuleEntityList.size() == 0){
+        if (objectModuleEntityList.size() == 0) {
             throw new BusinessException("未查询到数据！");
-        }else {
+        } else {
             return objectModuleEntityList;
         }
 
     }
+
+    @Override
+    public List<ObjectModuleEntity> getBySystemId(Integer systemId) {
+        return objectModuleRepositiry.findByObjsystemId(systemId);
+    }
+
 }

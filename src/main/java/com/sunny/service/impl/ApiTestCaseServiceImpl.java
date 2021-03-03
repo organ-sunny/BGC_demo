@@ -17,9 +17,14 @@ import com.sunny.service.ObjectSystemService;
 import com.sunny.util.HttpUtil;
 import com.sunny.util.RegexUtil;
 import com.sunny.util.StringUtil;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -158,77 +163,73 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
      * 入参-查询条件：系统名、模块名、接口名、案例名
      */
     @Override
-    public List<ApiTestCaseEntity> queryApiCase(ApiTestCaseDTO apiTestCaseDTO) {
+    public List<ApiTestCaseEntity> queryApiCase(Map<String, Object> map) {
+        Integer systemId = (Integer) map.get("systemId");
+        Integer moduleId = (Integer) map.get("moduleId");
+        Integer apiId = (Integer) map.get("apiId");
+        String caseName = (String) map.get("apiCaseName");
 
-        String systemName = apiTestCaseDTO.getObjectSystemName();
-        String moduleName = apiTestCaseDTO.getObjectModuleName();
-        String objectApiName = apiTestCaseDTO.getObjectApiName();
-        String apiCaseName = apiTestCaseDTO.getApiCaseName();
+        final boolean[] a = {true};
 
-        List<ApiTestCaseEntity> apiTestCaseEntityList = new ArrayList<>();
-        if (StringUtil.isEmpty(systemName) && StringUtil.isEmpty(moduleName) && StringUtil.isEmpty(objectApiName) && StringUtil.isEmpty(apiCaseName)) {
-            apiTestCaseEntityList = apiTestCaseRepository.findAll();
+        List<ApiTestCaseEntity> all = apiTestCaseRepository.findAll(new Specification<ApiTestCaseEntity>() {
+            @Override
+            public Predicate toPredicate(Root<ApiTestCaseEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                Predicate restriction = criteriaQuery.where().getRestriction();
+                // 所有符合条件的apiId
+                List<Integer> apiIdList = new ArrayList<>();
+
+                // 通过apiId
+                if (apiId != null) {
+                    apiIdList.add(apiId);
+                }
+
+                // 模块id
+                else if (moduleId != null) {
+                    List<ObjectApiEntity> apiEntityList = objectApiService.getByModuleId(moduleId);
+                    for (ObjectApiEntity apiEntity : apiEntityList) {
+                        apiIdList.add(apiEntity.getId());
+                    }
+                }
+
+                // 系统id
+                else if (systemId != null) {
+                    List<ObjectModuleEntity> bySystemId = objectModuleService.getBySystemId(systemId);
+                    for (ObjectModuleEntity objectModuleEntity : bySystemId) {
+                        List<ObjectApiEntity> apiEntityList = objectApiService.getByModuleId(objectModuleEntity.getId());
+                        for (ObjectApiEntity apiEntity : apiEntityList) {
+                            apiIdList.add(apiEntity.getId());
+                        }
+                    }
+                }
+
+                // 全部
+                else {
+                    return restriction;
+                }
+
+                // 动态筛选
+                if (apiIdList.size() == 0) {
+                    a[0] = false;
+                } else {
+                    restriction = criteriaBuilder.equal(root.get("objectApiId").as(Integer.class), apiIdList.get(0));
+                    for (Integer integer : apiIdList) {
+                        restriction = criteriaBuilder.or(restriction, criteriaBuilder.equal(root.get("objectApiId").as(Integer.class), integer));
+                    }
+
+                    if (!StringUtil.isEmpty(caseName)) {
+                        restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("apiCaseName").as(String.class), caseName));
+                    }
+                }
+
+                return restriction;
+            }
+        });
+
+        if (a[0]) {
+            return all;
+        } else {
+            return new ArrayList<>();
         }
-        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
-            if (objectSystemRepository.findByObjectSystem(systemName).size() == 0){
-                throw new BusinessException("未查询到相关结果1！");
-            }
-            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
-            if (objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).size() == 0){
-                throw new BusinessException("未查询到相关结果2！");
-            }
-            Integer moduleId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).get(0).getId();
-            if (objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName).size() == 0){
-                throw new BusinessException("未查询到相关结果3！");
-            }
-            Integer apiId = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName).get(0).getId();
-            apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndObjectApiId(apiCaseName, apiId);
-
-        }
-        return apiTestCaseEntityList;
-
-//        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && StringUtil.isEmpty(apiCaseName)) {
-//            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
-//            Integer moduleId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).get(0).getId();
-//            Integer apiId = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName).get(0).getId();
-//            apiTestCaseEntityList = apiTestCaseRepository.myFindById(apiId);
-//
-//        }
-//        if (!StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
-//            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
-//            Integer moduleId = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, systemId).get(0).getId();
-//            List<ObjectApiEntity> byModuleId = objectApiRepository.findByModuleId(moduleId);
-//            for (ObjectApiEntity objectApiEntity : byModuleId) {
-//                Integer apiId = objectApiEntity.getId();
-//                apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndId(apiCaseName, apiId);
-//            }
-//        }
-//        if (!StringUtil.isEmpty(systemName) && StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
-//            Integer systemId = objectSystemRepository.findByObjectSystem(systemName).get(0).getId();
-//            List<ObjectModuleEntity> byObjsystemId = objectModuleRepositiry.findByObjsystemId(systemId);
-//            for (ObjectModuleEntity objectModuleEntity : byObjsystemId){
-//                Integer moduleId = objectModuleEntity.getId();
-//                List<ObjectApiEntity> byModuleIdAndApiName = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName);
-//                for (ObjectApiEntity objectApiEntity :byModuleIdAndApiName){
-//                    Integer apiId = objectApiEntity.getId();
-//                    apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndId(apiCaseName, apiId);
-//                }
-//            }
-//        }
-//
-//        if (StringUtil.isEmpty(systemName) && !StringUtil.isEmpty(moduleName) && !StringUtil.isEmpty(objectApiName) && !StringUtil.isEmpty(apiCaseName)) {
-//            List<ObjectModuleEntity> byModuleName = objectModuleRepositiry.findByModuleName(moduleName);
-//            for (ObjectModuleEntity objectModuleEntity : byModuleName){
-//                Integer moduleId = objectModuleEntity.getId();
-//                List<ObjectApiEntity> byModuleIdAndApiName = objectApiRepository.findByModuleIdAndApiName(moduleId, objectApiName);
-//                for (ObjectApiEntity objectApiEntity :byModuleIdAndApiName){
-//                    Integer apiId = objectApiEntity.getId();
-//                    apiTestCaseEntityList = apiTestCaseRepository.findByApiCaseNameAndId(apiCaseName, apiId);
-//                }
-//            }
-//        }
-
-
     }
 
     @Override

@@ -18,4 +18,7 @@ public interface ObjectApiService {
     void editObjectApi(ObjectApiDTO objectApiDTO);
 
     List<ObjectApiEntity> queryObjectApi(ObjectApiDTO objectApiDTO);
+
+    List<ObjectApiEntity> getByModuleId(Integer moduleId);
+
 }
