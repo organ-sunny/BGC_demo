@@ -5,7 +5,8 @@ import homeIndex from "./component/home/index.vue";
 import baseUserInfo from "./component/home/user/baseUserInfo.vue";
 import securityUserInfo from "./component/home/user/securityUserInfo.vue";
 import system from "./component/home/system.vue";
-import apiTestcase from "./component/home/api/testcase.vue";
+import apiTestcase from "./component/home/apiAuto/testcase.vue";
+import api from "./component/home/apiAuto/api.vue";
 
 // 路由
 let vueRouter = new VueRouter({
@@ -29,10 +30,17 @@ let vueRouter = new VueRouter({
             }
         },
         {
-            path: "/apiTestcase",
+            path: "/apiAutoApi",
+            component: api,
+            meta: {
+                title: `接口自动化 - 接口管理`
+            }
+        },
+        {
+            path: "/apiAutoTestcase",
             component: apiTestcase,
             meta: {
-                title: `接口测试 - 用例管理`
+                title: `接口自动化 - 案例管理`
             }
         },
         {
