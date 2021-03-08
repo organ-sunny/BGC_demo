@@ -42,3 +42,17 @@ html, body, #main {
 .ep-card-contents {
     padding: 15px;
 }
+
+.block-title {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background: white;
+    font-weight: bolder;
+    font-size: 14px;
+    padding: 5px 12px;
+    height: 36px;
+    line-height: 26px;
+    border-left: 8px solid #2196f3;
+    color: #666;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+}

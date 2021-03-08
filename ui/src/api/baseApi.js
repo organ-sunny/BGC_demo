@@ -80,7 +80,7 @@ export default {
                     console.log(response);
 
                     // token失效
-                    if (response.code === 505) {
+                    if (response.code === 101) {
                         window.location.href = pageConfig.index;
                         return;
                     }
