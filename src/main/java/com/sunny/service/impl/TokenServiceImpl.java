@@ -19,6 +19,8 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String createToken(UserEntity userEntity) {
         String token = userEntity.getUsername() + userEntity.getPassword() + new Date().getTime();
+        userEntity.setUpdatedTime(new Date());
+        userRepository.save(userEntity);
         return DigestUtils.md5DigestAsHex(token.getBytes());
     }
 

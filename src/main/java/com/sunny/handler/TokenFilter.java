@@ -40,7 +40,6 @@ public class TokenFilter implements HandlerInterceptor, WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        System.out.println("看到这句话，就是进到第二个方法了");
         registry.addInterceptor(tokenFilter).
                 addPathPatterns("/api/**").     // 过滤所有接口
                 excludePathPatterns("/api/user/**");   //排除user接口

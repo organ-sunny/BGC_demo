@@ -31,8 +31,6 @@ public class ApiTestCaseController {
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
-    // test
-
     @PostMapping("query")
     public ResponseEntity queryApiCase(@RequestBody(required = false) Map<String, Object> map) {
         // 执行查询
