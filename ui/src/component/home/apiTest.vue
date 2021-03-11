@@ -1,127 +1,87 @@
 <template>
-    <div @click="isSelectProject = false" style="width: 100%;height: 100%;">
-        <!-- 最上面一条 -->
-        <div style="height: 40px;border-bottom: 1px solid #e6e6e6;display: flex;">
+    <div @click="isSelectProject = false" style="width: 100%;height: 100%;display: flex;">
+        <!-- 左侧 -->
+        <div style="width: 13%;border-right: 1px solid #DCDFE6;overflow: auto;" class="scrollbar">
             <!-- 项目选择 -->
-            <div class="select" style="width: 13%;">
-                <div @click.stop="isSelectProject = !isSelectProject;" style="display: flex;height: 100%;align-items: center;padding: 0 20px;">
-                    <div style="white-space: nowrap;" class="font">
-                        项目：项目1
+            <div>
+                <div class="select" @click.stop="isSelectProject = !isSelectProject;getProject()" style="display: flex;height: 100%;align-items: center;padding: 20px;border-bottom: 1px solid #DCDFE6;">
+                    <div style="white-space: nowrap;" class="title">
+                        <span v-if="variableUtil.isEmpty(project.select.objectSystem)">
+                            请选择项目
+                        </span>
+                        <span v-else>
+                            项目：{{project.select.objectSystem}}
+                        </span>
                     </div>
                     <div style="width: 100%;display: flex;flex-direction: row-reverse;">
-                        <i v-if="!isSelectProject" class="ion-chevron-down"></i>
-                        <i v-if="isSelectProject" class="ion-chevron-up"></i>
+                        <i v-if="!isSelectProject" class="ion-chevron-right"></i>
+                        <i v-if="isSelectProject" class="ion-chevron-down"></i>
                     </div>
                 </div>
-                <div v-if="isSelectProject" class="ep-drop-wrap ep-dropdown-menu" style="position: relative;">
-                    <ul>
-                        <li class="ep-dropdown-menu-item">进口换单业务</li>
-                        <li class="ep-dropdown-menu-item">进口放箱</li>
-                        <li class="ep-dropdown-menu-item">进口费用(人民币)</li>
-                    </ul>
+
+                <!-- 下拉框 -->
+                <div style="position: relative;width: 100%;">
+                    <div v-if="isSelectProject" class="ep-drop-wrap ep-dropdown-menu scrollbar" style="position: absolute;width: 100%;">
+                        <ul>
+                            <li @click="project.select = item;allModuleIsShow = false;module.select = {};" v-for="(item, key) in project.data" :key="key" class="ep-dropdown-menu-item">{{item.objectSystem}}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div class="tab action">
+            <!-- 所有模块 -->
+            <div @click="allModuleIsShow = !allModuleIsShow;allModuleIsShow ? getModule() : ''" style="display: flex;padding: 10px 20px;cursor: pointer;" class="select">
                 <div>
-                    用例管理
+                    <i class="ion-android-folder-open"></i>
                 </div>
-                <div></div>
+                <div style="white-space: nowrap;margin-left: 10px;font-weight: bold;">
+                    所有模块
+                </div>
+                <div style="width: 100%;display: flex;flex-direction: row-reverse;">
+                    <i v-if="!allModuleIsShow" class="ion-chevron-right"></i>
+                    <i v-else class="ion-chevron-down"></i>
+                </div>
             </div>
-            <div class="tab">
-                <div>
-                    测试报告
+
+            <!-- 子模块集合 -->
+            <div v-if="allModuleIsShow" style="margin-left: 20px;">
+                <div v-for="(item, key) in module.data" :key="key">
+                    <div @click="module.select = item" style="display: flex;padding: 10px 20px;" class="select" :class="module.select.id === item.id ? 'action' : ''">
+                        <div>
+                            <i class="ion-navicon-round" style="margin-right: 10px;"></i>
+                        </div>
+                        <div style="white-space: nowrap;margin-left: 10px;">
+                            {{item.moduleName}}
+                        </div>
+                        <div style="width: 100%;display: flex;flex-direction: row-reverse;">
+                            <i v-if="!item._apiIsShow" @click.stop="item._apiIsShow = true;loadApi(key)" class="ion-chevron-right icon"></i>
+                            <i @click="item._apiIsShow = false;$forceUpdate()" v-else class="ion-chevron-down icon"></i>
+                        </div>
+                    </div>
+
+                    <!-- api集合 -->
+                    <div v-if="item._apiIsShow" style="margin-left: 20px;">
+                        <div v-for="(api, k) in item._apiList" :key="k" style="padding: 10px 20px;" class="select">
+                            <i class="ion-information" style="margin-right: 10px;"></i>
+                            {{api.apiName}}
+                        </div>
+                    </div>
                 </div>
-                <div></div>
             </div>
         </div>
 
-        <!-- body -->
-        <div style="height: calc(100% - 40px);">
-            <!-- row -->
-            <div style="display: flex;height: 100%;">
-                <!-- 左侧 -->
-                <div style="width: 13%;border-right: 1px solid #e6e6e6;padding: 10px;">
-                    <!-- 所有模块 -->
-                    <div style="display: flex;padding: 10px 10px;cursor: pointer;" class="select">
-                        <div>
-                            <i class="ion-android-folder-open"></i>
-                        </div>
-                        <div style="white-space: nowrap;margin-left: 10px;font-weight: bold;">
-                            所有模块
-                        </div>
-                        <div style="width: 100%;display: flex;flex-direction: row-reverse;">
-                            <i class="ion-chevron-down"></i>
-<!--                            <i class="ion-chevron-up"></i>-->
-                        </div>
-                    </div>
-
-                    <!-- 子模块集合 -->
-                    <div style="margin-left: 20px;">
-                        <div>
-                            <div style="display: flex;padding: 10px;" class="select">
-                                <div>
-                                    <i class="ion-navicon-round" style="margin-right: 10px;"></i>
-                                </div>
-                                <div style="white-space: nowrap;margin-left: 10px;">
-                                    模块1
-                                </div>
-                                <div style="width: 100%;display: flex;flex-direction: row-reverse;">
-                                    <i class="ion-chevron-down"></i>
-<!--                                    <i class="ion-chevron-up"></i>-->
-                                </div>
-                            </div>
-
-                            <!-- api集合 -->
-                            <div style="margin-left: 20px;">
-                                <div style="padding: 10px;" class="select">
-                                    <i class="ion-information" style="margin-right: 10px;"></i>
-                                    api-1
-                                </div>
-                                <div style="padding: 10px;" class="select">
-                                    <i class="ion-information" style="margin-right: 10px;"></i>
-                                    api-2
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div style="display: flex;padding: 10px;" class="select">
-                                <div>
-                                    <i class="ion-navicon-round" style="margin-right: 10px;"></i>
-                                </div>
-                                <div style="white-space: nowrap;margin-left: 10px;">
-                                    模块1
-                                </div>
-                                <div style="width: 100%;display: flex;flex-direction: row-reverse;">
-                                    <i class="ion-chevron-down"></i>
-                                    <!--                                    <i class="ion-chevron-up"></i>-->
-                                </div>
-                            </div>
-
-                            <!-- api集合 -->
-                            <div style="margin-left: 20px;">
-                                <div style="padding: 10px;" class="select">
-                                    <i class="ion-information" style="margin-right: 10px;"></i>
-                                    api-1
-                                </div>
-                                <div style="padding: 10px;" class="select">
-                                    <i class="ion-information" style="margin-right: 10px;"></i>
-                                    api-2
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div style="width: 87%;padding: 20px;">
-                    456
-                </div>
-            </div>
+        <!-- 右侧 -->
+        <div style="width: 87%;">
+            123
         </div>
     </div>
 </template>
 
 <script>
     import objectSystemApi from "../../api/objectSystemApi.js";
+    import variableUtil from "../../util/variableUtil.js";
+    import objectModuleApi from "../../api/objectModuleApi.js";
+    import objectApiApi from "../../api/objectApiApi.js";
 
     export default {
         name: "home_apiTest.vue",
@@ -131,17 +91,72 @@
                 // 是否显示选择项目下拉框
                 isSelectProject: false,
 
+                // 所有模块是否展开
+                allModuleIsShow: false,
+
                 // 项目
                 project: {
+                    // 选择的项目
+                    select: {},
+
+                    // 所有数据
                     data: []
-                }
+                },
+
+                // 模块
+                module: {
+                    // 当前选择的模块
+                    select: {},
+
+                    // 所有数据
+                    data: []
+                },
+
+                variableUtil
             };
         },
 
         methods: {
-            getProject() {
+            init() {
 
+            },
+
+            getProject() {
+                objectSystemApi.query().then((data) => {
+                    this.project.data = data;
+                });
+            },
+
+            getModule() {
+                this.module.data = [];
+                if (variableUtil.isEmpty(this.project.select.id)) {
+                    return;
+                }
+                objectModuleApi.query({
+                    objsystemId: this.project.select.id
+                }).then((data) => {
+                    this.module.data = data;
+                    for (let item of this.module.data) {
+                        item._apiIsShow = false;
+                        item._apiList = [];
+                    }
+                });
+            },
+
+            loadApi(moduleIndex) {
+                let moduleId = this.module.data[moduleIndex].id;
+
+                objectApiApi.query({
+                    moduleId
+                }).then((data) => {
+                    this.module.data[moduleIndex]._apiList = data;
+                    this.$forceUpdate();
+                });
             }
+        },
+
+        created() {
+            this.init();
         }
     }
 </script>
@@ -150,6 +165,9 @@
     .select {
         cursor: pointer;
         transition: 0.1s;
+    }
+    .select.action {
+        background-color: #e6e6e6;
     }
     .select:hover {
         background-color: #e6e6e6;
@@ -175,5 +193,12 @@
 
     .tab.action > div:last-child {
         background-color: #0747a6;
+    }
+
+    .icon {
+        transition: 0.1s;
+    }
+    .icon:hover {
+        color: #409EFF;
     }
 </style>
