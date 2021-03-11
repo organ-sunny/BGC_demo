@@ -1,20 +1,23 @@
 import cookieUtil from "../util/cookieUtil.js";
-import cookieConfig from "../config/cookieConfig.js";
+import pageConfig from "../config/pageConfig.js";
+
+let key = "user";
 
 export default {
     set(data) {
-        cookieUtil.set(cookieConfig.user, JSON.stringify(data));
+        cookieUtil.set(key, JSON.stringify(data));
     },
 
     get() {
-        let user = cookieUtil.get(cookieConfig.user);
+        let user = cookieUtil.get(key);
         if (user === null) {
-            return null;
+            window.location.href = pageConfig.index;
+            return;
         }
         return JSON.parse(user);
     },
 
     delete() {
-        cookieUtil.delete(cookieConfig.user);
+        cookieUtil.delete(key);
     }
 };

@@ -1,5 +1,7 @@
 export default {
     index: "/",
 
-    home: "/home.html"
+    home: "/home.html",
+
+    project: "/project.html"
 };

@@ -1,20 +1,34 @@
 import baseApi from "./baseApi.js";
 
-let uri = "objectModule";
+let u = "/objectModule";
 
 export default {
-    add(data) {
+    query(urlData) {
         return baseApi.send({
-            url: `${uri}/add`,
-            type: "POST",
-            data: data
+            url: `${u}/query`,
+            type: "GET",
+            header: baseApi.getHeader(),
+            urlData: urlData,
+            check: {
+                url: {
+                    objsystemId: ""
+                }
+            }
         });
     },
 
-    query(objsystemId) {
+    add(data) {
         return baseApi.send({
-            url: `${uri}/query?objsystemId=${objsystemId}`,
-            type: "GET"
+            url: `${u}/add`,
+            type: "POST",
+            header: baseApi.getHeader(),
+            data: data,
+            check: {
+                data: {
+                    objsystemId: "",
+                    moduleName: ""
+                }
+            }
         });
     }
 };
