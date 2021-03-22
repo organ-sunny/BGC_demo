@@ -1,21 +1,21 @@
 <template>
-    <div style="width: 100%;height: 100%;">
-<!--        <div style="height: 5%;background-color: #2296F3;display: flex;">-->
-<!--            <div style="width: 10%;color: white;font-weight: bold;font-size: 18px;" class="center">-->
-<!--                BGC_demo-->
-<!--            </div>-->
-<!--            <div style="width: 90%;"></div>-->
-<!--        </div>-->
+    <div style="width: 100%;height: 100%;background-image: url('../image/80.jpg')">
+        <!--        <div style="height: 5%;background-color: #2296F3;display: flex;">-->
+        <!--            <div style="width: 10%;color: white;font-weight: bold;font-size: 18px;" class="center">-->
+        <!--                BGC_demo-->
+        <!--            </div>-->
+        <!--            <div style="width: 90%;"></div>-->
+        <!--        </div>-->
 
         <div style="height: 100%;flex-direction: column;" class="center">
             <div style="margin-bottom: 50px;font-weight: bold;font-size: 30px;color: #546E7A;">
                 BGC_demo
             </div>
 
-            <div class="panel" style="width: 20%;">
+            <div class="panel" style="width: 20%;background-color: #f5f7fa26;">
                 <div style="display: flex;">
                     <div style="width: 20%;" class="center">
-                        用户名
+                        账号
                     </div>
                     <ep-input v-model="login.username" style="margin-left: 10px;" placeholder=""></ep-input>
                 </div>
@@ -36,25 +36,25 @@
 </template>
 
 <script>
-    import userApi from "../api/userApi.js";
-    import alterUtil from "../util/alterUtil.js";
-    import user from "../js/user.js";
-    import pageConfig from "../config/pageConfig.js";
-    import baseConfig from "../config/baseConfig.js";
+import userApi from "../api/userApi.js";
+import alterUtil from "../util/alterUtil.js";
+import user from "../js/user.js";
+import pageConfig from "../config/pageConfig.js";
+import baseConfig from "../config/baseConfig.js";
 
-    export default {
-        name: "login.vue",
+export default {
+    name: "login.vue",
 
-        data() {
-            return {
-                login: {
-                    username: "",
-                    password: ""
-                },
+    data() {
+        return {
+            login: {
+                username: "",
+                password: ""
+            },
 
-                baseConfig
-            };
-        },
+            baseConfig
+        };
+    },
 
         methods: {
             loginMethod() {
@@ -74,5 +74,5 @@
                 }
             });
         }
-    }
+}
 </script>

@@ -2,6 +2,7 @@ const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const vueLoaderPlugin = require("vue-loader/lib/plugin");
 const webpack = require("webpack");
+const copyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
@@ -52,6 +53,15 @@ module.exports = {
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery"
+        }),
+
+        new copyWebpackPlugin({
+            patterns: [
+                {
+                    from: "./src/image",
+                    to: "image"
+                }
+            ]
         })
     ],
 
