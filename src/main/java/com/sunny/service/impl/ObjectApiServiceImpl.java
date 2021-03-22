@@ -6,7 +6,7 @@ import com.sunny.entity.ObjectModuleEntity;
 import com.sunny.entity.UserEntity;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ObjectApiRepository;
-import com.sunny.repository.ObjectModuleRepositiry;
+import com.sunny.repository.ObjectModuleRepository;
 import com.sunny.service.ObjectApiService;
 import com.sunny.util.RegexUtil;
 import com.sunny.util.StringUtil;
@@ -25,7 +25,7 @@ public class ObjectApiServiceImpl implements ObjectApiService {
     private ObjectApiRepository objectApiRepository;
 
     @Resource
-    private ObjectModuleRepositiry objectModuleRepositiry;
+    private ObjectModuleRepository objectModuleRepository;
 
     @Resource
     private HttpServletRequest httpServletRequest;
@@ -40,7 +40,7 @@ public class ObjectApiServiceImpl implements ObjectApiService {
         UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
         Integer moduleId = objectApiDTO.getModuleId();
 
-        ObjectModuleEntity objectModuleEntity = objectModuleRepositiry.myFindById(moduleId);
+        ObjectModuleEntity objectModuleEntity = objectModuleRepository.myFindById(moduleId);
         if (objectModuleEntity == null) {
             throw new BusinessException("该接口所属模块不存在，请先录入模块！");
         }
@@ -60,36 +60,38 @@ public class ObjectApiServiceImpl implements ObjectApiService {
     }
 
     @Override
-    public void deleteObjectApi(ObjectApiDTO objectApiDTO) {
-        Integer objectApiId = objectApiDTO.getId();
-        ObjectApiEntity objectApiEntity = objectApiRepository.myFindById(objectApiId);
-        if (objectApiEntity == null) {
-            throw new BusinessException("不存在这条记录！");
+    public void deleteObjectApi(List<Integer> idList) {
+        if (idList.size() == 0){
+            return;
         }
-        objectApiRepository.deleteById(objectApiId);
+        for (Integer apiId : idList) {
+            try {
+                objectApiRepository.deleteById(apiId);
+            } catch (Exception e) {
+                throw new BusinessException("id为" + apiId + "的接口不存在！");
+            }
+        }
     }
 
     @Override
-    public void deleteObjectApi2(Integer id) {
-        ObjectApiEntity objectApiEntity = objectApiRepository.myFindById(id);
-        if (objectApiEntity == null) {
-            throw new BusinessException("该条记录不存在，请确认后再试！");
-        }
-        objectApiRepository.deleteById(id);
-    }
-
-    @Override
-    public void editObjectApi(ObjectApiDTO objectApiDTO) {
+    public void editObjectApi(Integer apiId, ObjectApiDTO objectApiDTO) {
         // 定位用户，用于“更新人”字段
         UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
 
-        ObjectApiEntity objectApiEntity = objectApiRepository.myFindById(objectApiDTO.getId());
-        if (objectApiEntity == null) {
-            throw new BusinessException("该条记录不存在，请确认后再试！");
+        if (objectApiDTO.getApiName() == null) {
+            throw new BusinessException("接口名不能为空！");
         }
+
+        ObjectApiEntity objectApiEntity = objectApiRepository.myFindById(objectApiDTO.getId());
+        if (!objectApiEntity.getApiName().equals(objectApiDTO.getApiName()) &&
+                objectApiRepository.findByApiName(objectApiDTO.getApiName()).size() != 0){
+            throw new BusinessException("该接口名已存在！");
+        }
+
         if (!RegexUtil.isRequestMethodRight(objectApiDTO.getApiMethod())) {
             throw new BusinessException("请求方法填写错误：请填写POST、GET、PUT、DELETE中的一个，并注意大小写！");
         }
+
         objectApiEntity.setApiName(objectApiDTO.getApiName());
         objectApiEntity.setApiAddress(objectApiDTO.getApiAddress());
         objectApiEntity.setApiMethod(objectApiDTO.getApiMethod());

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ObjectModuleRepositiry extends JpaRepository<ObjectModuleEntity, Integer> {
+public interface ObjectModuleRepository extends JpaRepository<ObjectModuleEntity, Integer> {
 
     List<ObjectModuleEntity> findByModuleNameAndAndObjsystemId(String moduleName, Integer objsystemId);
 

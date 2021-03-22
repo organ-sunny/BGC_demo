@@ -8,7 +8,7 @@ import com.sunny.entity.*;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ApiTestCaseRepository;
 import com.sunny.repository.ObjectApiRepository;
-import com.sunny.repository.ObjectModuleRepositiry;
+import com.sunny.repository.ObjectModuleRepository;
 import com.sunny.repository.ObjectSystemRepository;
 import com.sunny.service.ApiTestCaseService;
 import com.sunny.service.ObjectApiService;
@@ -48,7 +48,7 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
     private ObjectSystemRepository objectSystemRepository;
 
     @Resource
-    private ObjectModuleRepositiry objectModuleRepositiry;
+    private ObjectModuleRepository objectModuleRepository;
 
     @Resource
     private ObjectSystemService objectSystemService;
@@ -119,7 +119,7 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
 
         // 判断模块是否存在
         String moduleName = apiTestCaseDTO.getObjectModuleName();
-        List<ObjectModuleEntity> objectModuleEntityList = objectModuleRepositiry.findByModuleNameAndAndObjsystemId(moduleName, objectSystemEntity.getId());
+        List<ObjectModuleEntity> objectModuleEntityList = objectModuleRepository.findByModuleNameAndAndObjsystemId(moduleName, objectSystemEntity.getId());
         ObjectModuleEntity objectModuleEntity;
         // 如果模块表记录不存在
         if (objectModuleEntityList.size() == 0) {
@@ -158,6 +158,36 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         apiTestCaseRepository.save(apiCaseEntity);
     }
 
+    @Override
+    public void deleteApiCase(List<Integer> idList) {
+        if (idList.size() == 0) {
+            return;
+        }
+        for (Integer apiCaseId : idList){
+            try {
+                apiTestCaseRepository.deleteById(apiCaseId);
+            }catch (Exception e){
+                throw new BusinessException("id为" + apiCaseId + "的接口用例不存在！");
+            }
+        }
+    }
+
+    @Override
+    public void editApiCase(Integer apiCaseId, ApiTestCaseDTO apiTestCaseDTO) {
+        UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
+
+        ApiTestCaseEntity apiTestCaseEntity = apiTestCaseRepository.getOne(apiCaseId);
+        if (!apiTestCaseEntity.getApiCaseName().equals(apiTestCaseDTO.getObjectApiName()) &&
+                apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum()).size() != 0){
+            throw new BusinessException("该案例编号已存在！");
+        }
+
+        apiTestCaseEntity = apiTestCaseDTO.getEntity();
+        apiTestCaseEntity.setUpdatedTime(new Date());
+        apiTestCaseEntity.setUpdatedBy(user.getUsername());
+        apiTestCaseRepository.save(apiTestCaseEntity);
+    }
+
 
     /**
      * 入参-查询条件：系统名、模块名、接口名、案例名
@@ -183,7 +213,7 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
                     apiIdList.add(apiId);
                 }
 
-                // 模块id
+                // 模块id不为空，则找到接口表下所有模块id为这个的接口记录，并通过这个记录，获取对应的接口id，最终添加到apiIdList中
                 else if (moduleId != null) {
                     List<ObjectApiEntity> apiEntityList = objectApiService.getByModuleId(moduleId);
                     for (ObjectApiEntity apiEntity : apiEntityList) {

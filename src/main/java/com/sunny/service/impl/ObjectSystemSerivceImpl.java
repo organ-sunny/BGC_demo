@@ -6,6 +6,7 @@ import com.sunny.entity.UserEntity;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ObjectSystemRepository;
 import com.sunny.service.ObjectSystemService;
+import com.sunny.util.StringUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,21 +40,60 @@ public class ObjectSystemSerivceImpl implements ObjectSystemService {
         objectSystemEntity.setCreator(user.getUsername());
         objectSystemEntity.setUpdatedTime(new Date());
         objectSystemEntity.setUpdatedBy(user.getUsername());
+        objectSystemEntity.setIsDeleted(0);
 
         return objectSystemRepository.save(objectSystemEntity);
     }
 
     @Override
-    public List<ObjectSystemEntity> queryObjectSystem(ObjectSystemDTO objectSystemDTO) {
+    public void deleteObjectSystem(List<Integer> idList) {
+        if (idList.size() == 0) {
+            return;
+        }
 
+        for (Integer systemId : idList) {
+            try {
+                ObjectSystemEntity objectSystemEntity = objectSystemRepository.myFindById(systemId);
+                objectSystemEntity.setIsDeleted(1);
+                objectSystemRepository.save(objectSystemEntity);
+            } catch (Exception e) {
+                throw new BusinessException("id为" + systemId + "的系统不存在！");
+            }
+        }
+    }
+
+    @Override
+    public void editObjectSystem(Integer systemId, ObjectSystemDTO objectSystemDTO) {
+
+        UserEntity userEntity = (UserEntity) httpServletRequest.getAttribute("user");
+
+        if (StringUtil.isEmpty(objectSystemDTO.getObjectSystem())) {
+            throw new BusinessException("项目名不能为空！");
+        }
+
+        ObjectSystemEntity objectSystemEntity = objectSystemRepository.getOne(systemId);
+        if (!objectSystemEntity.getObjectSystem().equals(objectSystemDTO.getObjectSystem()) &&
+                objectSystemRepository.findByObjectSystem(objectSystemDTO.getObjectSystem()).size() != 0) {
+            throw new BusinessException("该项目名已存在！");
+        }
+
+        objectSystemEntity.setObjectSystem(objectSystemDTO.getObjectSystem());
+        objectSystemEntity.setUpdatedBy(userEntity.getUsername());
+        objectSystemEntity.setUpdatedTime(new Date());
+
+        objectSystemRepository.save(objectSystemEntity);
+    }
+
+    @Override
+    public List<ObjectSystemEntity> queryObjectSystem(ObjectSystemDTO objectSystemDTO) {
         List<ObjectSystemEntity> objectSystemEntity;
 
         if (objectSystemDTO.getObjectSystem() != null) {
-            objectSystemEntity = objectSystemRepository.findByObjectSystem(objectSystemDTO.getObjectSystem());
+            objectSystemEntity = objectSystemRepository.findAllByIsDeletedAndObjectSystem(0, objectSystemDTO.getObjectSystem());
         } else {
-            objectSystemEntity = objectSystemRepository.findAll();
+//            objectSystemEntity = objectSystemRepository.findAllByIsDeleted(0);
+            objectSystemEntity = objectSystemRepository.myFindAll();
         }
-
         return objectSystemEntity;
     }
 
@@ -61,5 +101,4 @@ public class ObjectSystemSerivceImpl implements ObjectSystemService {
     public ObjectSystemEntity getById(Integer id) {
         return objectSystemRepository.getOne(id);
     }
-
 }

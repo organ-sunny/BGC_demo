@@ -4,10 +4,7 @@ import com.sunny.dto.ApiTestCaseDTO;
 import com.sunny.entity.ApiTestCaseEntity;
 import com.sunny.entity.ResponseEntity;
 import com.sunny.service.ApiTestCaseService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,12 +19,21 @@ public class ApiTestCaseController {
 
     @PostMapping("add")
     public ResponseEntity addApiCase(@RequestBody(required = false) ApiTestCaseDTO apiTestCaseDTO) {
-
-        // 参数校验
         apiTestCaseDTO.check();
-
-        // 执行新增
         apiTestCaseService.addApiCase(apiTestCaseDTO);
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+    @DeleteMapping
+    public ResponseEntity deleteApiCase(@RequestBody(required = false) List<Integer> idList){
+        apiTestCaseService.deleteApiCase(idList);
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity editApiCase(@PathVariable Integer apiId,@RequestBody(required = false) ApiTestCaseDTO apiTestCaseDTO){
+        apiTestCaseDTO.check();
+        apiTestCaseService.editApiCase(apiId, apiTestCaseDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 

@@ -18,21 +18,27 @@ public class ObjectSystemController {
 
     @PostMapping("add")
     public ResponseEntity addObjectSystem(@RequestBody(required = false) ObjectSystemDTO objectSystemDTO) {
-
         // 参数校验
         objectSystemDTO.check();
-
         objectSystemService.addObjectSystem(objectSystemDTO);
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+    @DeleteMapping
+    public ResponseEntity deleteObjectSystem(@RequestBody(required = false) List<Integer> idList) {
+        objectSystemService.deleteObjectSystem(idList);
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity editObjectSystem(@PathVariable Integer id, @RequestBody(required = false) ObjectSystemDTO objectSystemDTO) {
+        objectSystemService.editObjectSystem(id, objectSystemDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
     @GetMapping("query")
     public ResponseEntity queryObjectSystem(ObjectSystemDTO objectSystemDTO) {
-        try {
-            List<ObjectSystemEntity> result = objectSystemService.queryObjectSystem(objectSystemDTO);
-            return ResponseEntity.normalReturn("success", 200, result);
-        } catch (Exception e) {
-            return ResponseEntity.normalReturn(e.getMessage(), 101, null);
-        }
+        List<ObjectSystemEntity> result = objectSystemService.queryObjectSystem(objectSystemDTO);
+        return ResponseEntity.normalReturn("success", 200, result);
     }
 }

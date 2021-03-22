@@ -1,14 +1,12 @@
 package com.sunny.controller;
 
 import com.sunny.dto.ObjectApiDTO;
-import com.sunny.dto.vo.ApiVO;
 import com.sunny.entity.ObjectApiEntity;
 import com.sunny.entity.ResponseEntity;
 import com.sunny.service.ObjectApiService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,33 +19,21 @@ public class ObjectApiController {
     // 新增接口
     @PostMapping
     public ResponseEntity addObjectApi(@RequestBody(required = false) ObjectApiDTO objectApiDTO) {
-
         objectApiDTO.check();
         objectApiService.addObjectApi(objectApiDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
-
-    // 删除接口1
-    // 请求地址：http://localhost:1001/api/objectApi
+    // 删除接口
     @DeleteMapping
-    public ResponseEntity deleteObjectApi(@RequestBody ObjectApiDTO objectApiDTO) {
-        objectApiService.deleteObjectApi(objectApiDTO);
-        return ResponseEntity.normalReturn("success", 200, null);
-    }
-
-    // 删除接口2
-    // 请求地址：http://localhost:1001/api/objectApi/34
-    @DeleteMapping("{id}")
-    public ResponseEntity deleteObjectApi(@PathVariable("id") Integer id) {
-        objectApiService.deleteObjectApi2(id);
+    public ResponseEntity deleteObjectApi(@RequestBody(required = false) List<Integer> idList) {
+        objectApiService.deleteObjectApi(idList);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
     // 修改接口
-    @PutMapping
-    public ResponseEntity editObjectApi(@RequestBody ObjectApiDTO objectApiDTO) {
-        objectApiDTO.check();
-        objectApiService.editObjectApi(objectApiDTO);
+    @PutMapping("{id}")
+    public ResponseEntity editObjectApi(@PathVariable Integer id, @RequestBody(required = false) ObjectApiDTO objectApiDTO) {
+        objectApiService.editObjectApi(id, objectApiDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
@@ -55,12 +41,6 @@ public class ObjectApiController {
     @GetMapping
     public ResponseEntity queryObjectApi(ObjectApiDTO objectApiDTO) {
         List<ObjectApiEntity> objectApiEntityList = objectApiService.queryObjectApi(objectApiDTO);
-        List<ApiVO> result = new ArrayList<>();
-
-        for (ObjectApiEntity objectApiEntity : objectApiEntityList) {
-            ApiVO apiVO = objectApiEntity.getVO();
-            result.add(apiVO);
-        }
-        return ResponseEntity.normalReturn("success", 200, result);
+        return ResponseEntity.normalReturn("success", 200, objectApiEntityList);
     }
 }

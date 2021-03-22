@@ -7,40 +7,53 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
 
     private Integer id;
 
+    // 系统名
     @NotNull
     private String objectSystemName;
 
+    // 模块名
     @NotNull
     private String objectModuleName;
 
+    // 接口名
     @NotNull
     private String objectApiName;
 
+    // 接口用例编号
     @NotNull
     private String apiCaseNum;
 
+    // 接口用例名
     @NotNull
     private String apiCaseName;
 
+    // 用例描述
     @NotNull
     private String apiCaseDescription;
 
+    // 请求地址
     @NotNull
     private String apiCaseRequestAddress;
 
+    // 请求方式
     @NotNull
     private String apiCaseRequestMethod;
 
+    // 请求头内容
     private String apiCaseRequestHeader;
 
+    // 请求入参
     @NotNull
     private String apiCaseRequestParam;
 
+    // 预期结果
     @NotNull
     private String apiCaseExpectedResult;
 
+    // 实际结果
     private String apiCaseActualResult;
 
+    // 备注
     private String apiCaseRemark;
 
     @Override
@@ -49,7 +62,7 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
                 "id=" + id +
                 ", objectSystemName='" + objectSystemName + '\'' +
                 ", objectModuleName='" + objectModuleName + '\'' +
-                ", objectModuleName='" + objectApiName + '\'' +
+                ", objectApiName='" + objectApiName + '\'' +
                 ", apiCaseNum='" + apiCaseNum + '\'' +
                 ", apiCaseName='" + apiCaseName + '\'' +
                 ", apiCaseDescription='" + apiCaseDescription + '\'' +

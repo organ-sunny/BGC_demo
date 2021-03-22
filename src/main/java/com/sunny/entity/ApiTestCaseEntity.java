@@ -40,7 +40,7 @@ public class ApiTestCaseEntity {
     @Column(name = "API_TESTCASE_REMARK")
     private String apiCaseRemark;
 
-    @Column(name = "CREATEOR")
+    @Column(name = "CREATOR")
     private String creator;
 
     @Column(name = "CREATEDTIME")

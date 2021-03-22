@@ -12,6 +12,10 @@ public interface ApiTestCaseService {
 
     void addApiCase(ApiTestCaseDTO apiTestCaseDTO);
 
+    void deleteApiCase(List<Integer> idList);
+
+    void editApiCase(Integer apiCaseId, ApiTestCaseDTO apiTestCaseDTO);
+
     List<ApiTestCaseEntity> queryApiCase(Map<String, Object> map);
 
     void runApiCase(Integer apiCaseId);

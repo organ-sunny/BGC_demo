@@ -11,8 +11,11 @@ public interface ObjectModuleService {
 
     ObjectModuleEntity addModule(ObjectModuleDTO objectModuleDTO);
 
-    List<ObjectModuleEntity> queryModule(ObjectModuleDTO objectModuleDTO);
+    void deleteObjectModule(List<Integer> idList);
+
+    void editObjectModule(Integer moduleId, ObjectModuleDTO objectModuleDTO);
+
+    List<ObjectModuleEntity> queryObjectModule(ObjectModuleDTO objectModuleDTO);
 
     List<ObjectModuleEntity> getBySystemId(Integer systemId);
-
 }

@@ -15,20 +15,28 @@ public class ObjectModuleController {
     @Resource
     private ObjectModuleService objectModuleService;
 
-    @GetMapping("query")
-    public ResponseEntity queryModule(ObjectModuleDTO objectModuleDTO) {
-
-        List<ObjectModuleEntity> result = objectModuleService.queryModule(objectModuleDTO);
-        return ResponseEntity.normalReturn("success", 200, result);
-    }
-
     @PostMapping("add")
     public ResponseEntity addModule(@RequestBody(required = false) ObjectModuleDTO objectModuleDTO) {
-
         objectModuleDTO.check();
-
         objectModuleService.addModule(objectModuleDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
+    @DeleteMapping
+    public ResponseEntity deleteObjectModule(@RequestBody(required = false) List<Integer> idList) {
+        objectModuleService.deleteObjectModule(idList);
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity editObjectModule(@PathVariable Integer id, @RequestBody(required = false) ObjectModuleDTO objectModuleDTO) {
+        objectModuleService.editObjectModule(id, objectModuleDTO);
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+    @GetMapping("query")
+    public ResponseEntity queryModule(ObjectModuleDTO objectModuleDTO) {
+        List<ObjectModuleEntity> result = objectModuleService.queryObjectModule(objectModuleDTO);
+        return ResponseEntity.normalReturn("success", 200, result);
+    }
 }

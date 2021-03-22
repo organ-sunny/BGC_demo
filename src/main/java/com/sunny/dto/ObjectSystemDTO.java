@@ -11,7 +11,7 @@ public class ObjectSystemDTO extends ParentDTO<ObjectSystemEntity> {
     @Override
     public String toString() {
         return "ObjectSystemDTO{" +
-                "objectSystem='" + objectSystem + '\'' +
+                ", objectSystem='" + objectSystem + '\'' +
                 '}';
     }
 

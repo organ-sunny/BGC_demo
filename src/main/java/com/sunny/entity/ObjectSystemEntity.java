@@ -26,15 +26,19 @@ public class ObjectSystemEntity {
     @Column(name = "UPDATEDTIME")
     private Date updatedTime;
 
+    @Column(name = "ISDELETED")
+    private Integer isDeleted;
+
     @Override
     public String toString() {
         return "ObjectSystemEntity{" +
                 "id=" + id +
                 ", objectSystem='" + objectSystem + '\'' +
                 ", creator='" + creator + '\'' +
-                ", createdTime='" + createdTime + '\'' +
+                ", createdTime=" + createdTime +
                 ", updatedBy='" + updatedBy + '\'' +
-                ", updatedTime='" + updatedTime + '\'' +
+                ", updatedTime=" + updatedTime +
+                ", isDeteled=" + isDeleted +
                 '}';
     }
 
@@ -86,5 +90,11 @@ public class ObjectSystemEntity {
         this.objectSystem = objectSystem;
     }
 
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
 
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

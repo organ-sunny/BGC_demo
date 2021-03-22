@@ -11,8 +11,11 @@ public interface ObjectSystemService {
 
     ObjectSystemEntity addObjectSystem(ObjectSystemDTO objectSystemDTO);
 
+    void deleteObjectSystem(List<Integer> idList);
+
+    void editObjectSystem(Integer systemId, ObjectSystemDTO objectSystemDTO);
+
     List<ObjectSystemEntity> queryObjectSystem(ObjectSystemDTO objectSystemDTO);
 
     ObjectSystemEntity getById(Integer id);
-
 }

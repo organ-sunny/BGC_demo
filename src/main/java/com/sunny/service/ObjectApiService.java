@@ -11,11 +11,9 @@ public interface ObjectApiService {
 
     ObjectApiEntity addObjectApi(ObjectApiDTO objectApiDTO);
 
-    void deleteObjectApi(ObjectApiDTO objectApiDTO);
+    void deleteObjectApi(List<Integer> idList);
 
-    void deleteObjectApi2(Integer id);
-
-    void editObjectApi(ObjectApiDTO objectApiDTO);
+    void editObjectApi(Integer apiId, ObjectApiDTO objectApiDTO);
 
     List<ObjectApiEntity> queryObjectApi(ObjectApiDTO objectApiDTO);
 

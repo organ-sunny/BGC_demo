@@ -49,7 +49,7 @@ public class ParentDTO<T> {
                     if (o == null) {
                         throw new ParamErrorException();
                     }
-                    if (o.toString().equals("")) {
+                    if (o.toString().trim().equals("")) {
                         throw new ParamErrorException();
                     }
                 }
