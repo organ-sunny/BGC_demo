@@ -89,6 +89,7 @@
                                         <ep-tag v-if="props.row.apiMethod === 'DELETE'" type="danger" size="small">DELETE</ep-tag>
                                     </template>
                                 </ep-table-item>
+                                <ep-table-item column="apiName" title="api名称"></ep-table-item>
                                 <ep-table-item column="action" title="操作">
                                     <template slot-scope="props">
                                         <ep-button disabled :size="baseConfig.size">编辑</ep-button>

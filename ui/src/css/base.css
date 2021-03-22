@@ -1,6 +1,7 @@
 @import "card.css";
 @import "scrollbar.css";
 @import "input.css";
+@import "a.css";
 
 html, body, #main {
     width: 100%;

@@ -65,6 +65,14 @@
                     alterUtil.error(m);
                 });
             }
+        },
+
+        created() {
+            window.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    this.loginMethod();
+                }
+            });
         }
     }
 </script>
