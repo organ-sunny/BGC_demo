@@ -56,23 +56,25 @@ export default {
         };
     },
 
-        methods: {
-            loginMethod() {
-                userApi.login(this.login).then((data) => {
-                    user.set(data);
-                    window.location.href = pageConfig.home;
-                }).catch((m) => {
-                    alterUtil.error(m);
-                });
-            }
-        },
 
-        created() {
-            window.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
-                    this.loginMethod();
-                }
+    methods: {
+        loginMethod() {
+            userApi.login(this.login).then((data) => {
+                user.set(data);
+                window.location.href = pageConfig.home;
+            }).catch((m) => {
+                alterUtil.error(m);
             });
         }
+    },
+
+    created() {
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                this.loginMethod();
+            }
+
+        });
+    }
 }
 </script>

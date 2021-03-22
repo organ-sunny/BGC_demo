@@ -3,7 +3,7 @@
         <div style="display: flex;background-color: #EEE;">
             <div style="width: 10px;" :style="{backgroundColor: baseConfig.backgroundColor}"></div>
             <div style="width: 100%;padding: 10px;" class="font">
-                {{head}}
+                {{ head }}
             </div>
         </div>
 
@@ -14,17 +14,17 @@
 </template>
 
 <script>
-    import baseConfig from "../../config/baseConfig.js";
+import baseConfig from "../../config/baseConfig.js";
 
-    export default {
-        name: "card.vue",
+export default {
+    name: "card.vue",
 
-        props: ["head"],
+    props: ["head"],
 
-        data() {
-            return {
-                baseConfig
-            };
-        }
+    data() {
+        return {
+            baseConfig
+        };
     }
+}
 </script>

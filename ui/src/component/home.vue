@@ -1,7 +1,8 @@
 <template>
     <div style="width: 100%; height: 100%;">
         <div :style="baseConfig" style="height: 40px;display: flex;padding: 0 20px;">
-            <div @click="switchMenu('/')" style="color: white;font-weight: bold;font-size: 18px;width: 7%;" class="center menu-item">
+            <div class="center menu-item" style="color: white;font-weight: bold;font-size: 18px;width: 7%;"
+                 @click="switchMenu('/')">
                 BGC_demo
             </div>
             <div style="width: 86%;display: flex;">
@@ -15,7 +16,7 @@
             <div style="width: 7%;display: flex;flex-direction: row-reverse;">
                 <div class="center" style="width: 100%;flex-direction: row;">
                     <div class="center" style="padding: 0 11px;color: white;">
-                        {{user.username}}
+                        {{ user.username }}
                     </div>
                     <div class="center" style="padding: 0 5px;color: white;">
                         |
@@ -47,7 +48,8 @@
                         <div style="height: 100%;display: flex;flex-direction: row-reverse;">
                             <div style="display: flex;">
                                 <div style="flex-direction: column;padding: 0 20px;" class="center">
-                                    <div style="display: flex;justify-content: center;color: #0747a6;font-size: 32px;border-bottom: 1px solid #0747a6;cursor: pointer;">
+                                    <div
+                                        style="display: flex;justify-content: center;color: #0747a6;font-size: 32px;border-bottom: 1px solid #0747a6;cursor: pointer;">
                                         12
                                     </div>
                                     <div style="margin-top: 5px;">
@@ -105,7 +107,8 @@
                         </ep-col>
                         <ep-col :col="6">
                             <div style="border-right: 1px solid #e6e6e6;">
-                                <div style="margin-bottom: 10px;display: flex;justify-content: center;font-weight: bold;">
+                                <div
+                                    style="margin-bottom: 10px;display: flex;justify-content: center;font-weight: bold;">
                                     通过率
                                 </div>
                                 <div style="display: flex;justify-content: center;">
@@ -166,7 +169,7 @@
                             <ep-table-item column="title" title="标题">
                                 <template slot-scope="props">
                                     <div style="color: blue;text-decoration: underline;cursor: pointer;">
-                                        {{props.row.title}}
+                                        {{ props.row.title }}
                                     </div>
                                 </template>
                             </ep-table-item>
@@ -182,97 +185,97 @@
 </template>
 
 <script>
-    import baseConfig from "../config/baseConfig.js";
-    import user from "../js/user.js";
-    import variableUtil from "../util/variableUtil.js";
-    import pageConfig from "../config/pageConfig.js";
+import baseConfig from "../config/baseConfig.js";
+import user from "../js/user.js";
+import variableUtil from "../util/variableUtil.js";
+import pageConfig from "../config/pageConfig.js";
 
-    export default {
-        name: "home.vue",
+export default {
+    name: "home.vue",
 
-        data() {
-            return {
-                path: "",
+    data() {
+        return {
+            path: "",
 
-                user: {
-                    username: ""
-                },
+            user: {
+                username: ""
+            },
 
-                notice: {
-                    data: [
-                        {
-                            title: "这是公告1",
-                            createTime: "2021-03-10 10:12:34"
-                        },
-                        {
-                            title: "这是公告2",
-                            createTime: "2021-03-05 10:12:34"
-                        }
-                    ]
-                },
+            notice: {
+                data: [
+                    {
+                        title: "这是公告1",
+                        createTime: "2021-03-10 10:12:34"
+                    },
+                    {
+                        title: "这是公告2",
+                        createTime: "2021-03-05 10:12:34"
+                    }
+                ]
+            },
 
-                baseConfig
-            };
+            baseConfig
+        };
+    },
+
+    methods: {
+        init() {
+            this.path = this.$route.path;
+            variableUtil.extend(this.user, user.get());
         },
 
-        methods: {
-            init() {
-                this.path = this.$route.path;
-                variableUtil.extend(this.user, user.get());
-            },
-
-            switchMenu(path) {
-                if (path === this.path) {
-                    return;
-                }
-
-                this.$router.push(path);
-
-                let route = this.$route;
-                let title;
-                if (route.path === "/") {
-                    title = "首页";
-                } else {
-                    title = route.meta.title;
-                }
-                document.title = title;
-
-                this.init();
-            },
-
-            logout() {
-                window.location.href = pageConfig.index;
-                user.delete();
+        switchMenu(path) {
+            if (path === this.path) {
+                return;
             }
+
+            this.$router.push(path);
+
+            let route = this.$route;
+            let title;
+            if (route.path === "/") {
+                title = "首页";
+            } else {
+                title = route.meta.title;
+            }
+            document.title = title;
+
+            this.init();
         },
 
-        created() {
-            this.init();
+        logout() {
+            window.location.href = pageConfig.index;
+            user.delete();
         }
+    },
+
+    created() {
+        this.init();
     }
+}
 </script>
 
 <style scoped>
-    .menu-item {
-        padding: 0 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-    }
+.menu-item {
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
 
-    .menu-item.action {
-        background-color: #033681;
-    }
+.menu-item.action {
+    background-color: #033681;
+}
 
-    .menu-item:hover {
-        background-color: #033681;
-        cursor: pointer;
-    }
+.menu-item:hover {
+    background-color: #033681;
+    cursor: pointer;
+}
 
-    .num {
-        color: #0747a6;
-        border-bottom: 1px solid #0747a6;
-        font-weight: bold;
-    }
+.num {
+    color: #0747a6;
+    border-bottom: 1px solid #0747a6;
+    font-weight: bold;
+}
 </style>

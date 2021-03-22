@@ -38,7 +38,8 @@ export default {
                 type: "warning"
             }).then(() => {
                 s();
-            }).catch(() => {});
+            }).catch(() => {
+            });
         });
     }
 };
