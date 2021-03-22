@@ -1,4 +1,6 @@
 @import "card.css";
+@import "scrollbar.css";
+@import "input.css";
 
 html, body, #main {
     width: 100%;
@@ -15,28 +17,30 @@ html, body, #main {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 * {
     font-size: 14px;
+    font-family: Microsoft YaHei, serif;
 }
 
 .title {
     font-size: 18px;
     font-weight: bold;
     color: #546E7A;
-}
+}.font {
+     font-size: 14px;
+     color: #303133;
+ }
 
-.font {
-    font-size: 14px;
-    color: rgba(0,0,0,.54);
-    font-weight: 700;
-}
+
 
 .panel {
     border: 1px #0000001f solid;
     padding: 20px;
     border-radius: 5px;
+    background-color: white;
 }
 
 .ep-card-contents {

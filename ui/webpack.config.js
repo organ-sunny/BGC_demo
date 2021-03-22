@@ -1,7 +1,7 @@
 const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const vueLoaderPlugin = require("vue-loader/lib/plugin");
-const copyWebpackPlugin = require("copy-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
     entry: {
@@ -49,13 +49,9 @@ module.exports = {
             chunks: ["home"]
         }),
         new vueLoaderPlugin(),
-        new copyWebpackPlugin({
-            patterns: [
-                {
-                    from: "./src/favicon.ico",
-                    to: "favicon.ico"
-                }
-            ]
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
         })
     ],
 

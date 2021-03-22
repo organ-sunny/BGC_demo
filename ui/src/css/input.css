@@ -1,0 +1,3 @@
+.noBorder > .ep-input > .ep-input__inner {
+    border: none;
+}

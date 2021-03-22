@@ -6,7 +6,10 @@ export default {
     extend(o1, o2) {
         for (let key in o1) {
             if (o1.hasOwnProperty(key)) {
-                o1[key] = o2[key];
+                let o2V = o2[key];
+                if (!this.isEmpty(o2V)) {
+                    o1[key] = o2V;
+                }
             }
         }
     }

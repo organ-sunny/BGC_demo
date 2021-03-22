@@ -1,21 +1,19 @@
 import baseApi from "./baseApi.js";
 
-let uri = "apiTestCase";
+let u = "/apiTestCase";
 
 export default {
-    add(data) {
-        return baseApi.send({
-            url: `${uri}/add`,
-            type: "POST",
-            data: data
-        });
-    },
-
     query(data) {
         return baseApi.send({
-            url: `${uri}/query`,
-            type: "GET",
-            data: data
+            url: `${u}/query`,
+            type: "POST",
+            header: baseApi.getHeader(),
+            data,
+            check: {
+                urlData: {
+                    apiId: ""
+                }
+            }
         });
     }
 };

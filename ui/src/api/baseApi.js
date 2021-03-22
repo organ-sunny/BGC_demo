@@ -1,97 +1,182 @@
-import baseConfig from "../config/baseConfig.js";
-import token from "../js/token.js";
-import cookieConfig from "../config/cookieConfig.js";
 import pageConfig from "../config/pageConfig.js";
-import variableUtil from "../util/variableUtil.js";
+import user from "../js/user.js";
+
+let host = process.env.NODE_ENV === "development" ? "http://192.168.12.104:1001/api" : "/api";
 
 export default {
     send(option) {
-        return new Promise((successCallback, errorCallback) => {
-            let type = option.type,
-                url = baseConfig.host + "/api/" + option.url,
-                headers = option.headers,
-                data = option.data,
-                dataType = option.dataType,
-                sendData = null;
+        return new Promise(function (successCallback, errorCallback) {
+            _send(option).then((response) => {
+                let responseJson = JSON.parse(response);
+                console.log(responseJson);
 
-            if (variableUtil.isEmpty(headers)) {
-                headers = [];
-            }
-
-            if (dataType === "file") {
-                sendData = new FormData();
-                for (let key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        sendData.append(key, data[key]);
-                    }
+                // token失效
+                if (responseJson.code === 101) {
+                    window.location.href = pageConfig.index;
+                    return;
                 }
-            } else {
-                if ((type === "post" || type === "POST")) {
-                    headers.push({
-                        key: "content-type",
-                        value: "application/json"
-                    });
-                    sendData = JSON.stringify(data);
+
+                if (responseJson.code === 200) {
+                    successCallback(responseJson.data);
                 } else {
-                    if (!variableUtil.isEmpty(data)) {
-                        if (data instanceof Object) {
-                            let b = false;
-                            for (let key in data) {
-                                if (data.hasOwnProperty(key)) {
-                                    let v = data[key];
-                                    if (!variableUtil.isEmpty(v)) {
-                                        let a = ``;
-                                        if (!b) {
-                                            a = "?";
-                                            b = true;
-                                        } else {
-                                            a = "&";
-                                        }
-                                        url = `${url}${a}${key}=${v}`;
-                                    }
-                                }
-                            }
+                    errorCallback(responseJson.message);
+                }
+            });
+        });
+    },
+
+    getHeader() {
+        let result = {};
+        let userJson = user.get();
+
+        result.token = userJson.token;
+        return result;
+    }
+};
+
+function _send(option) {
+    return new Promise(function (s) {
+        function isEmpty(data) {
+            return data === undefined || data === null || data === "";
+        }
+
+        function isObject(data) {
+            return typeof data === "object";
+        }
+
+        function isFile(data) {
+            return data.__proto__ === File.prototype;
+        }
+
+        let url = option.url,
+            type = option.type,
+            header = option.header;
+        if (type === "get") {
+            type = "GET";
+        }
+        if (type === "post") {
+            type = "POST";
+        }
+        if (isEmpty(header)) {
+            header = {};
+        }
+
+        let urlData = option.urlData;
+        let data = option.data;
+
+        let check = option.check;
+        if (isEmpty(check)) {
+            check = {};
+        }
+        let urlCheck = check.urlData,
+            dataCheck = check.data;
+
+        let sendData = {
+            url: null,
+            data: null
+        };
+
+        // 参数校验
+        if (!isEmpty(urlCheck) && isObject(urlCheck)) {
+            if (!isEmpty(urlData) && isObject(urlData)) {
+                sendData.url = {};
+                for (let key in urlCheck) {
+                    if (urlCheck.hasOwnProperty(key)) {
+                        let v = urlData[key];
+                        if (!isEmpty(v)) {
+                            sendData.url[key] = v;
                         }
                     }
                 }
             }
-
-            // 设置token
-            headers.push({
-                key: cookieConfig.token,
-                value: token.get()
-            });
-
-            let http = new XMLHttpRequest();
-            console.log(url)
-            http.open(type, url);
-            for (let item of headers) {
-                let key = item.key;
-                let value = item.value;
-                if (!variableUtil.isEmpty(key) && !variableUtil.isEmpty(value)) {
-                    http.setRequestHeader(key, value);
-                }
+        } else {
+            if (!isEmpty(urlData) && isObject(urlData)) {
+                sendData.url = urlData;
             }
-            http.send(sendData);
+        }
 
-            http.onreadystatechange = function () {
-                if (http.status === 200 && http.readyState === 4) {
-                    let response = JSON.parse(http.response);
-                    console.log(response);
-
-                    // token失效
-                    if (response.code === 101) {
-                        window.location.href = pageConfig.index;
-                        return;
-                    }
-
-                    if (response.code === 200) {
-                        successCallback(response.data);
-                    } else {
-                        errorCallback(response.message);
+        if (!isEmpty(dataCheck) && isObject(dataCheck)) {
+            if (!isEmpty(data) && isObject(data)) {
+                sendData.data = {};
+                for (let key in dataCheck) {
+                    if (dataCheck.hasOwnProperty(key)) {
+                        let v = data[key];
+                        if (!isEmpty(v)) {
+                            sendData.data[key] = v;
+                        }
                     }
                 }
             }
-        });
-    },
-};
+        } else {
+            if (!isEmpty(data) && isObject(data)) {
+                sendData.data = data;
+            }
+        }
+
+        // 是否存在文件
+        let isExistFile = false;
+        if (sendData.data !== null) {
+            for (let key in sendData.data) {
+                if (sendData.data.hasOwnProperty(key)) {
+                    if (isFile(sendData.data[key])) {
+                        isExistFile = true;
+                    }
+                }
+            }
+        }
+        if (isExistFile) {
+            let formData = new FormData();
+            for (let key in sendData.data) {
+                if (sendData.data.hasOwnProperty(key)) {
+                    formData.append(key, sendData.data[key]);
+                }
+            }
+            sendData.data = formData;
+        } else {
+            if (type !== "GET") {
+                header["content-type"] = "application/json";
+            }
+            if (sendData.data !== null) {
+                sendData.data = JSON.stringify(sendData.data);
+            }
+        }
+
+        // 装配url参数
+        if (sendData.url !== null) {
+            let u = sendData.url.length === 0 ? "" : "?";
+            for (let key in sendData.url) {
+                if (sendData.url.hasOwnProperty(key)) {
+                    let value = sendData.url[key];
+                    if (!isEmpty(value)) {
+                        u = u + key + "=" + sendData.url[key] + "&";
+                    }
+                }
+            }
+            if (u !== "") {
+                u = u.substring(0, u.length - 1);
+            }
+            url = url + u;
+        }
+
+
+        // 发送
+        let http = new XMLHttpRequest();
+        http.open(type, host + url);
+        for (let key in header) {
+            if (header.hasOwnProperty(key)) {
+                http.setRequestHeader(key, header[key]);
+            }
+        }
+        if (sendData.data !== null) {
+            http.send(sendData.data);
+        } else {
+            http.send();
+        }
+
+        http.onreadystatechange = function () {
+            if (http.status === 200 && http.readyState === 4) {
+                s(http.response);
+            }
+        }
+    });
+}
