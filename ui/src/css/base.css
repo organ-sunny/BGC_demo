@@ -1,5 +1,6 @@
 @import "card.css";
 @import "scrollbar.css";
+@import "input.css";
 
 html, body, #main {
     width: 100%;
@@ -28,12 +29,12 @@ html, body, #main {
     font-size: 18px;
     font-weight: bold;
     color: #546E7A;
-}
+}.font {
+     font-size: 14px;
+     color: #303133;
+ }
 
-.font {
-    font-size: 14px;
-    color: #303133;
-}
+
 
 .panel {
     border: 1px #0000001f solid;

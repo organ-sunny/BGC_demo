@@ -38,24 +38,24 @@
                             <ep-table-item column="createdTime" title="创建时间"></ep-table-item>
                             <ep-table-item column="updatedBy" title="更新人"></ep-table-item>
                             <ep-table-item column="updatedTime" title="更新时间"></ep-table-item>
+                            <ep-table-item column="action" title="操作">
+                                <template slot-scope="props">
+                                    <ep-button @click.stop="popup.updateProject.open(props.row)" type="text" style="color: #E7963B;padding-left: 0;">编辑</ep-button>
+                                    <ep-button @click.stop="alterUtil.confirm('确认删除?').then(() => {
+                                        project.delete.idList = [];
+                                        project.delete.idList.push(props.row.id);
+                                        deleteProject().then(() => {
+                                            alterUtil.success('已删除');
+                                            getProject();
+                                        }).catch((m) => {
+                                            alterUtil.error(m);
+                                        });
+                                    })" type="text" style="color: #FF4D4F;">删除</ep-button>
+                                </template>
+                            </ep-table-item>
                         </ep-table>
                     </div>
                 </card>
-
-<!--                <card v-if="project.select !== null" head="模块" style="margin-top: 50px;">-->
-<!--                    <div>-->
-<!--                        <ep-button :size="baseConfig.size">新增模块</ep-button>-->
-<!--                    </div>-->
-
-<!--                    <ep-divider></ep-divider>-->
-
-<!--                    <div>-->
-<!--                        <ep-table :size="baseConfig.size" :data="module.data" :height="500">-->
-<!--                            <ep-table-item column="moduleName" title="模块名"></ep-table-item>-->
-<!--                            <ep-table-item column="createdTime" title="创建时间"></ep-table-item>-->
-<!--                        </ep-table>-->
-<!--                    </div>-->
-<!--                </card>-->
             </div>
 
             <div v-if="tab === 'user'">
@@ -80,22 +80,62 @@
                 </div>
 
                 <div style="margin-top: 20px;">
-                    <ep-button :size="baseConfig.size" @click="popup.addProject.ok()" style="width: 100%;" type="primary">查询</ep-button>
+                    <ep-button :size="baseConfig.size" @click="popup.addProject.ok()" style="width: 100%;" type="primary">确定</ep-button>
                 </div>
             </div>
         </ep-modal>
 
         <!-- 模块弹框 -->
-        <ep-modal :title="popup.module.projectName" v-model="popup.module.show" width="800px">
+        <ep-modal :title="popup.module.projectName" v-model="popup.module.show" width="1000px">
             <div>
-                <div>
-                    <ep-button @click="popup.addModule.open()" :size="baseConfig.size">新增模块</ep-button>
+                <div style="display: flex;">
+                    <div>
+                        <ep-input v-model="module.query.moduleName" :size="baseConfig.size" placeholder="模块名"></ep-input>
+                    </div>
+                    <div style="margin-left: 20px;">
+                        <ep-button @click="getModule()" :size="baseConfig.size" type="primary">查询</ep-button>
+                    </div>
+                    <div style="margin-left: 10px;">
+                        <ep-button @click="popup.addModule.open()" :size="baseConfig.size">新增模块</ep-button>
+                    </div>
                 </div>
 
                 <div style="margin-top: 20px;">
                     <ep-table :size="baseConfig.size" :data="module.data" :height="500">
-                        <ep-table-item column="moduleName" title="模块名"></ep-table-item>
+                        <ep-table-item column="moduleName" title="模块名">
+                            <template slot-scope="props">
+                                <div class="noBorder">
+                                    <ep-input @blur="(i) => {
+                                        let newData = i.path[0].value;
+                                        if (newData === props.row.moduleName) {
+                                            return;
+                                        }
+
+                                        module.selectModuleId = props.row.id;
+                                        props.row.moduleName = newData;
+                                        variableUtil.extend(module.update, props.row);
+                                        updateModule().then(() => {
+                                            getModule();
+                                        });
+                                    }" :size="baseConfig.size" :value="props.row.moduleName"></ep-input>
+                                </div>
+                            </template>
+                        </ep-table-item>
+                        <ep-table-item column="creator" title="创建人"></ep-table-item>
                         <ep-table-item column="createdTime" title="创建时间"></ep-table-item>
+                        <ep-table-item column="updatedBy" title="更新人"></ep-table-item>
+                        <ep-table-item column="updatedTime" title="更新时间"></ep-table-item>
+                        <ep-table-item column="action" title="操作">
+                            <template slot-scope="props">
+                                <ep-button @click="() => {
+                                    module.delete = [];
+                                    module.delete.push(props.row.id);
+                                    deleteModule().then(() => {
+                                        getModule();
+                                    });
+                                }" type="text" style="color: #FF4D4F;padding-left: 0;">删除</ep-button>
+                            </template>
+                        </ep-table-item>
                     </ep-table>
                 </div>
             </div>
@@ -115,6 +155,24 @@
 
                 <div style="margin-top: 20px;">
                     <ep-button @click="popup.addModule.ok()" :size="baseConfig.size" style="width: 100%;" type="primary">确定</ep-button>
+                </div>
+            </div>
+        </ep-modal>
+
+        <!-- 编辑项目弹框 -->
+        <ep-modal title="编辑" v-model="popup.updateProject.show" width="300px">
+            <div>
+                <div style="display: flex;">
+                    <div style="width: 70px;display: flex;align-items: center;">
+                        项目名
+                    </div>
+                    <div style="width: 100%;">
+                        <ep-input :size="baseConfig.size" v-model="project.update.objectSystem"></ep-input>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <ep-button @click="popup.updateProject.ok()" :size="baseConfig.size" style="width: 100%;" type="primary">确定</ep-button>
                 </div>
             </div>
         </ep-modal>
@@ -139,12 +197,24 @@
                 tab: "project",
 
                 project: {
+                    // 当前选择的项目
+                    selectProjectId: null,
+
                     query: {
                         objectSystem: ""
                     },
 
                     add: {
                         objectSystem: ""
+                    },
+
+                    update: {
+                        id: 0,
+                        objectSystem: ""
+                    },
+
+                    delete: {
+                        idList: []
                     },
 
                     data: []
@@ -152,12 +222,22 @@
 
                 // 模块数据
                 module: {
+                    // 当前选择的模块
+                    selectModuleId: null,
+
                     query: {
                         objsystemId: null,
+                        moduleName: ""
                     },
 
                     add: {
                         objsystemId: "",
+                        moduleName: ""
+                    },
+
+                    delete: [],
+
+                    update: {
                         moduleName: ""
                     },
 
@@ -188,6 +268,26 @@
                             current.addProject().then(() => {
                                 alterUtil.success("完成");
                                 current.init();
+                                this.show = false;
+                            }).catch((m) => {
+                                alterUtil.error(m);
+                            });
+                        }
+                    },
+
+                    updateProject: {
+                        show: false,
+
+                        open(data) {
+                            variableUtil.extend(current.project.update, data);
+                            this.show = true;
+                        },
+
+                        ok() {
+                            current.updateProject().then(() => {
+                                alterUtil.success("完成");
+                                current.getProject();
+                                this.show = false;
                             }).catch((m) => {
                                 alterUtil.error(m);
                             });
@@ -203,6 +303,8 @@
                             this.show = true;
                             this.projectName = projectName;
                             current.module.query.objsystemId = projectId;
+                            current.module.query.moduleName = "";
+                            current.project.selectProjectId = projectId;
                             current.getModule();
                         }
                     },
@@ -219,6 +321,7 @@
                             current.addModule().then(() => {
                                 alterUtil.success("完成");
                                 current.getModule();
+                                this.show = false;
                             }).catch((m) => {
                                 alterUtil.error(m);
                             });
@@ -226,7 +329,9 @@
                     }
                 },
 
-                baseConfig
+                baseConfig,
+                alterUtil,
+                variableUtil
             };
         },
 
@@ -257,6 +362,30 @@
 
             async addModule() {
                 return await objectModuleApi.add(this.module.add).catch((m) => {
+                    return Promise.reject(m);
+                });
+            },
+
+            async updateProject() {
+                return await objectSystemApi.update(this.project.update.id, this.project.update).catch((m) => {
+                    return Promise.reject(m);
+                });
+            },
+
+            async deleteProject() {
+                return await objectSystemApi.delete(this.project.delete.idList).catch((m) => {
+                    return Promise.reject(m);
+                });
+            },
+
+            async deleteModule() {
+                return await objectModuleApi.delete(this.module.delete).catch((m) => {
+                    return Promise.reject(m);
+                });
+            },
+
+            async updateModule() {
+                return await objectModuleApi.update(this.module.selectModuleId, this.module.update).catch((m) => {
                     return Promise.reject(m);
                 });
             }

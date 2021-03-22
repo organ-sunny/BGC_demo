@@ -10,8 +10,25 @@ export default {
             header: baseApi.getHeader(),
             urlData,
             check: {
-                url: {
+                urlData: {
                     moduleId: ""
+                }
+            }
+        });
+    },
+
+    add(data) {
+        return baseApi.send({
+            url: `${u}`,
+            type: "POST",
+            header: baseApi.getHeader(),
+            data,
+            check: {
+                data: {
+                    moduleId: "",
+                    apiName: "",
+                    apiAddress: "",
+                    apiMethod: ""
                 }
             }
         });

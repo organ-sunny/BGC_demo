@@ -10,8 +10,9 @@ export default {
             header: baseApi.getHeader(),
             urlData: urlData,
             check: {
-                url: {
-                    objsystemId: ""
+                urlData: {
+                    objsystemId: "",
+                    moduleName: ""
                 }
             }
         });
@@ -26,6 +27,29 @@ export default {
             check: {
                 data: {
                     objsystemId: "",
+                    moduleName: ""
+                }
+            }
+        });
+    },
+
+    delete(data) {
+        return baseApi.send({
+            url: `${u}`,
+            type: "DELETE",
+            header: baseApi.getHeader(),
+            data: data
+        });
+    },
+
+    update(moduleId, data) {
+        return baseApi.send({
+            url: `${u}/${moduleId}`,
+            type: "PUT",
+            header: baseApi.getHeader(),
+            data: data,
+            check: {
+                data: {
                     moduleName: ""
                 }
             }

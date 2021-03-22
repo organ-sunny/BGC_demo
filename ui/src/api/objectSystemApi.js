@@ -10,7 +10,7 @@ export default {
             urlData: urlData,
             header: baseApi.getHeader(),
             check: {
-                url: {
+                urlData: {
                     objectSystem: ""
                 }
             }
@@ -28,6 +28,29 @@ export default {
                     objectSystem: ""
                 }
             }
+        });
+    },
+
+    update(id, data) {
+        return baseApi.send({
+            url: `${u}/${id}`,
+            type: "put",
+            header: baseApi.getHeader(),
+            data: data,
+            check: {
+                data: {
+                    objectSystem: ""
+                }
+            }
+        });
+    },
+
+    delete(data) {
+        return baseApi.send({
+            url: `${u}`,
+            type: "DELETE",
+            header: baseApi.getHeader(),
+            data: data
         });
     }
 };

@@ -68,7 +68,7 @@ function _send(option) {
         if (isEmpty(check)) {
             check = {};
         }
-        let urlCheck = check.url,
+        let urlCheck = check.urlData,
             dataCheck = check.data;
 
         let sendData = {
@@ -82,7 +82,10 @@ function _send(option) {
                 sendData.url = {};
                 for (let key in urlCheck) {
                     if (urlCheck.hasOwnProperty(key)) {
-                        sendData.url[key] = urlData[key];
+                        let v = urlData[key];
+                        if (!isEmpty(v)) {
+                            sendData.url[key] = v;
+                        }
                     }
                 }
             }
@@ -97,7 +100,10 @@ function _send(option) {
                 sendData.data = {};
                 for (let key in dataCheck) {
                     if (dataCheck.hasOwnProperty(key)) {
-                        sendData.data[key] = data[key];
+                        let v = data[key];
+                        if (!isEmpty(v)) {
+                            sendData.data[key] = v;
+                        }
                     }
                 }
             }
@@ -127,7 +133,7 @@ function _send(option) {
             }
             sendData.data = formData;
         } else {
-            if (type === "POST") {
+            if (type !== "GET") {
                 header["content-type"] = "application/json";
             }
             if (sendData.data !== null) {
