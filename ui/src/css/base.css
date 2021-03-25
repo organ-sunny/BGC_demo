@@ -2,6 +2,7 @@
 @import "scrollbar.css";
 @import "input.css";
 @import "a.css";
+@import "panel.css";
 
 html, body, #main {
     width: 100%;
@@ -35,14 +36,6 @@ html, body, #main {
 .font {
     font-size: 14px;
     color: #303133;
-}
-
-
-.panel {
-    border: 1px #0000001f solid;
-    padding: 20px;
-    border-radius: 5px;
-    background-color: white;
 }
 
 .ep-card-contents {

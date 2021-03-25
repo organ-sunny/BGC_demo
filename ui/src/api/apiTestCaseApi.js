@@ -3,12 +3,11 @@ import baseApi from "./baseApi.js";
 let u = "/apiTestCase";
 
 export default {
-    query(data) {
+    query(apiId) {
         return baseApi.send({
-            url: `${u}/query`,
-            type: "POST",
+            url: `${u}/${apiId}`,
+            type: "GET",
             header: baseApi.getHeader(),
-            data,
             check: {
                 urlData: {
                     apiId: ""
@@ -25,9 +24,9 @@ export default {
             data,
             check: {
                 data: {
-                    apiId: "",
-                    apiCaseName: "",
+                    objectApiId: "",
                     apiCaseNum: "",
+                    apiCaseName: "",
                     apiCaseDescription: "",
                     apiCaseRequestHeader: "",
                     apiCaseRequestParam: "",

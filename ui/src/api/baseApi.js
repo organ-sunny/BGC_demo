@@ -101,9 +101,10 @@ function _send(option) {
                 for (let key in dataCheck) {
                     if (dataCheck.hasOwnProperty(key)) {
                         let v = data[key];
-                        if (!isEmpty(v)) {
-                            sendData.data[key] = v;
+                        if (v === undefined) {
+                            v = dataCheck[key];
                         }
+                        sendData.data[key] = v;
                     }
                 }
             }

@@ -12,5 +12,27 @@ export default {
                 }
             }
         }
+    },
+
+    // 数据还原
+    reset(data) {
+        for (let key in data) {
+            if (data.hasOwnProperty(key)) {
+                let value = data[key];
+                if (this.IsTypeof(value, String)) {
+                    data[key] = "";
+                }
+                if (this.IsTypeof(value, Array)) {
+                    data[key] = [];
+                }
+            }
+        }
+    },
+
+    IsTypeof(data, type) {
+        if (type === String) {
+            return typeof data === "string";
+        }
+        return data instanceof type;
     }
 };
