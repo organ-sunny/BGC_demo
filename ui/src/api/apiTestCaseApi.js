@@ -37,5 +37,37 @@ export default {
                 }
             }
         });
+    },
+
+    update(id, data) {
+        return baseApi.send({
+            url: `${u}/${id}`,
+            type: "PUT",
+            header: baseApi.getHeader(),
+            data,
+            check: {
+                data: {
+                    objectApiId: "",
+                    apiCaseNum: "",
+                    apiCaseName: "",
+                    apiCaseDescription: "",
+                    apiCaseRequestHeader: "",
+                    apiCaseRequestParam: "",
+                    apiCaseExpectedResult: "",
+                    apiCaseActualResult: "",
+                    isPassed: "",
+                    apiCaseRemark: ""
+                }
+            }
+        });
+    },
+
+    delete(idList) {
+        return baseApi.send({
+            url: `${u}`,
+            type: "DELETE",
+            header: baseApi.getHeader(),
+            data: idList
+        });
     }
 };

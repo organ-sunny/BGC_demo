@@ -189,7 +189,16 @@
                                     <template slot-scope="props">
                                         <div style="display: flex;">
                                             <ep-button @click="addTestcasePopup.open(props.row)" type="text">编辑</ep-button>
-                                            <ep-button type="text" style="color: #FF4D4F;">删除</ep-button>
+                                            <ep-button @click="() => {
+                                                alterUtil.confirm('确定删除？').then(() => {
+                                                    apiCase.delete.idList = [];
+                                                    apiCase.delete.idList.push(props.row.id);
+                                                    deleteTestcase().then(() => {
+                                                        alterUtil.success('删除成功');
+                                                        getTestcase();
+                                                    });
+                                                }).catch(() => {});
+                                            }" type="text" style="color: #FF4D4F;">删除</ep-button>
                                         </div>
                                     </template>
                                 </ep-table-item>
@@ -314,179 +323,197 @@
         </ep-modal>
 
         <!-- 新增用例弹框 -->
-        <ep-modal title="新增用例" width="1000px" v-model="addTestcasePopup.show" :wrap-close="false">
+        <ep-modal :title="(addTestcasePopup.isAdd ? '新增' : '编辑') + '用例'" width="1000px" v-model="addTestcasePopup.show" :wrap-close="false">
             <div style="max-height: 700px;overflow: auto;padding: 10px;" class="scrollbar">
                 <div style="display: flex;">
                     <card head="api信息" style="padding-right: 10px;width: 50%;">
-                        <div class="bgc_panel">
-                            <div class="apiInfo">
-                                <div>
-                                    名称
-                                </div>
-                                <div>
-                                    {{selectApi.apiName}}
-                                </div>
+                        <div class="apiInfo">
+                            <div>
+                                名称
                             </div>
-
-                            <div class="apiInfo" style="margin-top: 10px;">
-                                <div>
-                                    接口地址
-                                </div>
-                                <div>
-                                    {{selectApi.apiAddress}}
-                                </div>
+                            <div>
+                                {{selectApi.apiName}}
                             </div>
+                        </div>
 
-                            <div class="apiInfo" style="margin-top: 10px;">
-                                <div>
-                                    请求方式
-                                </div>
-                                <div>
-                                    {{selectApi.apiMethod}}
-                                </div>
+                        <div class="apiInfo" style="margin-top: 10px;">
+                            <div>
+                                接口地址
+                            </div>
+                            <div>
+                                {{selectApi.apiAddress}}
+                            </div>
+                        </div>
+
+                        <div class="apiInfo" style="margin-top: 10px;">
+                            <div>
+                                请求方式
+                            </div>
+                            <div>
+                                {{selectApi.apiMethod}}
                             </div>
                         </div>
                     </card>
 
                     <card head="基本信息" style="padding-left: 10px;width: 50%;">
-                        <div class="bgc_panel">
-                            <div style="display: flex;">
-                                <div style="white-space: nowrap;display: flex;align-items: center;">
-                                    用例编号
-                                </div>
-                                <div style="width: 100%;margin-left: 10px;">
-                                    <ep-input v-model="apiCase.add.apiCaseNum" :size="baseConfig.size" style="width: 100%;"></ep-input>
-                                </div>
+                        <div style="display: flex;">
+                            <div style="white-space: nowrap;display: flex;align-items: center;">
+                                用例编号
                             </div>
-
-                            <div style="display: flex;margin-top: 20px;">
-                                <div style="white-space: nowrap;display: flex;align-items: center;">
-                                    用例名称
-                                </div>
-                                <div style="width: 100%;padding-left: 10px;">
-                                    <ep-input v-model="apiCase.add.apiCaseName" :size="baseConfig.size" style="width: 100%;"></ep-input>
-                                </div>
+                            <div style="width: 100%;margin-left: 10px;">
+                                <ep-input v-model="apiCase.add.apiCaseNum" :size="baseConfig.size" style="width: 100%;"></ep-input>
                             </div>
+                        </div>
 
-                            <div style="margin-top: 20px;display: flex;">
-                                <div style="white-space: nowrap;display: flex;align-items: center;">
-                                    用例描述
-                                </div>
-                                <div style="width: 100%;padding-left: 10px;">
-                                    <ep-input v-model="apiCase.add.apiCaseDescription" :size="baseConfig.size" style="width: 100%;"></ep-input>
-                                </div>
+                        <div style="display: flex;margin-top: 20px;">
+                            <div style="white-space: nowrap;display: flex;align-items: center;">
+                                用例名称
+                            </div>
+                            <div style="width: 100%;padding-left: 10px;">
+                                <ep-input v-model="apiCase.add.apiCaseName" :size="baseConfig.size" style="width: 100%;"></ep-input>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;display: flex;">
+                            <div style="white-space: nowrap;display: flex;align-items: center;">
+                                用例描述
+                            </div>
+                            <div style="width: 100%;padding-left: 10px;">
+                                <ep-input v-model="apiCase.add.apiCaseDescription" :size="baseConfig.size" style="width: 100%;"></ep-input>
                             </div>
                         </div>
                     </card>
                 </div>
 
-                <ep-divider></ep-divider>
-
-                <card head="请求参数">
-                    <div class="bgc_panel" style="padding: 2px;">
-                        <ep-tabs>
-                            <ep-tab-item name="header" label="请求头">
-                                <div v-for="(item, key) in addTestcasePopup.requestData.headers" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
-                                    <div style="width: 45%;padding-right: 10px;">
-                                        <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
-                                    </div>
-                                    <div style="width: 45%;padding: 0 10px;">
-                                        <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
-                                    </div>
-                                    <div style="width: 10%;">
-                                        <ep-button @click="() => {
+                <card head="请求参数" style="margin-top: 50px;">
+                    <ep-tabs>
+                        <ep-tab-item name="header" label="请求头">
+                            <div v-for="(item, key) in addTestcasePopup.requestData.headers" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
+                                <div style="width: 45%;padding-right: 10px;">
+                                    <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
+                                </div>
+                                <div style="width: 45%;padding: 0 10px;">
+                                    <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
+                                </div>
+                                <div style="width: 10%;">
+                                    <ep-button @click="() => {
                                             for (let i = 0; i < addTestcasePopup.requestData.headers.length; i++) {
                                                 if (key === i) {
                                                     addTestcasePopup.requestData.headers.splice(i, 1);
                                                 }
                                             }
                                         }" style="width: 100%;" :size="baseConfig.size">删除</ep-button>
-                                    </div>
                                 </div>
+                            </div>
 
-                                <div style="margin-top: 10px;overflow: hidden;">
-                                    <ep-button @click="() => {
+                            <div style="margin-top: 10px;overflow: hidden;">
+                                <ep-button @click="() => {
                                         addTestcasePopup.requestData.headers.push({
                                             key: '',
                                             value: ''
                                         });
                                     }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
+                            </div>
+                        </ep-tab-item>
+                        <ep-tab-item name="params" label="params">
+                            <div v-for="(item, key) in addTestcasePopup.requestData.params" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
+                                <div style="width: 45%;padding-right: 10px;">
+                                    <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
                                 </div>
-                            </ep-tab-item>
-                            <ep-tab-item name="params" label="params">
-                                <div v-for="(item, key) in addTestcasePopup.requestData.params" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
-                                    <div style="width: 45%;padding-right: 10px;">
-                                        <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
-                                    </div>
-                                    <div style="width: 45%;padding: 0 10px;">
-                                        <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
-                                    </div>
-                                    <div style="width: 10%;">
-                                        <ep-button @click="() => {
+                                <div style="width: 45%;padding: 0 10px;">
+                                    <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
+                                </div>
+                                <div style="width: 10%;">
+                                    <ep-button @click="() => {
                                             for (let i = 0; i < addTestcasePopup.requestData.params.length; i++) {
                                                 if (key === i) {
                                                     addTestcasePopup.requestData.params.splice(i, 1);
                                                 }
                                             }
                                         }" style="width: 100%;" :size="baseConfig.size">删除</ep-button>
-                                    </div>
                                 </div>
+                            </div>
 
-                                <div style="margin-top: 10px;overflow: hidden;">
-                                    <ep-button @click="() => {
+                            <div style="margin-top: 10px;overflow: hidden;">
+                                <ep-button @click="() => {
                                         addTestcasePopup.requestData.params.push({
                                             key: '',
                                             value: ''
                                         });
                                     }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
-                                </div>
-                            </ep-tab-item>
-                            <ep-tab-item name="body" label="body">
-                                <ep-input type="textarea" v-model="addTestcasePopup.requestData.body"></ep-input>
-                            </ep-tab-item>
-                        </ep-tabs>
-                    </div>
+                            </div>
+                        </ep-tab-item>
+                        <ep-tab-item name="body" label="body">
+                            <ep-input type="textarea" v-model="addTestcasePopup.requestData.body"></ep-input>
+                        </ep-tab-item>
+                    </ep-tabs>
                 </card>
 
-                <card head="预期结果" style="margin-top: 30px;">
-                    <div class="bgc_panel">
-                        <div v-for="(item, key) in addTestcasePopup.expectedResult" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
-                            <div style="width: 45%;padding-right: 10px;">
-                                <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
-                            </div>
-                            <div style="width: 45%;padding: 0 10px;">
-                                <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
-                            </div>
-                            <div style="width: 10%;">
-                                <ep-button @click="() => {
+                <card head="预期响应" style="margin-top: 50px;">
+                    <div v-for="(item, key) in addTestcasePopup.expectedResult" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
+                        <div style="width: 45%;padding-right: 10px;">
+                            <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
+                        </div>
+                        <div style="width: 45%;padding: 0 10px;">
+                            <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
+                        </div>
+                        <div style="width: 10%;">
+                            <ep-button @click="() => {
                                             for (let i = 0; i < addTestcasePopup.expectedResult.length; i++) {
                                                 if (key === i) {
                                                     addTestcasePopup.expectedResult.splice(i, 1);
                                                 }
                                             }
                                         }" style="width: 100%;" :size="baseConfig.size">删除</ep-button>
-                            </div>
                         </div>
+                    </div>
 
-                        <div style="margin-top: 10px;overflow: hidden;">
-                            <ep-button @click="() => {
+                    <div style="margin-top: 10px;overflow: hidden;">
+                        <ep-button @click="() => {
                                         addTestcasePopup.expectedResult.push({
                                             key: '',
                                             value: ''
                                         });
                                     }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
-                        </div>
                     </div>
                 </card>
 
-                <ep-divider></ep-divider>
+                <card head="实际响应" style="margin-top: 50px;">
+                    <div v-if="!addTestcasePopup.isAdd">
+                        <ep-alert v-if="apiCase.add.isPassed === 'Pass'" title="PASS" type="success" :closable="false"></ep-alert>
 
-                <card head="实际结果">
-                    <ep-input type="textarea" v-model="apiCase.add.apiCaseActualResult"></ep-input>
-                </card>
+                        <ep-alert v-else-if="apiCase.add.isPassed === 'Failed'" title="FAIL" type="error" :closable="false"></ep-alert>
 
-                <card head="备注" style="margin-top: 30px;">
-                    <ep-input type="textarea" v-model="apiCase.add.apiCaseRemark"></ep-input>
+                        <ep-alert v-else title="未执行" type="info" :closable="false"></ep-alert>
+                    </div>
+
+                    <div v-if="addTestcasePopup.isAdd" style="display: flex;">
+                        <div style="display: flex;align-items: center;">
+                            是否通过
+                        </div>
+                        <ep-select :size="baseConfig.size" placeholder="请选择" style="margin-left: 10px;" v-model="apiCase.add.isPassed">
+                            <ep-select-item index="Pass" label="PASS"></ep-select-item>
+                            <ep-select-item index="Failed" label="FAIL"></ep-select-item>
+                        </ep-select>
+                    </div>
+
+                    <div style="display: flex;margin-top: 10px;">
+                        <div style="white-space: nowrap;">
+                            响应体&emsp;
+                        </div>
+                        <div style="width: 100%;margin-left: 10px;">
+                            <ep-input :disabled="!addTestcasePopup.isAdd" type="textarea" v-model="apiCase.add.apiCaseActualResult"></ep-input>
+                        </div>
+                    </div>
+
+                    <div style="display: flex;margin-top: 10px;">
+                        <div style="white-space: nowrap;">
+                            备注&emsp;&emsp;
+                        </div>
+                        <div style="width: 100%;margin-left: 10px;">
+                            <ep-input :disabled="!addTestcasePopup.isAdd" type="textarea" v-model="apiCase.add.apiCaseRemark"></ep-input>
+                        </div>
+                    </div>
                 </card>
 
                 <div style="margin-top: 30px;display: flex;flex-direction: row-reverse;">
@@ -578,6 +605,7 @@ export default {
             apiCase: {
                 // 添加
                 add: {
+                    id: "",
                     objectApiId: "",
                     apiCaseNum: "",
                     apiCaseName: "",
@@ -588,6 +616,11 @@ export default {
                     apiCaseActualResult: "",
                     isPassed: "",
                     apiCaseRemark: ""
+                },
+
+                // 删除
+                delete: {
+                    idList: []
                 },
 
                 data: []
@@ -621,6 +654,9 @@ export default {
             addTestcasePopup: {
                 show: false,
 
+                // 是否是新增
+                isAdd: true,
+
                 // 用例数据
                 testcase: {},
 
@@ -638,16 +674,67 @@ export default {
                     this.show = true;
 
                     // 数据还原
+                    this.isAdd = true;
                     variableUtil.reset(current.apiCase.add);
                     variableUtil.reset(this.requestData);
                     this.expectedResult = [];
 
                     current.apiCase.add.objectApiId = current.selectApi.id;
-                    if (variableUtil.isEmpty(testcase)) {
-                        testcase = {};
+                    if (!variableUtil.isEmpty(testcase)) {
+                        this.testcase = testcase;
+                        this.isAdd = false;
+                        variableUtil.extend(current.apiCase.add, this.testcase);
+
+                        // 装配请求头
+                        if (!variableUtil.isEmpty(testcase.apiCaseRequestHeader)) {
+                            let headerJson = JSON.parse(testcase.apiCaseRequestHeader);
+                            for (let key in headerJson) {
+                                if (headerJson.hasOwnProperty(key)) {
+                                    this.requestData.headers.push({
+                                        key: key,
+                                        value: headerJson[key]
+                                    });
+                                }
+                            }
+                        }
+
+                        // 装配请求参数
+                        if (!variableUtil.isEmpty(testcase.apiCaseRequestParam)) {
+                            let apiCaseRequestParamJson = JSON.parse(testcase.apiCaseRequestParam);
+                            for (let item of apiCaseRequestParamJson) {
+                                if (item.type === "params") {
+                                    let content = item.content;
+                                    if (!variableUtil.isEmpty(content)) {
+                                        let contentJson = JSON.parse(content);
+                                        for (let key in contentJson) {
+                                            if (contentJson.hasOwnProperty(key)) {
+                                                this.requestData.params.push({
+                                                    key: key,
+                                                    value: contentJson[key]
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                                if (item.type === "body") {
+                                    this.requestData.body = item.content;
+                                }
+                            }
+                        }
+
+                        // 装配预期结果
+                        if (!variableUtil.isEmpty(testcase.apiCaseExpectedResult)) {
+                            let apiCaseExpectedResultJson = JSON.parse(testcase.apiCaseExpectedResult);
+                            for (let key in apiCaseExpectedResultJson) {
+                                if (apiCaseExpectedResultJson.hasOwnProperty(key)) {
+                                    this.expectedResult.push({
+                                       key: key,
+                                        value: apiCaseExpectedResultJson[key]
+                                    });
+                                }
+                            }
+                        }
                     }
-                    this.testcase = testcase;
-                    variableUtil.extend(current.apiCase.add, this.testcase);
                 },
 
                 ok() {
@@ -703,12 +790,21 @@ export default {
                     }
                     current.apiCase.add.apiCaseExpectedResult = expectedResult;
 
-                    current.addTestcase().then(() => {
-                        alterUtil.success("成功");
-                        current.getTestcase();
-                    }).catch((m) => {
-                        alterUtil.error(m);
-                    });
+                    if (this.isAdd) {
+                        current.addTestcase().then(() => {
+                            alterUtil.success("成功");
+                            current.getTestcase();
+                        }).catch((m) => {
+                            alterUtil.error(m);
+                        });
+                    } else {
+                        current.updateTestcase().then(() => {
+                            alterUtil.success("成功");
+                            current.getTestcase();
+                        }).catch((m) => {
+                            alterUtil.error(m);
+                        });
+                    }
                 }
             },
 
@@ -797,6 +893,20 @@ export default {
         // 新增用例
         async addTestcase() {
             return await apiTestCaseApi.add(this.apiCase.add).catch((m) => {
+                return Promise.reject(m);
+            });
+        },
+
+        // 编辑用例
+        async updateTestcase() {
+            return await apiTestCaseApi.update(this.apiCase.add.id, this.apiCase.add).catch((m) => {
+                return Promise.reject(m);
+            });
+        },
+
+        // 删除用例
+        async deleteTestcase() {
+            return await apiTestCaseApi.delete(this.apiCase.delete.idList).catch((m) => {
                 return Promise.reject(m);
             });
         }
