@@ -69,5 +69,14 @@ export default {
             header: baseApi.getHeader(),
             data: idList
         });
+    },
+
+    run(idList) {
+        return baseApi.send({
+            url: `${u}/runApiCase`,
+            type: "POST",
+            header: baseApi.getHeader(),
+            data: idList
+        });
     }
 };

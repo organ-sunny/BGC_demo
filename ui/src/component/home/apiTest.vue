@@ -1,5 +1,5 @@
 <template>
-    <div @click="isSelectProject = false" style="width: 100%;height: 100%;display: flex;">
+    <div v-loading="loading" @click="isSelectProject = false" style="width: 100%;height: 100%;display: flex;">
         <!-- 左侧 -->
         <div style="width: 13%;border-right: 1px solid #DCDFE6;overflow: auto;" class="scrollbar">
             <!-- 项目选择 -->
@@ -73,19 +73,105 @@
         </div>
 
         <!-- 右侧 -->
-        <div style="width: 87%;padding: 20px;">
+        <div style="width: 87%;padding: 20px;overflow: auto;" class="scrollbar">
             <!-- module -->
             <div v-if="tab === 'module'">
                 <div>
-                    <card :head="module.select.moduleName">
-                        <div>
-                            <ep-button @click="addApiPopup.open()" :size="baseConfig.size" type="info">新增api</ep-button>
-                        </div>
+                    <card head="API管理">
+                        <div class="bgc_panel">
+                            <div>
+                                <ep-button @click="addApiPopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
+                                <ep-button @click="() => {
+                                    alterUtil.confirm().then(() => {
+                                        deleteApi().then(() => {
+                                            getApi();
+                                            alterUtil.success('删除成功');
+                                        });
+                                    }).catch(() => {});
+                                }" :size="baseConfig.size" type="danger">删除</ep-button>
+                            </div>
 
-                        <div style="margin-top: 20px;">
-                            <ep-table :size="baseConfig.size" :data="api.data" :height="500">
+                            <ep-table @selection-change="(allData) => {
+                                api.delete.idList = [];
+                                for (let i = 0 ; i < allData.length; i++) {
+                                    api.delete.idList.push(allData[i].id);
+                                }
+                            }" style="margin-top: 10px;" :size="baseConfig.size" :data="api.data">
+                                <ep-table-item type="expand">
+                                    <template slot-scope="props">
+                                        <div style="padding: 20px;">
+                                            <div style="display: flex;">
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        创建人:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.creator}}
+                                                    </span>
+                                                </div>
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        创建时间:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.createdTime}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex;margin-top: 10px;">
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        更新人:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.updatedBy}}
+                                                    </span>
+                                                </div>
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        更新时间:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.updatedTime}}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div style="margin-top: 20px;display: flex;">
+                                                <div style="width: 50%;display: flex;align-items: center;" class="smallFont">
+                                                    用例数：<span style="color: #2296F3;text-decoration: underline;margin-left: 10px;cursor: pointer;">{{props.row._testcaseRunResult.num}}</span>
+                                                </div>
+                                                <div style="width: 50%;display: flex;">
+                                                    <div>
+                                                        <div>
+                                                            <ep-progress type="circle" :percentage="props.row._testcaseRunResult.execution"></ep-progress>
+                                                        </div>
+                                                        <div class="center smallFont" style="margin-top: 10px;">
+                                                            执行率
+                                                        </div>
+                                                    </div>
+                                                    <div style="margin-left: 10px;">
+                                                        <div>
+                                                            <ep-progress type="circle" :percentage="props.row._testcaseRunResult.pass" :status="props.row._testcaseRunResult.pass === 100 ? 'success': ''"></ep-progress>
+                                                        </div>
+                                                        <div class="center smallFont" style="margin-top: 10px;">
+                                                            通过率
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </ep-table-item>
+                                <ep-table-item type="select"></ep-table-item>
                                 <ep-table-item column="apiName" title="api名称"></ep-table-item>
-                                <ep-table-item column="apiAddress" title="请求地址"></ep-table-item>
+                                <ep-table-item column="apiAddress" title="请求地址">
+                                    <template slot-scope="props">
+                                        <div style="color: #2296F3;text-decoration: underline;cursor: pointer;">
+                                            {{props.row.apiAddress}}
+                                        </div>
+                                    </template>
+                                </ep-table-item>
                                 <ep-table-item column="apiMethod" title="请求方式">
                                     <template slot-scope="props">
                                         <ep-tag v-if="props.row.apiMethod === 'GET'" type="success" size="small">
@@ -102,26 +188,12 @@
                                         </ep-tag>
                                     </template>
                                 </ep-table-item>
-                                <ep-table-item column="createdTime" title="创建时间"></ep-table-item>
-                                <ep-table-item column="creator" title="创建人"></ep-table-item>
-                                <ep-table-item column="updatedTime" title="更新时间"></ep-table-item>
-                                <ep-table-item column="updatedBy" title="更新人"></ep-table-item>
                                 <ep-table-item column="action" title="操作">
                                     <template slot-scope="props">
                                         <ep-button @click="() => {
                                             updateApiPopup.show = true;
                                             variableUtil.extend(api.update, props.row);
-                                        }" :size="baseConfig.size">编辑</ep-button>
-                                        <ep-button @click="() => {
-                                            alterUtil.confirm('确认删除？').then(() => {
-                                                api.delete.idList = [];
-                                                api.delete.idList.push(props.row.id);
-                                                deleteApi().then(() => {
-                                                    alterUtil.success('成功');
-                                                    getApi();
-                                                });
-                                            }).catch(() => {});
-                                        }" :size="baseConfig.size" type="danger">删除</ep-button>
+                                        }" :size="baseConfig.size" type="text">编辑</ep-button>
                                     </template>
                                 </ep-table-item>
                             </ep-table>
@@ -132,7 +204,7 @@
 
             <!-- api -->
             <div v-if="tab === 'api'">
-                <card head="api信息">
+                <card head="API">
                     <div class="bgc_panel">
                         <div class="apiInfo">
                             <div>
@@ -147,7 +219,7 @@
                             <div>
                                 接口地址
                             </div>
-                            <div>
+                            <div style="text-decoration: underline;color: #2296F3;">
                                 {{selectApi.apiAddress}}
                             </div>
                         </div>
@@ -157,48 +229,122 @@
                                 请求方式
                             </div>
                             <div>
-                                {{selectApi.apiMethod}}
+                                <ep-tag v-if="selectApi.apiMethod === 'GET'" type="success" size="small">
+                                    GET
+                                </ep-tag>
+                                <ep-tag v-if="selectApi.apiMethod === 'POST'" type="primary" size="small">
+                                    POST
+                                </ep-tag>
+                                <ep-tag v-if="selectApi.apiMethod === 'PUT'" type="warning" size="small">
+                                    PUT
+                                </ep-tag>
+                                <ep-tag v-if="selectApi.apiMethod === 'DELETE'" type="danger" size="small">
+                                    DELETE
+                                </ep-tag>
                             </div>
                         </div>
                     </div>
                 </card>
 
 
-                <card head="接口用例" style="margin-top: 50px;">
+                <card head="用例管理" style="margin-top: 50px;">
                     <div style="margin-top: 20px;" class="bgc_panel">
                         <div>
-                            <ep-button @click="addTestcasePopup.open()" :size="baseConfig.size">新增</ep-button>
+                            <ep-button @click="addTestcasePopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
+                            <ep-button :size="baseConfig.size" type="danger" @click="() => {
+                                alterUtil.confirm('确定删除？').then(() => {
+                                    deleteTestcase().then(() => {
+                                        getTestcase();
+                                        alterUtil.success('删除成功');
+                                    });
+                                }).catch(() => {});
+                            }">删除</ep-button>
+                            <ep-button :size="baseConfig.size" type="success">执行</ep-button>
                         </div>
 
                         <div style="margin-top: 20px;">
-                            <ep-table :size="baseConfig.size" :data="apiCase.data" :height="500">
+                            <ep-table :size="baseConfig.size" :data="apiCase.data" @selection-change="(allData) => {
+                                apiCase.delete.idList = [];
+                                for (let i = 0 ; i < allData.length; i++) {
+                                    apiCase.delete.idList.push(allData[i].id);
+                                }
+                            }">
+                                <ep-table-item type="expand">
+                                    <template slot-scope="props">
+<!--                                        <div class="bgc_panel" style="margin: 20px 0;">-->
+                                        <div style="padding: 20px;">
+                                            <ep-tabs>
+                                                <ep-tab-item name="params" label="params">
+                                                    <div v-for="(value, key, index) in props.row._param" :key="index" style="display: flex;overflow: hidden;margin-top: 10px;">
+                                                        <div style="width: 50%;padding-right: 10px;">
+                                                            <ep-input disabled :value="key" :size="baseConfig.size"></ep-input>
+                                                        </div>
+                                                        <div style="width: 50%;padding-left: 10px;">
+                                                            <ep-input disabled :value="value" :size="baseConfig.size"></ep-input>
+                                                        </div>
+                                                    </div>
+                                                </ep-tab-item>
+                                                <ep-tab-item name="header" label="header">
+                                                    <div v-for="(value, key, index) in props.row._header" :key="index" style="display: flex;overflow: hidden;margin-top: 10px;">
+                                                        <div style="width: 50%;padding-right: 10px;">
+                                                            <ep-input disabled :value="key" :size="baseConfig.size"></ep-input>
+                                                        </div>
+                                                        <div style="width: 50%;padding-left: 10px;">
+                                                            <ep-input disabled :value="value" :size="baseConfig.size"></ep-input>
+                                                        </div>
+                                                    </div>
+                                                </ep-tab-item>
+                                                <ep-tab-item name="body" label="body">
+                                                    <ep-input disabled type="textarea" :value="props.row._body"></ep-input>
+                                                </ep-tab-item>
+                                            </ep-tabs>
+
+                                            <div style="margin-top: 20px;" class="smallFont">
+                                                预期结果
+                                            </div>
+                                            <div style="margin-top: 10px;">
+                                                <div v-for="(value, key, index) in props.row._expectedResult" :key="index" style="display: flex;overflow: hidden;margin-top: 10px;">
+                                                    <div style="width: 50%;padding-right: 10px;">
+                                                        <ep-input disabled :value="key" :size="baseConfig.size"></ep-input>
+                                                    </div>
+                                                    <div style="width: 50%;padding-left: 10px;">
+                                                        <ep-input disabled :value="value" :size="baseConfig.size"></ep-input>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style="margin-top: 20px;" class="smallFont">
+                                                实际结果
+                                            </div>
+                                            <div style="margin-top: 10px;">
+                                                <ep-input disabled type="textarea" :value="props.row.apiCaseActualResult"></ep-input>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </ep-table-item>
+                                <ep-table-item type="select"></ep-table-item>
                                 <ep-table-item column="apiCaseNum" title="用例编号"></ep-table-item>
                                 <ep-table-item column="apiCaseName" title="用例名称"></ep-table-item>
                                 <ep-table-item column="apiCaseDescription" title="用例描述"></ep-table-item>
-                                <ep-table-item column="apiCaseRequestHeader" title="接口请求头"></ep-table-item>
-                                <ep-table-item column="apiCaseRequestParam" title="接口请求入参"></ep-table-item>
-                                <ep-table-item column="apiCaseExpectedResult" title="预期结果"></ep-table-item>
-                                <ep-table-item column="apiCaseActualResult" title="实际结果"></ep-table-item>
-                                <ep-table-item column="isPassed" title="是否通过"></ep-table-item>
+
+                                <ep-table-item column="isPassed" title="是否通过">
+                                    <template slot-scope="props">
+                                        <ep-tag v-if="props.row.isPassed === 'Pass'" type="success" size="small">
+                                            PASS
+                                        </ep-tag>
+                                        <ep-tag v-else-if="props.row.isPassed === 'Failed'" type="danger" size="small">
+                                            FAILED
+                                        </ep-tag>
+                                        <ep-tag v-else type="gray" size="small">
+                                            未执行
+                                        </ep-tag>
+                                    </template>
+                                </ep-table-item>
                                 <ep-table-item column="apiCaseRemark" title="备注"></ep-table-item>
-                                <ep-table-item column="createdTime" title="创建时间"></ep-table-item>
-                                <ep-table-item column="creator" title="创建人"></ep-table-item>
-                                <ep-table-item column="updatedTime" title="更新时间"></ep-table-item>
-                                <ep-table-item column="updatedBy" title="更新人"></ep-table-item>
                                 <ep-table-item column="action" title="操作">
                                     <template slot-scope="props">
                                         <div style="display: flex;">
                                             <ep-button @click="addTestcasePopup.open(props.row)" type="text">编辑</ep-button>
-                                            <ep-button @click="() => {
-                                                alterUtil.confirm('确定删除？').then(() => {
-                                                    apiCase.delete.idList = [];
-                                                    apiCase.delete.idList.push(props.row.id);
-                                                    deleteTestcase().then(() => {
-                                                        alterUtil.success('删除成功');
-                                                        getTestcase();
-                                                    });
-                                                }).catch(() => {});
-                                            }" type="text" style="color: #FF4D4F;">删除</ep-button>
                                         </div>
                                     </template>
                                 </ep-table-item>
@@ -387,34 +533,6 @@
 
                 <card head="请求参数" style="margin-top: 50px;">
                     <ep-tabs>
-                        <ep-tab-item name="header" label="请求头">
-                            <div v-for="(item, key) in addTestcasePopup.requestData.headers" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
-                                <div style="width: 45%;padding-right: 10px;">
-                                    <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
-                                </div>
-                                <div style="width: 45%;padding: 0 10px;">
-                                    <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
-                                </div>
-                                <div style="width: 10%;">
-                                    <ep-button @click="() => {
-                                            for (let i = 0; i < addTestcasePopup.requestData.headers.length; i++) {
-                                                if (key === i) {
-                                                    addTestcasePopup.requestData.headers.splice(i, 1);
-                                                }
-                                            }
-                                        }" style="width: 100%;" :size="baseConfig.size">删除</ep-button>
-                                </div>
-                            </div>
-
-                            <div style="margin-top: 10px;overflow: hidden;">
-                                <ep-button @click="() => {
-                                        addTestcasePopup.requestData.headers.push({
-                                            key: '',
-                                            value: ''
-                                        });
-                                    }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
-                            </div>
-                        </ep-tab-item>
                         <ep-tab-item name="params" label="params">
                             <div v-for="(item, key) in addTestcasePopup.requestData.params" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
                                 <div style="width: 45%;padding-right: 10px;">
@@ -443,13 +561,41 @@
                                     }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
                             </div>
                         </ep-tab-item>
+                        <ep-tab-item name="header" label="header">
+                            <div v-for="(item, key) in addTestcasePopup.requestData.headers" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
+                                <div style="width: 45%;padding-right: 10px;">
+                                    <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
+                                </div>
+                                <div style="width: 45%;padding: 0 10px;">
+                                    <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
+                                </div>
+                                <div style="width: 10%;">
+                                    <ep-button @click="() => {
+                                            for (let i = 0; i < addTestcasePopup.requestData.headers.length; i++) {
+                                                if (key === i) {
+                                                    addTestcasePopup.requestData.headers.splice(i, 1);
+                                                }
+                                            }
+                                        }" style="width: 100%;" :size="baseConfig.size">删除</ep-button>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 10px;overflow: hidden;">
+                                <ep-button @click="() => {
+                                        addTestcasePopup.requestData.headers.push({
+                                            key: '',
+                                            value: ''
+                                        });
+                                    }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
+                            </div>
+                        </ep-tab-item>
                         <ep-tab-item name="body" label="body">
                             <ep-input type="textarea" v-model="addTestcasePopup.requestData.body"></ep-input>
                         </ep-tab-item>
                     </ep-tabs>
                 </card>
 
-                <card head="预期响应" style="margin-top: 50px;">
+                <card head="预期结果" style="margin-top: 50px;">
                     <div v-for="(item, key) in addTestcasePopup.expectedResult" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
                         <div style="width: 45%;padding-right: 10px;">
                             <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
@@ -478,7 +624,7 @@
                     </div>
                 </card>
 
-                <card head="实际响应" style="margin-top: 50px;">
+                <card v-if="addTestcasePopup.isAdd" head="实际结果" style="margin-top: 50px;">
                     <div v-if="!addTestcasePopup.isAdd">
                         <ep-alert v-if="apiCase.add.isPassed === 'Pass'" title="PASS" type="success" :closable="false"></ep-alert>
 
@@ -542,6 +688,8 @@ export default {
         let current = this;
 
         return {
+            loading: false,
+
             // 是否显示选择项目下拉框
             isSelectProject: false,
 
@@ -603,7 +751,7 @@ export default {
 
             // apiCase
             apiCase: {
-                // 添加
+                // 添加 | 修改
                 add: {
                     id: "",
                     objectApiId: "",
@@ -623,6 +771,11 @@ export default {
                     idList: []
                 },
 
+                // 运行
+                run: {
+                    idList: []
+                },
+
                 data: []
             },
 
@@ -639,6 +792,7 @@ export default {
                         alterUtil.success("完成");
                         current.getApi();
                         current.moduleItemVue.getApi();
+                        this.show = false;
                     }).catch((m) => {
                         alterUtil.error(m);
                     });
@@ -785,8 +939,9 @@ export default {
                         }
                     }
                     expectedResult = JSON.stringify(expectedResult);
-                    if (requestData === "{}") {
-                        requestData = "";
+                    if (expectedResult === "{}") {
+                        alterUtil.error("预期结果不能为空");
+                        return;
                     }
                     current.apiCase.add.apiCaseExpectedResult = expectedResult;
 
@@ -794,6 +949,7 @@ export default {
                         current.addTestcase().then(() => {
                             alterUtil.success("成功");
                             current.getTestcase();
+                            this.show = false;
                         }).catch((m) => {
                             alterUtil.error(m);
                         });
@@ -801,6 +957,7 @@ export default {
                         current.updateTestcase().then(() => {
                             alterUtil.success("成功");
                             current.getTestcase();
+                            this.show = false;
                         }).catch((m) => {
                             alterUtil.error(m);
                         });
@@ -812,7 +969,9 @@ export default {
 
             baseConfig,
 
-            alterUtil
+            alterUtil,
+
+            window: window
         };
     },
 
@@ -842,7 +1001,10 @@ export default {
         getApi() {
             objectApiApi.query({
                 moduleId: this.module.select.id
-            }).then((data) => {
+            }).then(async (data) => {
+                for (let item of data) {
+                    await this._loadTestcaseRunResult(item);
+                }
                 this.api.data = data;
             });
         },
@@ -865,6 +1027,26 @@ export default {
 
         getTestcase() {
             apiTestCaseApi.query(this.selectApi.id).then((data) => {
+                for (let item of data) {
+                    item["_header"] = variableUtil.isEmpty(item.apiCaseRequestHeader) ? {} : JSON.parse(item.apiCaseRequestHeader);
+                    item["_param"] = {};
+                    item["_body"] = "";
+                    let params = variableUtil.isEmpty(item.apiCaseRequestParam) ? [] : JSON.parse(item.apiCaseRequestParam);
+                    for (let i of params) {
+                        let key = i.type;
+                        let content = i.content;
+                        if (variableUtil.isEmpty(content)) {
+                            continue;
+                        }
+                        if (key === "params") {
+                            item["_param"] = JSON.parse(content);
+                        }
+                        if (key === "body") {
+                            item["_body"] = content;
+                        }
+                    }
+                    item["_expectedResult"] = JSON.parse(item.apiCaseExpectedResult);
+                }
                 this.apiCase.data = data;
             });
         },
@@ -908,6 +1090,43 @@ export default {
         async deleteTestcase() {
             return await apiTestCaseApi.delete(this.apiCase.delete.idList).catch((m) => {
                 return Promise.reject(m);
+            });
+        },
+
+        // 执行用例
+        async runTestcase() {
+            return await apiTestCaseApi.run(this.apiCase.run.idList).catch((m) => {
+                return Promise.reject(m);
+            });
+        },
+
+        // 加载用例通过率
+        async _loadTestcaseRunResult(api) {
+            await apiTestCaseApi.query(api.id).then((data) => {
+                let size = data.length;
+                let execution = 0;
+                let pass = 0;
+                if (size !== 0) {
+                    let executionSize = 0;
+                    let passSize = 0;
+                    for (let i = 0; i < size; i++) {
+                        let isPass = data[i].isPassed;
+                        if (!variableUtil.isEmpty(isPass)) {
+                            executionSize = executionSize + 1;
+                            if (isPass === "Pass") {
+                                passSize = passSize + 1;
+                            }
+                        }
+                    }
+                    execution = parseInt(((executionSize / size) * 100).toFixed(2));
+                    pass = executionSize === 0 ? 0 : parseInt(((passSize / executionSize) * 100).toFixed(2));
+                    console.log(execution, pass);
+                }
+                api["_testcaseRunResult"] = {
+                    num: size,
+                    execution,
+                    pass
+                };
             });
         }
     },

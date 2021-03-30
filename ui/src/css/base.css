@@ -3,6 +3,7 @@
 @import "input.css";
 @import "a.css";
 @import "panel.css";
+@import "font.css";
 
 html, body, #main {
     width: 100%;
@@ -31,11 +32,6 @@ html, body, #main {
     font-size: 18px;
     font-weight: bold;
     color: #546E7A;
-}
-
-.font {
-    font-size: 14px;
-    color: #303133;
 }
 
 .ep-card-contents {
