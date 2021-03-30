@@ -99,7 +99,8 @@
                             }" style="margin-top: 10px;" :size="baseConfig.size" :data="api.data">
                                 <ep-table-item type="expand">
                                     <template slot-scope="props">
-                                        <div style="padding: 20px;">
+<!--                                        <div style="padding: 20px;">-->
+                                        <div style="margin: 20px 0;" class="bgc_panel">
                                             <div style="display: flex;">
                                                 <div style="width: 50%;">
                                                     <span class="smallFont">
@@ -271,8 +272,11 @@
                             }">
                                 <ep-table-item type="expand">
                                     <template slot-scope="props">
-<!--                                        <div class="bgc_panel" style="margin: 20px 0;">-->
-                                        <div style="padding: 20px;">
+                                        <div class="bgc_panel" style="margin: 20px 0;">
+<!--                                        <div style="padding: 20px;">-->
+                                            <div class="smallFont">
+                                                请求参数
+                                            </div>
                                             <ep-tabs>
                                                 <ep-tab-item name="params" label="params">
                                                     <div v-for="(value, key, index) in props.row._param" :key="index" style="display: flex;overflow: hidden;margin-top: 10px;">
@@ -319,6 +323,44 @@
                                             <div style="margin-top: 10px;">
                                                 <ep-input disabled type="textarea" :value="props.row.apiCaseActualResult"></ep-input>
                                             </div>
+
+                                            <div style="display: flex;margin-top: 20px;">
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        创建人:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.creator}}
+                                                    </span>
+                                                </div>
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        创建时间:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.createdTime}}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex;margin-top: 20px;">
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        更新人:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.updatedBy}}
+                                                    </span>
+                                                </div>
+                                                <div style="width: 50%;">
+                                                    <span class="smallFont">
+                                                        更新时间:
+                                                    </span>
+                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                        {{props.row.updatedTime}}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </template>
                                 </ep-table-item>
@@ -345,6 +387,7 @@
                                     <template slot-scope="props">
                                         <div style="display: flex;">
                                             <ep-button @click="addTestcasePopup.open(props.row)" type="text">编辑</ep-button>
+                                            <ep-button style="color: #E7963B;" type="text">调试</ep-button>
                                         </div>
                                     </template>
                                 </ep-table-item>
@@ -1120,7 +1163,6 @@ export default {
                     }
                     execution = parseInt(((executionSize / size) * 100).toFixed(2));
                     pass = executionSize === 0 ? 0 : parseInt(((passSize / executionSize) * 100).toFixed(2));
-                    console.log(execution, pass);
                 }
                 api["_testcaseRunResult"] = {
                     num: size,
