@@ -11,6 +11,7 @@ export default {
             urlData: urlData,
             check: {
                 urlData: {
+                    id: "",
                     objsystemId: "",
                     moduleName: ""
                 }

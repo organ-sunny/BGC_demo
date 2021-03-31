@@ -78,5 +78,14 @@ export default {
             header: baseApi.getHeader(),
             data: idList
         });
+    },
+
+    debug(data) {
+        return baseApi.send({
+            url: `${u}/debug`,
+            type: "POST",
+            header: baseApi.getHeader(),
+            data: data
+        });
     }
 };

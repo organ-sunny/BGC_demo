@@ -1,5 +1,4 @@
 import cookieUtil from "../util/cookieUtil.js";
-import pageConfig from "../config/pageConfig.js";
 
 let key = "user";
 
@@ -11,8 +10,7 @@ export default {
     get() {
         let user = cookieUtil.get(key);
         if (user === null) {
-            window.location.href = pageConfig.index;
-            return;
+            return null;
         }
         return JSON.parse(user);
     },

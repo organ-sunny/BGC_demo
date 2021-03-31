@@ -58,6 +58,9 @@
                         getApi();
                         moduleItemVue = moduleItem;
                         selectApi = {};
+                        routerQuery.moduleId = item.id;
+                        routerQuery.apiId = undefined;
+                        _loadingVueQuery();
                     }"
                     v-for="(item, key) in module.data"
                     :key="key"
@@ -65,8 +68,16 @@
                     @apiClick="(moduleItem, apiItem) => {
                         module.select = moduleItem;
                         selectApi = apiItem;
+                        selectApi._testcaseRunResult = {
+                            num: 0,
+                            execution: 0,
+                            pass: 0
+                        };
                         tab = 'api';
                         getTestcase();
+                        routerQuery.moduleId = module.select.id;
+                        routerQuery.apiId = apiItem.id;
+                        _loadingVueQuery();
                     }" :api-action-id="selectApi.id">
                 </module-item>
             </div>
@@ -74,6 +85,10 @@
 
         <!-- 右侧 -->
         <div style="width: 87%;padding: 20px;overflow: auto;" class="scrollbar">
+            <div v-if="tab === ''" style="height: 100%;color: #909399;font-size: 20px;font-weight: bold;" class="center">
+                选择项目和模块
+            </div>
+
             <!-- module -->
             <div v-if="tab === 'module'">
                 <div>
@@ -99,7 +114,6 @@
                             }" style="margin-top: 10px;" :size="baseConfig.size" :data="api.data">
                                 <ep-table-item type="expand">
                                     <template slot-scope="props">
-<!--                                        <div style="padding: 20px;">-->
                                         <div style="margin: 20px 0;" class="bgc_panel">
                                             <div style="display: flex;">
                                                 <div style="width: 50%;">
@@ -205,48 +219,69 @@
 
             <!-- api -->
             <div v-if="tab === 'api'">
-                <card head="API">
+                <card head="API信息">
                     <div class="bgc_panel">
-                        <div class="apiInfo">
-                            <div>
-                                名称
-                            </div>
-                            <div>
-                                {{selectApi.apiName}}
-                            </div>
-                        </div>
+                        <div style="display: flex;">
+                            <div style="width: 50%;display: flex;flex-direction: column;justify-content: center;">
+                                <div class="apiInfo">
+                                    <div>
+                                        名称
+                                    </div>
+                                    <div>
+                                        {{selectApi.apiName}}
+                                    </div>
+                                </div>
 
-                        <div class="apiInfo" style="margin-top: 10px;">
-                            <div>
-                                接口地址
-                            </div>
-                            <div style="text-decoration: underline;color: #2296F3;">
-                                {{selectApi.apiAddress}}
-                            </div>
-                        </div>
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        接口地址
+                                    </div>
+                                    <div style="text-decoration: underline;color: #2296F3;">
+                                        {{selectApi.apiAddress}}
+                                    </div>
+                                </div>
 
-                        <div class="apiInfo" style="margin-top: 10px;">
-                            <div>
-                                请求方式
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        请求方式
+                                    </div>
+                                    <div>
+                                        <ep-tag v-if="selectApi.apiMethod === 'GET'" type="success" size="small">
+                                            GET
+                                        </ep-tag>
+                                        <ep-tag v-if="selectApi.apiMethod === 'POST'" type="primary" size="small">
+                                            POST
+                                        </ep-tag>
+                                        <ep-tag v-if="selectApi.apiMethod === 'PUT'" type="warning" size="small">
+                                            PUT
+                                        </ep-tag>
+                                        <ep-tag v-if="selectApi.apiMethod === 'DELETE'" type="danger" size="small">
+                                            DELETE
+                                        </ep-tag>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <ep-tag v-if="selectApi.apiMethod === 'GET'" type="success" size="small">
-                                    GET
-                                </ep-tag>
-                                <ep-tag v-if="selectApi.apiMethod === 'POST'" type="primary" size="small">
-                                    POST
-                                </ep-tag>
-                                <ep-tag v-if="selectApi.apiMethod === 'PUT'" type="warning" size="small">
-                                    PUT
-                                </ep-tag>
-                                <ep-tag v-if="selectApi.apiMethod === 'DELETE'" type="danger" size="small">
-                                    DELETE
-                                </ep-tag>
+                            <div style="width: 50%;display: flex;">
+                                <div>
+                                    <div>
+                                        <ep-progress type="circle" :percentage="selectApi._testcaseRunResult.execution"></ep-progress>
+                                    </div>
+                                    <div class="center smallFont" style="margin-top: 10px;">
+                                        执行率
+                                    </div>
+                                </div>
+                                <div style="margin-left: 20px;">
+                                    <div>
+                                        <ep-progress type="circle" :percentage="selectApi._testcaseRunResult.pass" :status="selectApi._testcaseRunResult.pass === 100 ? 'success': ''"></ep-progress>
+                                    </div>
+                                    <div class="center smallFont" style="margin-top: 10px;">
+                                        通过率
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </card>
-
 
                 <card head="用例管理" style="margin-top: 50px;">
                     <div style="margin-top: 20px;" class="bgc_panel">
@@ -254,20 +289,37 @@
                             <ep-button @click="addTestcasePopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
                             <ep-button :size="baseConfig.size" type="danger" @click="() => {
                                 alterUtil.confirm('确定删除？').then(() => {
+                                    apiCase.delete.idList = apiCase.selectIdList;
                                     deleteTestcase().then(() => {
                                         getTestcase();
                                         alterUtil.success('删除成功');
                                     });
                                 }).catch(() => {});
                             }">删除</ep-button>
-                            <ep-button :size="baseConfig.size" type="success">执行</ep-button>
+                            <ep-button @click="() => {
+                                apiCase.run.idList = apiCase.selectIdList;
+                                if (apiCase.run.idList.length === 0) {
+                                    alterUtil.info('未选择用例');
+                                    return;
+                                }
+
+                                alterUtil.confirm('确定执行？').then(() => {
+                                    loading = true;
+                                    runTestcase().then(() => {
+                                        getTestcase();
+                                        alterUtil.success('执行完成');
+                                    }).finally(() => {
+                                        loading = false;
+                                    });
+                                }).catch(() => {});
+                            }" :size="baseConfig.size" type="success">执行</ep-button>
                         </div>
 
                         <div style="margin-top: 20px;">
                             <ep-table :size="baseConfig.size" :data="apiCase.data" @selection-change="(allData) => {
-                                apiCase.delete.idList = [];
+                                apiCase.selectIdList = [];
                                 for (let i = 0 ; i < allData.length; i++) {
-                                    apiCase.delete.idList.push(allData[i].id);
+                                    apiCase.selectIdList.push(allData[i].id);
                                 }
                             }">
                                 <ep-table-item type="expand">
@@ -387,7 +439,17 @@
                                     <template slot-scope="props">
                                         <div style="display: flex;">
                                             <ep-button @click="addTestcasePopup.open(props.row)" type="text">编辑</ep-button>
-                                            <ep-button style="color: #E7963B;" type="text">调试</ep-button>
+                                            <ep-button @click="() => {
+                                                loading = true;
+                                                apiCase.debug.id = props.row.id;
+                                                debugTestcase().then((response) => {
+                                                    alterUtil.confirm(`响应：${response.response}，备注：${response.remark}`).then(() => {
+
+                                                    }).catch(() => {});
+                                                }).finally(() => {
+                                                    loading = false;
+                                                });
+                                            }" style="color: #E7963B;" type="text">调试</ep-button>
                                         </div>
                                     </template>
                                 </ep-table-item>
@@ -514,65 +576,34 @@
         <!-- 新增用例弹框 -->
         <ep-modal :title="(addTestcasePopup.isAdd ? '新增' : '编辑') + '用例'" width="1000px" v-model="addTestcasePopup.show" :wrap-close="false">
             <div style="max-height: 700px;overflow: auto;padding: 10px;" class="scrollbar">
-                <div style="display: flex;">
-                    <card head="api信息" style="padding-right: 10px;width: 50%;">
-                        <div class="apiInfo">
-                            <div>
-                                名称
-                            </div>
-                            <div>
-                                {{selectApi.apiName}}
-                            </div>
+                <card head="基本信息">
+                    <div style="display: flex;">
+                        <div style="white-space: nowrap;display: flex;align-items: center;">
+                            用例编号
                         </div>
+                        <div style="width: 100%;margin-left: 10px;">
+                            <ep-input v-model="apiCase.add.apiCaseNum" :size="baseConfig.size" style="width: 100%;"></ep-input>
+                        </div>
+                    </div>
 
-                        <div class="apiInfo" style="margin-top: 10px;">
-                            <div>
-                                接口地址
-                            </div>
-                            <div>
-                                {{selectApi.apiAddress}}
-                            </div>
+                    <div style="display: flex;margin-top: 20px;">
+                        <div style="white-space: nowrap;display: flex;align-items: center;">
+                            用例名称
                         </div>
+                        <div style="width: 100%;padding-left: 10px;">
+                            <ep-input v-model="apiCase.add.apiCaseName" :size="baseConfig.size" style="width: 100%;"></ep-input>
+                        </div>
+                    </div>
 
-                        <div class="apiInfo" style="margin-top: 10px;">
-                            <div>
-                                请求方式
-                            </div>
-                            <div>
-                                {{selectApi.apiMethod}}
-                            </div>
+                    <div style="margin-top: 20px;display: flex;">
+                        <div style="white-space: nowrap;display: flex;align-items: center;">
+                            用例描述
                         </div>
-                    </card>
-
-                    <card head="基本信息" style="padding-left: 10px;width: 50%;">
-                        <div style="display: flex;">
-                            <div style="white-space: nowrap;display: flex;align-items: center;">
-                                用例编号
-                            </div>
-                            <div style="width: 100%;margin-left: 10px;">
-                                <ep-input v-model="apiCase.add.apiCaseNum" :size="baseConfig.size" style="width: 100%;"></ep-input>
-                            </div>
+                        <div style="width: 100%;padding-left: 10px;">
+                            <ep-input v-model="apiCase.add.apiCaseDescription" :size="baseConfig.size" style="width: 100%;"></ep-input>
                         </div>
-
-                        <div style="display: flex;margin-top: 20px;">
-                            <div style="white-space: nowrap;display: flex;align-items: center;">
-                                用例名称
-                            </div>
-                            <div style="width: 100%;padding-left: 10px;">
-                                <ep-input v-model="apiCase.add.apiCaseName" :size="baseConfig.size" style="width: 100%;"></ep-input>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 20px;display: flex;">
-                            <div style="white-space: nowrap;display: flex;align-items: center;">
-                                用例描述
-                            </div>
-                            <div style="width: 100%;padding-left: 10px;">
-                                <ep-input v-model="apiCase.add.apiCaseDescription" :size="baseConfig.size" style="width: 100%;"></ep-input>
-                            </div>
-                        </div>
-                    </card>
-                </div>
+                    </div>
+                </card>
 
                 <card head="请求参数" style="margin-top: 50px;">
                     <ep-tabs>
@@ -731,6 +762,7 @@ export default {
         let current = this;
 
         return {
+            // 加载
             loading: false,
 
             // 是否显示选择项目下拉框
@@ -741,6 +773,13 @@ export default {
 
             // 右侧的tab
             tab: "",
+
+            // 路由query
+            routerQuery: {
+                projectId: undefined,
+                moduleId: undefined,
+                apiId: undefined
+            },
 
             // 选择的模块vue
             moduleItemVue: null,
@@ -818,6 +857,14 @@ export default {
                 run: {
                     idList: []
                 },
+
+                // 调试
+                debug: {
+                    id: undefined
+                },
+
+                // 选择的用例
+                selectIdList: [],
 
                 data: []
             },
@@ -1019,8 +1066,47 @@ export default {
     },
 
     methods: {
-        init() {
-            // this.addTestcase();
+        async init() {
+            let query = this.$route.query;
+            variableUtil.extend(this.routerQuery, query);
+
+            // 加载项目
+            if (!variableUtil.isEmpty(this.routerQuery.projectId)) {
+                let projectData = await objectSystemApi.query({
+                    id: this.routerQuery.projectId
+                });
+                if (projectData.length === 1) {
+                    this.project.select = projectData[0];
+
+                    // 加载模块
+                    if (!variableUtil.isEmpty(this.routerQuery.moduleId)) {
+                        let moduleData = await objectModuleApi.query({
+                            id: this.routerQuery.moduleId
+                        });
+                        if (moduleData.length === 1) {
+                            this.allModuleIsShow = true;
+                            this.getModule();
+                            this.module.select = moduleData[0];
+                            this.tab = "module";
+                            this.getApi();
+
+                            // 加载api
+                            if (!variableUtil.isEmpty(this.routerQuery.apiId)) {
+                                let apiData = await objectApiApi.query({
+                                    id: this.routerQuery.apiId
+                                });
+
+                                if (apiData.length === 1) {
+                                    this.selectApi = apiData[0];
+                                    this.selectApi._testcaseRunResult = {};
+                                    this.tab = "api";
+                                    this.getTestcase();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         getProject() {
@@ -1069,7 +1155,7 @@ export default {
         },
 
         getTestcase() {
-            apiTestCaseApi.query(this.selectApi.id).then((data) => {
+            apiTestCaseApi.query(this.selectApi.id).then(async (data) => {
                 for (let item of data) {
                     item["_header"] = variableUtil.isEmpty(item.apiCaseRequestHeader) ? {} : JSON.parse(item.apiCaseRequestHeader);
                     item["_param"] = {};
@@ -1091,6 +1177,8 @@ export default {
                     item["_expectedResult"] = JSON.parse(item.apiCaseExpectedResult);
                 }
                 this.apiCase.data = data;
+                await this._loadTestcaseRunResult(this.selectApi);
+                this.$forceUpdate();
             });
         },
 
@@ -1099,6 +1187,10 @@ export default {
             this.project.select = project;
             this.allModuleIsShow = false;
             this.tab = "";
+            this.routerQuery.projectId = project.id;
+            this.routerQuery.moduleId = undefined;
+            this.routerQuery.apiId = undefined;
+            this._loadingVueQuery();
         },
 
         // 删除api
@@ -1143,6 +1235,11 @@ export default {
             });
         },
 
+        // 调试用例
+        debugTestcase() {
+            return apiTestCaseApi.debug(this.apiCase.debug);
+        },
+
         // 加载用例通过率
         async _loadTestcaseRunResult(api) {
             await apiTestCaseApi.query(api.id).then((data) => {
@@ -1170,6 +1267,20 @@ export default {
                     pass
                 };
             });
+        },
+
+        // 加载路由的query
+        _loadingVueQuery() {
+            for (let key in this.routerQuery) {
+                if (this.routerQuery.hasOwnProperty(key)) {
+                    if (`${this.$route.query[key]}` !== `${this.routerQuery[key]}`) {
+                        this.$router.push({
+                            query: this.routerQuery
+                        });
+                        return;
+                    }
+                }
+            }
         }
     },
 
