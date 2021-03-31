@@ -78,7 +78,8 @@
                         routerQuery.moduleId = module.select.id;
                         routerQuery.apiId = apiItem.id;
                         _loadingVueQuery();
-                    }" :api-action-id="selectApi.id">
+                    }"
+                    :api-action-id="selectApi.id" ref="moduleItem">
                 </module-item>
             </div>
         </div>
@@ -91,148 +92,161 @@
 
             <!-- module -->
             <div v-if="tab === 'module'">
-                <div>
-                    <card head="API管理">
-                        <div class="bgc_panel">
-                            <div>
-                                <ep-button @click="addApiPopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
-                                <ep-button @click="() => {
-                                    alterUtil.confirm().then(() => {
+                <card :head="'模块：' + module.select.moduleName">
+                    <div class="bgc_panel">
+                        <div class="title" style="margin-bottom: 20px;">
+                            API信息
+                        </div>
+
+                        <div>
+                            <ep-button @click="addApiPopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
+                            <ep-button @click="() => {
+                                    alterUtil.confirm('确定删除？').then(() => {
+                                        api.delete.idList = api.selectIdList;
                                         deleteApi().then(() => {
                                             getApi();
+                                            _reloadModuleItem();
                                             alterUtil.success('删除成功');
                                         });
                                     }).catch(() => {});
                                 }" :size="baseConfig.size" type="danger">删除</ep-button>
-                            </div>
+                            <ep-button :size="baseConfig.size" type="success" disabled>执行(开发中...)</ep-button>
+                        </div>
 
-                            <ep-table @selection-change="(allData) => {
-                                api.delete.idList = [];
+                        <ep-table @selection-change="(allData) => {
+                                api.selectIdList = [];
                                 for (let i = 0 ; i < allData.length; i++) {
-                                    api.delete.idList.push(allData[i].id);
+                                    api.selectIdList.push(allData[i].id);
                                 }
                             }" style="margin-top: 10px;" :size="baseConfig.size" :data="api.data">
-                                <ep-table-item type="expand">
-                                    <template slot-scope="props">
-                                        <div style="margin: 20px 0;" class="bgc_panel">
-                                            <div style="display: flex;">
-                                                <div style="width: 50%;">
+                            <ep-table-item type="select"></ep-table-item>
+                            <ep-table-item type="expand">
+                                <template slot-scope="props">
+                                    <div style="margin: 20px 0;" class="bgc_panel">
+                                        <div style="display: flex;">
+                                            <div style="width: 50%;">
                                                     <span class="smallFont">
                                                         创建人:
                                                     </span>
-                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.creator}}
                                                     </span>
-                                                </div>
-                                                <div style="width: 50%;">
+                                            </div>
+                                            <div style="width: 50%;">
                                                     <span class="smallFont">
                                                         创建时间:
                                                     </span>
-                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.createdTime}}
                                                     </span>
-                                                </div>
                                             </div>
-                                            <div style="display: flex;margin-top: 10px;">
-                                                <div style="width: 50%;">
+                                        </div>
+                                        <div style="display: flex;margin-top: 10px;">
+                                            <div style="width: 50%;">
                                                     <span class="smallFont">
                                                         更新人:
                                                     </span>
-                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.updatedBy}}
                                                     </span>
-                                                </div>
-                                                <div style="width: 50%;">
+                                            </div>
+                                            <div style="width: 50%;">
                                                     <span class="smallFont">
                                                         更新时间:
                                                     </span>
-                                                    <span style="margin-left: 10px;" class="smallFont">
+                                                <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.updatedTime}}
                                                     </span>
-                                                </div>
                                             </div>
+                                        </div>
 
-                                            <div style="margin-top: 20px;display: flex;">
-                                                <div style="width: 50%;display: flex;align-items: center;" class="smallFont">
-                                                    用例数：<span style="color: #2296F3;text-decoration: underline;margin-left: 10px;cursor: pointer;">{{props.row._testcaseRunResult.num}}</span>
-                                                </div>
-                                                <div style="width: 50%;display: flex;">
+                                        <div style="margin-top: 20px;display: flex;">
+                                            <div style="width: 50%;display: flex;align-items: center;" class="smallFont">
+                                                用例数：<span style="color: #2296F3;text-decoration: underline;margin-left: 10px;cursor: pointer;">{{props.row._testcaseRunResult.num}}</span>
+                                            </div>
+                                            <div style="width: 50%;display: flex;">
+                                                <div>
                                                     <div>
-                                                        <div>
-                                                            <ep-progress type="circle" :percentage="props.row._testcaseRunResult.execution"></ep-progress>
-                                                        </div>
-                                                        <div class="center smallFont" style="margin-top: 10px;">
-                                                            执行率
-                                                        </div>
+                                                        <ep-progress type="circle" :percentage="props.row._testcaseRunResult.execution"></ep-progress>
                                                     </div>
-                                                    <div style="margin-left: 10px;">
-                                                        <div>
-                                                            <ep-progress type="circle" :percentage="props.row._testcaseRunResult.pass" :status="props.row._testcaseRunResult.pass === 100 ? 'success': ''"></ep-progress>
-                                                        </div>
-                                                        <div class="center smallFont" style="margin-top: 10px;">
-                                                            通过率
-                                                        </div>
+                                                    <div class="center smallFont" style="margin-top: 10px;">
+                                                        执行率
+                                                    </div>
+                                                </div>
+                                                <div style="margin-left: 10px;">
+                                                    <div>
+                                                        <ep-progress type="circle" :percentage="props.row._testcaseRunResult.pass" :status="props.row._testcaseRunResult.pass === 100 ? 'success': ''"></ep-progress>
+                                                    </div>
+                                                    <div class="center smallFont" style="margin-top: 10px;">
+                                                        通过率
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </template>
-                                </ep-table-item>
-                                <ep-table-item type="select"></ep-table-item>
-                                <ep-table-item column="apiName" title="api名称"></ep-table-item>
-                                <ep-table-item column="apiAddress" title="请求地址">
-                                    <template slot-scope="props">
-                                        <div style="color: #2296F3;text-decoration: underline;cursor: pointer;">
-                                            {{props.row.apiAddress}}
-                                        </div>
-                                    </template>
-                                </ep-table-item>
-                                <ep-table-item column="apiMethod" title="请求方式">
-                                    <template slot-scope="props">
-                                        <ep-tag v-if="props.row.apiMethod === 'GET'" type="success" size="small">
-                                            GET
-                                        </ep-tag>
-                                        <ep-tag v-if="props.row.apiMethod === 'POST'" type="primary" size="small">
-                                            POST
-                                        </ep-tag>
-                                        <ep-tag v-if="props.row.apiMethod === 'PUT'" type="warning" size="small">
-                                            PUT
-                                        </ep-tag>
-                                        <ep-tag v-if="props.row.apiMethod === 'DELETE'" type="danger" size="small">
-                                            DELETE
-                                        </ep-tag>
-                                    </template>
-                                </ep-table-item>
-                                <ep-table-item column="action" title="操作">
-                                    <template slot-scope="props">
-                                        <ep-button @click="() => {
+                                    </div>
+                                </template>
+                            </ep-table-item>
+                            <ep-table-item width="50px" title="">
+                                <template slot-scope="props">
+                                    <div>
+                                        <i v-if="props.row._testcaseRunResult.pass === 100" style="color: #27AE60;" class="ion-checkmark-circled"></i>
+                                        <i v-else-if="props.row._testcaseRunResult.num !== 0" style="color: #E7963B;" class="ion-information-circled"></i>
+                                    </div>
+                                </template>
+                            </ep-table-item>
+                            <ep-table-item column="apiName" title="api名称"></ep-table-item>
+                            <ep-table-item column="apiAddress" title="请求地址">
+                                <template slot-scope="props">
+                                    <div style="color: #2296F3;text-decoration: underline;cursor: pointer;">
+                                        {{props.row.apiAddress}}
+                                    </div>
+                                </template>
+                            </ep-table-item>
+                            <ep-table-item column="apiMethod" title="请求方式">
+                                <template slot-scope="props">
+                                    <ep-tag v-if="props.row.apiMethod === 'GET'" type="success" size="small">
+                                        GET
+                                    </ep-tag>
+                                    <ep-tag v-if="props.row.apiMethod === 'POST'" type="primary" size="small">
+                                        POST
+                                    </ep-tag>
+                                    <ep-tag v-if="props.row.apiMethod === 'PUT'" type="warning" size="small">
+                                        PUT
+                                    </ep-tag>
+                                    <ep-tag v-if="props.row.apiMethod === 'DELETE'" type="danger" size="small">
+                                        DELETE
+                                    </ep-tag>
+                                </template>
+                            </ep-table-item>
+                            <ep-table-item column="action" title="操作">
+                                <template slot-scope="props">
+                                    <ep-button @click="() => {
                                             updateApiPopup.show = true;
                                             variableUtil.extend(api.update, props.row);
                                         }" :size="baseConfig.size" type="text">编辑</ep-button>
-                                    </template>
-                                </ep-table-item>
-                            </ep-table>
-                        </div>
-                    </card>
-                </div>
+                                </template>
+                            </ep-table-item>
+                        </ep-table>
+                    </div>
+                </card>
             </div>
 
             <!-- api -->
             <div v-if="tab === 'api'">
-                <card head="API信息">
+                <card :head="'API：' + selectApi.apiName">
                     <div class="bgc_panel">
                         <div style="display: flex;">
-                            <div style="width: 50%;display: flex;flex-direction: column;justify-content: center;">
-                                <div class="apiInfo">
-                                    <div>
-                                        名称
-                                    </div>
-                                    <div>
-                                        {{selectApi.apiName}}
-                                    </div>
-                                </div>
+                            <div style="width: 50%;display: flex;flex-direction: column;">
+<!--                                <div class="apiInfo">-->
+<!--                                    <div>-->
+<!--                                        名称-->
+<!--                                    </div>-->
+<!--                                    <div>-->
+<!--                                        {{selectApi.apiName}}-->
+<!--                                    </div>-->
+<!--                                </div>-->
 
-                                <div class="apiInfo" style="margin-top: 10px;">
+                                <div class="apiInfo">
                                     <div>
                                         接口地址
                                     </div>
@@ -281,10 +295,12 @@
                             </div>
                         </div>
                     </div>
-                </card>
 
-                <card head="用例管理" style="margin-top: 50px;">
                     <div style="margin-top: 20px;" class="bgc_panel">
+                        <div style="margin-bottom: 20px;" class="title">
+                            用例信息
+                        </div>
+
                         <div>
                             <ep-button @click="addTestcasePopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
                             <ep-button :size="baseConfig.size" type="danger" @click="() => {
@@ -322,10 +338,11 @@
                                     apiCase.selectIdList.push(allData[i].id);
                                 }
                             }">
+                                <ep-table-item type="select"></ep-table-item>
                                 <ep-table-item type="expand">
                                     <template slot-scope="props">
                                         <div class="bgc_panel" style="margin: 20px 0;">
-<!--                                        <div style="padding: 20px;">-->
+                                            <!--                                        <div style="padding: 20px;">-->
                                             <div class="smallFont">
                                                 请求参数
                                             </div>
@@ -416,7 +433,6 @@
                                         </div>
                                     </template>
                                 </ep-table-item>
-                                <ep-table-item type="select"></ep-table-item>
                                 <ep-table-item column="apiCaseNum" title="用例编号"></ep-table-item>
                                 <ep-table-item column="apiCaseName" title="用例名称"></ep-table-item>
                                 <ep-table-item column="apiCaseDescription" title="用例描述"></ep-table-item>
@@ -564,6 +580,7 @@
                         updateApi().then(() => {
                             alterUtil.success('成功');
                             getApi();
+                            _reloadModuleItem();
                             updateApiPopup.show = false;
                         }).catch((m) => {
                             alterUtil.error(m);
@@ -822,6 +839,9 @@ export default {
                     idList: []
                 },
 
+                // 选中的
+                selectIdList: [],
+
                 // 编辑
                 update: {
                     id: "",
@@ -881,7 +901,7 @@ export default {
                     current.addApi().then(() => {
                         alterUtil.success("完成");
                         current.getApi();
-                        current.moduleItemVue.getApi();
+                        current._reloadModuleItem();
                         this.show = false;
                     }).catch((m) => {
                         alterUtil.error(m);
@@ -1279,6 +1299,15 @@ export default {
                         });
                         return;
                     }
+                }
+            }
+        },
+
+        // 重新加载moduleItem
+        _reloadModuleItem() {
+            for (let item of this.$refs["moduleItem"]) {
+                if (item.actionId === item.module.id) {
+                    item.getApi();
                 }
             }
         }

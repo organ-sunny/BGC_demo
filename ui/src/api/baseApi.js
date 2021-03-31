@@ -13,6 +13,7 @@ export default {
 
                 // token失效
                 if (responseJson.code === 101) {
+                    user.delete();
                     window.location.href = pageConfig.index;
                     return;
                 }
