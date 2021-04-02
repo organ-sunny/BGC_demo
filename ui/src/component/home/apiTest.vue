@@ -435,14 +435,7 @@
                                                 预期结果
                                             </div>
                                             <div style="margin-top: 10px;">
-                                                <div v-for="(value, key, index) in props.row._expectedResult" :key="index" style="display: flex;overflow: hidden;margin-top: 10px;">
-                                                    <div style="width: 50%;padding-right: 10px;">
-                                                        <ep-input disabled :value="key" :size="baseConfig.size"></ep-input>
-                                                    </div>
-                                                    <div style="width: 50%;padding-left: 10px;">
-                                                        <ep-input disabled :value="value" :size="baseConfig.size"></ep-input>
-                                                    </div>
-                                                </div>
+                                                <ep-input disabled type="textarea" v-model="props.row.apiCaseExpectedResult"></ep-input>
                                             </div>
 
                                             <div style="margin-top: 20px;" class="smallFont">
@@ -746,31 +739,8 @@
                 </card>
 
                 <card head="预期结果" style="margin-top: 50px;">
-                    <div v-for="(item, key) in addTestcasePopup.expectedResult" :key="key" style="display: flex;overflow: hidden;margin-top: 10px;">
-                        <div style="width: 45%;padding-right: 10px;">
-                            <ep-input v-model="item.key" :size="baseConfig.size" placeholder="键"></ep-input>
-                        </div>
-                        <div style="width: 45%;padding: 0 10px;">
-                            <ep-input v-model="item.value" :size="baseConfig.size" placeholder="值"></ep-input>
-                        </div>
-                        <div style="width: 10%;">
-                            <ep-button @click="() => {
-                                            for (let i = 0; i < addTestcasePopup.expectedResult.length; i++) {
-                                                if (key === i) {
-                                                    addTestcasePopup.expectedResult.splice(i, 1);
-                                                }
-                                            }
-                                        }" style="width: 100%;" :size="baseConfig.size">删除</ep-button>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 10px;overflow: hidden;">
-                        <ep-button @click="() => {
-                                        addTestcasePopup.expectedResult.push({
-                                            key: '',
-                                            value: ''
-                                        });
-                                    }" :size="baseConfig.size" style="width: 100%;">添加...</ep-button>
+                    <div>
+                        <ep-input type="textarea" v-model="apiCase.add.apiCaseExpectedResult"></ep-input>
                     </div>
                 </card>
 
@@ -1005,9 +975,6 @@ export default {
                     body: ""
                 },
 
-                // 预期结果
-                expectedResult: [],
-
                 open(isAdd, testcase) {
                     this.show = true;
 
@@ -1058,19 +1025,6 @@ export default {
                                 }
                             }
                         }
-
-                        // 装配预期结果
-                        if (!variableUtil.isEmpty(testcase.apiCaseExpectedResult)) {
-                            let apiCaseExpectedResultJson = JSON.parse(testcase.apiCaseExpectedResult);
-                            for (let key in apiCaseExpectedResultJson) {
-                                if (apiCaseExpectedResultJson.hasOwnProperty(key)) {
-                                    this.expectedResult.push({
-                                       key: key,
-                                        value: apiCaseExpectedResultJson[key]
-                                    });
-                                }
-                            }
-                        }
                     }
                 },
 
@@ -1113,20 +1067,6 @@ export default {
                         requestData = "";
                     }
                     current.apiCase.add.apiCaseRequestParam = requestData;
-
-                    // 预期结果
-                    let expectedResult = {};
-                    if (this.expectedResult.length !== 0) {
-                        for (let item of this.expectedResult) {
-                            expectedResult[item.key] = item.value;
-                        }
-                    }
-                    expectedResult = JSON.stringify(expectedResult);
-                    if (expectedResult === "{}") {
-                        alterUtil.error("预期结果不能为空");
-                        return;
-                    }
-                    current.apiCase.add.apiCaseExpectedResult = expectedResult;
 
                     if (this.isAdd) {
                         current.addTestcase().then(() => {
@@ -1315,7 +1255,6 @@ export default {
                             item["_body"] = content;
                         }
                     }
-                    item["_expectedResult"] = JSON.parse(item.apiCaseExpectedResult);
                 }
                 this.apiCase.data = data;
                 await this._loadTestcaseRunResult(this.selectApi);
