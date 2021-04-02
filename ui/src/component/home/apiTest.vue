@@ -102,7 +102,10 @@
                             <ep-button @click="addApiPopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
                             <ep-button @click="() => {
                                     alterUtil.confirm('确定删除？').then(() => {
-                                        api.delete.idList = api.selectIdList;
+                                        api.delete.idList = [];
+                                        for (let i = 0; i < api.selectList.length; i++) {
+                                            api.delete.idList.push(api.selectList[i].id);
+                                        }
                                         deleteApi().then(() => {
                                             getApi();
                                             _reloadModuleItem();
@@ -110,13 +113,13 @@
                                         });
                                     }).catch(() => {});
                                 }" :size="baseConfig.size" type="danger">删除</ep-button>
-                            <ep-button :size="baseConfig.size" type="success" disabled>执行(开发中...)</ep-button>
+                            <ep-button @click="apiRunPopup.open()" :size="baseConfig.size" type="success">执行</ep-button>
                         </div>
 
                         <ep-table @selection-change="(allData) => {
-                                api.selectIdList = [];
+                                api.selectList = [];
                                 for (let i = 0 ; i < allData.length; i++) {
-                                    api.selectIdList.push(allData[i].id);
+                                    api.selectList.push(allData[i]);
                                 }
                             }" style="margin-top: 10px;" :size="baseConfig.size" :data="api.data">
                             <ep-table-item type="select"></ep-table-item>
@@ -125,44 +128,41 @@
                                     <div style="margin: 20px 0;" class="bgc_panel">
                                         <div style="display: flex;">
                                             <div style="width: 50%;">
+                                                <div style="width: 50%;">
                                                     <span class="smallFont">
                                                         创建人:
                                                     </span>
-                                                <span style="margin-left: 10px;" class="smallFont">
+                                                    <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.creator}}
                                                     </span>
-                                            </div>
-                                            <div style="width: 50%;">
+                                                </div>
+                                                <div style="width: 50%;margin-top: 10px;">
                                                     <span class="smallFont">
                                                         创建时间:
                                                     </span>
-                                                <span style="margin-left: 10px;" class="smallFont">
+                                                    <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.createdTime}}
                                                     </span>
-                                            </div>
-                                        </div>
-                                        <div style="display: flex;margin-top: 10px;">
-                                            <div style="width: 50%;">
+                                                </div>
+                                                <div style="width: 50%;margin-top: 10px;">
                                                     <span class="smallFont">
                                                         更新人:
                                                     </span>
-                                                <span style="margin-left: 10px;" class="smallFont">
+                                                    <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.updatedBy}}
                                                     </span>
-                                            </div>
-                                            <div style="width: 50%;">
+                                                </div>
+                                                <div style="width: 50%;margin-top: 10px;">
                                                     <span class="smallFont">
                                                         更新时间:
                                                     </span>
-                                                <span style="margin-left: 10px;" class="smallFont">
+                                                    <span style="margin-left: 10px;" class="smallFont">
                                                         {{props.row.updatedTime}}
                                                     </span>
-                                            </div>
-                                        </div>
-
-                                        <div style="margin-top: 20px;display: flex;">
-                                            <div style="width: 50%;display: flex;align-items: center;" class="smallFont">
-                                                用例数：<span style="color: #2296F3;text-decoration: underline;margin-left: 10px;cursor: pointer;">{{props.row._testcaseRunResult.num}}</span>
+                                                </div>
+                                                <div style="width: 50%;display: flex;align-items: center;margin-top: 20px;" class="smallFont">
+                                                    用例数：<span style="color: #2296F3;text-decoration: underline;margin-left: 10px;cursor: pointer;">{{props.row._testcaseRunResult.num}}</span>
+                                                </div>
                                             </div>
                                             <div style="width: 50%;display: flex;">
                                                 <div>
@@ -274,8 +274,53 @@
                                         </ep-tag>
                                     </div>
                                 </div>
+
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        创建人
+                                    </div>
+                                    <div>
+                                        {{selectApi.creator}}
+                                    </div>
+                                </div>
+
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        创建时间
+                                    </div>
+                                    <div>
+                                        {{selectApi.createdTime}}
+                                    </div>
+                                </div>
+
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        修改人
+                                    </div>
+                                    <div>
+                                        {{selectApi.updatedBy}}
+                                    </div>
+                                </div>
+
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        修改时间
+                                    </div>
+                                    <div>
+                                        {{selectApi.updatedTime}}
+                                    </div>
+                                </div>
+
+                                <div class="apiInfo" style="margin-top: 10px;">
+                                    <div>
+                                        用例数
+                                    </div>
+                                    <div>
+                                        {{selectApi._testcaseRunResult.num}}
+                                    </div>
+                                </div>
                             </div>
-                            <div style="width: 50%;display: flex;">
+                            <div style="width: 50%;display: flex;align-items: center;">
                                 <div>
                                     <div>
                                         <ep-progress type="circle" :percentage="selectApi._testcaseRunResult.execution"></ep-progress>
@@ -302,10 +347,24 @@
                         </div>
 
                         <div>
-                            <ep-button @click="addTestcasePopup.open()" :size="baseConfig.size" type="primary">新增</ep-button>
+                            <ep-button @click="addTestcasePopup.open(true, null)" :size="baseConfig.size" type="primary">新增</ep-button>
+                            <ep-button @click="() => {
+                                if (apiCase.selectList.length === 0) {
+                                    alterUtil.info('未选择用例');
+                                    return;
+                                }
+                                if (apiCase.selectList.length > 1) {
+                                    alterUtil.info('只能选择一条用例');
+                                    return;
+                                }
+                                addTestcasePopup.open(true, apiCase.selectList[0]);
+                            }" :size="baseConfig.size" type="primary">复制</ep-button>
                             <ep-button :size="baseConfig.size" type="danger" @click="() => {
                                 alterUtil.confirm('确定删除？').then(() => {
-                                    apiCase.delete.idList = apiCase.selectIdList;
+                                    apiCase.delete.idList = [];
+                                    for (let i = 0; i < apiCase.selectList.length; i++) {
+                                        apiCase.delete.idList.push(apiCase.selectList[i].id);
+                                    }
                                     deleteTestcase().then(() => {
                                         getTestcase();
                                         alterUtil.success('删除成功');
@@ -313,12 +372,15 @@
                                 }).catch(() => {});
                             }">删除</ep-button>
                             <ep-button @click="() => {
-                                apiCase.run.idList = apiCase.selectIdList;
-                                if (apiCase.run.idList.length === 0) {
+                                if (apiCase.selectList === 0) {
                                     alterUtil.info('未选择用例');
                                     return;
                                 }
 
+                                apiCase.run.idList = [];
+                                for (let i = 0; i < apiCase.selectList.length; i++) {
+                                    apiCase.run.idList.push(apiCase.selectList[i].id);
+                                }
                                 alterUtil.confirm('确定执行？').then(() => {
                                     loading = true;
                                     runTestcase().then(() => {
@@ -333,10 +395,7 @@
 
                         <div style="margin-top: 20px;">
                             <ep-table :size="baseConfig.size" :data="apiCase.data" @selection-change="(allData) => {
-                                apiCase.selectIdList = [];
-                                for (let i = 0 ; i < allData.length; i++) {
-                                    apiCase.selectIdList.push(allData[i].id);
-                                }
+                                apiCase.selectList = allData;
                             }">
                                 <ep-table-item type="select"></ep-table-item>
                                 <ep-table-item type="expand">
@@ -454,7 +513,7 @@
                                 <ep-table-item column="action" title="操作">
                                     <template slot-scope="props">
                                         <div style="display: flex;">
-                                            <ep-button @click="addTestcasePopup.open(props.row)" type="text">编辑</ep-button>
+                                            <ep-button @click="addTestcasePopup.open(false, props.row)" type="text">编辑</ep-button>
                                             <ep-button @click="() => {
                                                 loading = true;
                                                 apiCase.debug.id = props.row.id;
@@ -758,6 +817,21 @@
                 </div>
             </div>
         </ep-modal>
+
+        <!-- api执行弹框 -->
+        <ep-modal title="执行" width="500px" v-model="apiRunPopup.show" :wrap-close="false">
+            <div style="max-height: 700px;overflow: auto;" class="scrollbar">
+                <ep-steps :space="100" direction="vertical" :active="apiRunPopup.active" finish-status="success">
+                    <ep-step
+                        v-for="(item, key) in apiRunPopup.itemList"
+                        :key="key"
+                        :title="'API：' + item.apiName"
+                        :description="item.status"
+                    >
+                    </ep-step>
+                </ep-steps>
+            </div>
+        </ep-modal>
     </div>
 </template>
 
@@ -840,7 +914,7 @@ export default {
                 },
 
                 // 选中的
-                selectIdList: [],
+                selectList: [],
 
                 // 编辑
                 update: {
@@ -884,7 +958,7 @@ export default {
                 },
 
                 // 选择的用例
-                selectIdList: [],
+                selectList: [],
 
                 data: []
             },
@@ -934,11 +1008,11 @@ export default {
                 // 预期结果
                 expectedResult: [],
 
-                open(testcase) {
+                open(isAdd, testcase) {
                     this.show = true;
 
                     // 数据还原
-                    this.isAdd = true;
+                    this.isAdd = isAdd;
                     variableUtil.reset(current.apiCase.add);
                     variableUtil.reset(this.requestData);
                     this.expectedResult = [];
@@ -946,7 +1020,6 @@ export default {
                     current.apiCase.add.objectApiId = current.selectApi.id;
                     if (!variableUtil.isEmpty(testcase)) {
                         this.testcase = testcase;
-                        this.isAdd = false;
                         variableUtil.extend(current.apiCase.add, this.testcase);
 
                         // 装配请求头
@@ -1071,6 +1144,54 @@ export default {
                         }).catch((m) => {
                             alterUtil.error(m);
                         });
+                    }
+                }
+            },
+
+            // api执行弹框
+            apiRunPopup: {
+                show: false,
+
+                active: 0,
+
+                itemList: [],
+
+                Item: class {
+                    constructor(api) {
+                        this.id = api.id;
+                        this.apiName = api.apiName;
+                        this.status = "";
+                    }
+
+                    async run() {
+                        this.status = "执行中...";
+                        let testcaseList = await apiTestCaseApi.query(this.id);
+                        current.apiCase.run.idList = [];
+                        for (let testcase of testcaseList) {
+                            current.apiCase.run.idList.push(testcase.id);
+                        }
+                        await current.runTestcase().then(() => {
+                            this.status = "执行完成！";
+                            current.apiRunPopup.active = current.apiRunPopup.active + 1;
+                        });
+                    }
+                },
+
+                async open() {
+                    if (current.api.selectList.length === 0) {
+                        alterUtil.info("未选择API");
+                        return;
+                    }
+
+                    this.show = true;
+                    this.active = 0;
+                    this.itemList = [];
+                    for (let api of current.api.selectList) {
+                        this.itemList.push(new this.Item(api));
+                    }
+
+                    for (let item of this.itemList) {
+                        await item.run();
                     }
                 }
             },
