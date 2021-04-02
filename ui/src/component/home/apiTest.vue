@@ -360,6 +360,10 @@
                                 addTestcasePopup.open(true, apiCase.selectList[0]);
                             }" :size="baseConfig.size" type="primary">复制</ep-button>
                             <ep-button :size="baseConfig.size" type="danger" @click="() => {
+                                if (apiCase.selectList.length === 0) {
+                                    alterUtil.info('未选择记录');
+                                    return;
+                                }
                                 alterUtil.confirm('确定删除？').then(() => {
                                     apiCase.delete.idList = [];
                                     for (let i = 0; i < apiCase.selectList.length; i++) {
@@ -372,7 +376,7 @@
                                 }).catch(() => {});
                             }">删除</ep-button>
                             <ep-button @click="() => {
-                                if (apiCase.selectList === 0) {
+                                if (apiCase.selectList.length === 0) {
                                     alterUtil.info('未选择用例');
                                     return;
                                 }
