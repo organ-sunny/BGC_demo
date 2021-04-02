@@ -361,7 +361,7 @@
                             }" :size="baseConfig.size" type="primary">复制</ep-button>
                             <ep-button :size="baseConfig.size" type="danger" @click="() => {
                                 if (apiCase.selectList.length === 0) {
-                                    alterUtil.info('未选择记录');
+                                    alterUtil.info('未选择用例');
                                     return;
                                 }
                                 alterUtil.confirm('确定删除？').then(() => {
