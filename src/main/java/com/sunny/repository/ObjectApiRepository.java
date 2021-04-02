@@ -2,13 +2,14 @@ package com.sunny.repository;
 
 import com.sunny.entity.ObjectApiEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface ObjectApiRepository extends JpaRepository<ObjectApiEntity,Integer> {
+public interface ObjectApiRepository extends JpaRepository<ObjectApiEntity, Integer>, JpaSpecificationExecutor<ObjectApiEntity> {
 
     List<ObjectApiEntity> findByModuleIdAndApiName(Integer moduleId, String apiName);
 

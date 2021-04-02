@@ -2,10 +2,15 @@ package com.sunny.service.impl;
 
 import com.sunny.constant.ConfigConstant;
 import com.sunny.dto.ApiTestCaseDTO;
+import com.sunny.dto.ObjectApiDTO;
+import com.sunny.dto.ObjectModuleDTO;
+import com.sunny.dto.ObjectSystemDTO;
+import com.sunny.entity.ObjectModuleEntity;
+import com.sunny.entity.ObjectSystemEntity;
 import com.sunny.exception.BusinessException;
-import com.sunny.service.ApiTestCaseService;
-import com.sunny.service.ConfigService;
-import com.sunny.service.ExcelService;
+import com.sunny.repository.ObjectModuleRepository;
+import com.sunny.repository.ObjectSystemRepository;
+import com.sunny.service.*;
 import com.sunny.util.ExcelUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +27,15 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Resource
     private ConfigService configService;
+
+    @Resource
+    private ObjectSystemService objectSystemService;
+
+    @Resource
+    private ObjectModuleService objectModuleService;
+
+    @Resource
+    private ObjectApiService objectApiService;
 
     @Resource
     private ApiTestCaseService apiTestCaseService;
@@ -90,6 +104,9 @@ public class ExcelServiceImpl implements ExcelService {
         for (int i = 0; i < allDataOfMap.size(); i++) {
 
             Map<String, Object> stringObjectMap = allDataOfMap.get(i);
+            ObjectSystemDTO objectSystemDTO = new ObjectSystemDTO();
+            ObjectModuleDTO objectModuleDTO = new ObjectModuleDTO();
+            ObjectApiDTO objectApiDTO = new ObjectApiDTO();
             ApiTestCaseDTO apiTestCaseDTO = new ApiTestCaseDTO();
 
             /**
@@ -104,10 +121,12 @@ public class ExcelServiceImpl implements ExcelService {
              * apiCaseRequestParam":"接口请求入参",
              * apiCaseExpectedResult":"预期结果",
              * apiCaseActualResult":"实际结果",
+             * isPassed":"是否通过",
              * apiCaseRemark":"备注"
              */
             String objectSystemName = (String) stringObjectMap.get("OBJECT_SYSTEM_NAME");
             String objectModuleName = (String) stringObjectMap.get("OBJECT_MODULE_NAME");
+            String objectApiName = (String) stringObjectMap.get("objectApiName");
             String apiCaseNum = (String) stringObjectMap.get("API_TESTCASE_NUM");
             String apiCaseName = (String) stringObjectMap.get("API_TESTCASE_NAME");
             String apiCaseDescription = (String) stringObjectMap.get("API_TESTCASE_DESCRIPTION");
@@ -117,19 +136,30 @@ public class ExcelServiceImpl implements ExcelService {
             String apiCaseRequestParam = (String) stringObjectMap.get("API_TESTCASE_REQUESTPARA");
             String apiCaseExpectedResult = (String) stringObjectMap.get("API_TESTCASE_EXPECTEDRESULT");
             String apiCaseActualResult = (String) stringObjectMap.get("API_TESTCASE_ACTUALRESULT");
+            String isPassed = (String) stringObjectMap.get("isPassed");
             String apiCaseRemark = (String) stringObjectMap.get("API_TESTCASE_REMARK");
 
-            apiTestCaseDTO.setObjectSystemName(objectSystemName);
-            apiTestCaseDTO.setObjectModuleName(objectModuleName);
+            objectSystemDTO.setObjectSystem(objectSystemName);
+            ObjectSystemEntity objectSystemEntity = objectSystemService.addObjectSystem(objectSystemDTO);
+
+            objectModuleDTO.setObjsystemId(objectSystemEntity.getId());
+            objectModuleDTO.setModuleName(objectModuleName);
+            ObjectModuleEntity objectModuleEntity = objectModuleService.addModule(objectModuleDTO);
+
+            objectApiDTO.setModuleId(objectModuleEntity.getId());
+            objectApiDTO.setApiName(objectApiName);
+            objectApiDTO.setApiAddress(apiCaseRequestAddress);
+            objectApiDTO.setApiMethod(apiCaseRequestMethod);
+            objectApiService.addObjectApi(objectApiDTO);
+
             apiTestCaseDTO.setApiCaseNum(apiCaseNum);
             apiTestCaseDTO.setApiCaseName(apiCaseName);
             apiTestCaseDTO.setApiCaseDescription(apiCaseDescription);
-            apiTestCaseDTO.setApiCaseRequestAddress(apiCaseRequestAddress);
-            apiTestCaseDTO.setApiCaseRequestMethod(apiCaseRequestMethod);
             apiTestCaseDTO.setApiCaseRequestHeader(apiCaseRequestHeader);
             apiTestCaseDTO.setApiCaseRequestParam(apiCaseRequestParam);
             apiTestCaseDTO.setApiCaseExpectedResult(apiCaseExpectedResult);
             apiTestCaseDTO.setApiCaseActualResult(apiCaseActualResult);
+            apiTestCaseDTO.setIsPassed(isPassed);
             apiTestCaseDTO.setApiCaseRemark(apiCaseRemark);
 
             apiTestCaseService.addApiCase(apiTestCaseDTO);

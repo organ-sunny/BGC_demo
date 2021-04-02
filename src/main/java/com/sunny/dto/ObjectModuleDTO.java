@@ -4,6 +4,8 @@ import com.sunny.entity.ObjectModuleEntity;
 
 public class ObjectModuleDTO extends ParentDTO<ObjectModuleEntity> {
 
+    private Integer id;
+
     private String moduleName;
 
     private Integer objsystemId;
@@ -31,5 +33,14 @@ public class ObjectModuleDTO extends ParentDTO<ObjectModuleEntity> {
     public void setObjsystemId(Integer objsystemId) {
         this.objsystemId = objsystemId;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 }
 

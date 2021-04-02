@@ -1,23 +1,16 @@
 package com.sunny.dto;
 
+import com.alibaba.fastjson.JSON;
 import com.sunny.dto.annotation.NotNull;
 import com.sunny.entity.ApiTestCaseEntity;
 
+import java.util.Map;
+
 public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
 
-    private Integer id;
-
-    // 系统名
+    // 接口编号
     @NotNull
-    private String objectSystemName;
-
-    // 模块名
-    @NotNull
-    private String objectModuleName;
-
-    // 接口名
-    @NotNull
-    private String objectApiName;
+    private Integer objectApiId;
 
     // 接口用例编号
     @NotNull
@@ -31,19 +24,10 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
     @NotNull
     private String apiCaseDescription;
 
-    // 请求地址
-    @NotNull
-    private String apiCaseRequestAddress;
-
-    // 请求方式
-    @NotNull
-    private String apiCaseRequestMethod;
-
     // 请求头内容
     private String apiCaseRequestHeader;
 
     // 请求入参
-    @NotNull
     private String apiCaseRequestParam;
 
     // 预期结果
@@ -53,59 +37,34 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
     // 实际结果
     private String apiCaseActualResult;
 
+    // 是否通过
+    private String isPassed;
+
     // 备注
     private String apiCaseRemark;
 
     @Override
     public String toString() {
         return "ApiTestCaseDTO{" +
-                "id=" + id +
-                ", objectSystemName='" + objectSystemName + '\'' +
-                ", objectModuleName='" + objectModuleName + '\'' +
-                ", objectApiName='" + objectApiName + '\'' +
+                ", objectApiId=" + objectApiId +
                 ", apiCaseNum='" + apiCaseNum + '\'' +
                 ", apiCaseName='" + apiCaseName + '\'' +
                 ", apiCaseDescription='" + apiCaseDescription + '\'' +
-                ", apiCaseRequestAddress='" + apiCaseRequestAddress + '\'' +
-                ", apiCaseRequestMethod='" + apiCaseRequestMethod + '\'' +
                 ", apiCaseRequestHeader='" + apiCaseRequestHeader + '\'' +
                 ", apiCaseRequestParam='" + apiCaseRequestParam + '\'' +
                 ", apiCaseExpectedResult='" + apiCaseExpectedResult + '\'' +
                 ", apiCaseActualResult='" + apiCaseActualResult + '\'' +
+                ", isPassed='" + isPassed + '\'' +
                 ", apiCaseRemark='" + apiCaseRemark + '\'' +
                 '}';
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getObjectApiId() {
+        return objectApiId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getObjectSystemName() {
-        return objectSystemName;
-    }
-
-    public void setObjectSystemName(String objectSystemName) {
-        this.objectSystemName = objectSystemName;
-    }
-
-    public String getObjectModuleName() {
-        return objectModuleName;
-    }
-
-    public void setObjectModuleName(String objectModuleName) {
-        this.objectModuleName = objectModuleName;
-    }
-
-    public String getObjectApiName() {
-        return objectApiName;
-    }
-
-    public void setObjectApiName(String objectApiName) {
-        this.objectApiName = objectApiName;
+    public void setObjectApiId(Integer objectApiId) {
+        this.objectApiId = objectApiId;
     }
 
     public String getApiCaseNum() {
@@ -130,22 +89,6 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
 
     public void setApiCaseDescription(String apiCaseDescription) {
         this.apiCaseDescription = apiCaseDescription;
-    }
-
-    public String getApiCaseRequestAddress() {
-        return apiCaseRequestAddress;
-    }
-
-    public void setApiCaseRequestAddress(String apiCaseRequestAddress) {
-        this.apiCaseRequestAddress = apiCaseRequestAddress;
-    }
-
-    public String getApiCaseRequestMethod() {
-        return apiCaseRequestMethod;
-    }
-
-    public void setApiCaseRequestMethod(String apiCaseRequestMethod) {
-        this.apiCaseRequestMethod = apiCaseRequestMethod;
     }
 
     public String getApiCaseRequestHeader() {
@@ -180,11 +123,43 @@ public class ApiTestCaseDTO extends ParentDTO<ApiTestCaseEntity> {
         this.apiCaseActualResult = apiCaseActualResult;
     }
 
+    public String getIsPassed() {
+        return isPassed;
+    }
+
+    public void setIsPassed(String isPassed) {
+        this.isPassed = isPassed;
+    }
+
     public String getApiCaseRemark() {
         return apiCaseRemark;
     }
 
     public void setApiCaseRemark(String apiCaseRemark) {
         this.apiCaseRemark = apiCaseRemark;
+    }
+
+    // 解析请求入参
+    public static class analysisApiCaseRequestParam{
+
+        String type;
+        String content;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        @SuppressWarnings("unchecked")
+        public Map<String, Object> getContent() {
+            return (Map<String, Object>) JSON.parseObject(content, Map.class);
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
     }
 }

@@ -7,9 +7,14 @@ import com.sunny.exception.BusinessException;
 import com.sunny.repository.ObjectSystemRepository;
 import com.sunny.service.ObjectSystemService;
 import com.sunny.util.StringUtil;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -101,4 +106,32 @@ public class ObjectSystemSerivceImpl implements ObjectSystemService {
     public ObjectSystemEntity getById(Integer id) {
         return objectSystemRepository.getOne(id);
     }
+
+    @Override
+    public List<ObjectSystemEntity> query(ObjectSystemDTO objectSystemDTO) {
+        return objectSystemRepository.findAll(new Specification<ObjectSystemEntity>() {
+            @Override
+            public Predicate toPredicate(Root<ObjectSystemEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                Predicate restriction = criteriaQuery.where().getRestriction();
+
+                // id
+                Integer id = objectSystemDTO.getId();
+                if (id != null) {
+                    restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("id").as(Integer.class), id));
+                }
+
+                // 系统名
+                String objectSystem = objectSystemDTO.getObjectSystem();
+                if (!StringUtil.isEmpty(objectSystem)) {
+                    restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("objectSystem").as(String.class), objectSystem));
+                }
+
+                // 过滤已删除的
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("isDeleted").as(String.class), "0"));
+
+                return restriction;
+            }
+        });
+    }
+
 }

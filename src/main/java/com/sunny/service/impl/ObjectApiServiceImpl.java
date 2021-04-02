@@ -10,9 +10,14 @@ import com.sunny.repository.ObjectModuleRepository;
 import com.sunny.service.ObjectApiService;
 import com.sunny.util.RegexUtil;
 import com.sunny.util.StringUtil;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,7 +87,7 @@ public class ObjectApiServiceImpl implements ObjectApiService {
             throw new BusinessException("接口名不能为空！");
         }
 
-        ObjectApiEntity objectApiEntity = objectApiRepository.myFindById(objectApiDTO.getId());
+        ObjectApiEntity objectApiEntity = objectApiRepository.myFindById(apiId);
         if (!objectApiEntity.getApiName().equals(objectApiDTO.getApiName()) &&
                 objectApiRepository.findByApiName(objectApiDTO.getApiName()).size() != 0){
             throw new BusinessException("该接口名已存在！");
@@ -128,6 +133,45 @@ public class ObjectApiServiceImpl implements ObjectApiService {
     @Override
     public List<ObjectApiEntity> getByModuleId(Integer moduleId) {
         return objectApiRepository.findByModuleId(moduleId);
+    }
+
+    @Override
+    public List<ObjectApiEntity> query(ObjectApiDTO objectApiDTO) {
+        return objectApiRepository.findAll((Specification<ObjectApiEntity>) (root, criteriaQuery, criteriaBuilder) -> {
+            Predicate restriction = criteriaQuery.where().getRestriction();
+
+            // id
+            Integer id = objectApiDTO.getId();
+            if (id != null) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("id").as(Integer.class), id));
+            }
+
+            // moduleId
+            Integer moduleId = objectApiDTO.getModuleId();
+            if (moduleId != null) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("moduleId").as(Integer.class), moduleId));
+            }
+
+            // apiName
+            String apiName = objectApiDTO.getApiName();
+            if (!StringUtil.isEmpty(apiName)) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("apiName").as(String.class), apiName));
+            }
+
+            // apiAddress
+            String apiAddress = objectApiDTO.getApiAddress();
+            if (!StringUtil.isEmpty(apiAddress)) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("apiAddress").as(String.class), apiAddress));
+            }
+
+            // apiMethod
+            String apiMethod = objectApiDTO.getApiMethod();
+            if (!StringUtil.isEmpty(apiMethod)) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("apiMethod").as(String.class), apiMethod));
+            }
+
+            return restriction;
+        });
     }
 
 }

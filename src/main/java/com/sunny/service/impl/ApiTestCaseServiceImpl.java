@@ -1,10 +1,11 @@
 package com.sunny.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.sunny.dto.ApiTestCaseDTO;
-import com.sunny.dto.ObjectApiDTO;
-import com.sunny.dto.ObjectModuleDTO;
-import com.sunny.dto.ObjectSystemDTO;
-import com.sunny.entity.*;
+import com.sunny.entity.ApiTestCaseEntity;
+import com.sunny.entity.ObjectApiEntity;
+import com.sunny.entity.ObjectModuleEntity;
+import com.sunny.entity.UserEntity;
 import com.sunny.exception.BusinessException;
 import com.sunny.repository.ApiTestCaseRepository;
 import com.sunny.repository.ObjectApiRepository;
@@ -14,8 +15,8 @@ import com.sunny.service.ApiTestCaseService;
 import com.sunny.service.ObjectApiService;
 import com.sunny.service.ObjectModuleService;
 import com.sunny.service.ObjectSystemService;
+import com.sunny.util.GetRequestUrl;
 import com.sunny.util.HttpUtil;
-import com.sunny.util.RegexUtil;
 import com.sunny.util.StringUtil;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ApiTestCaseServiceImpl implements ApiTestCaseService {
@@ -61,27 +58,19 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
 
     /**
      * 入参：
-     * objectSystemName":"系统名称",
-     * objectModuleName":"模块名称",
-     * objectApiName":"接口名称",
+     * objectApiId":"接口编号",
      * apiCaseNum":"接口用例编号",
      * apiCaseName":"接口用例名称",
      * apiCaseDescription":"用例描述",
-     * apiCaseRequestAddress":"接口请求地址",
-     * apiCaseRequestMethod":"接口请求方式",
      * apiCaseRequestHeader":"接口请求头",
      * apiCaseRequestParam":"接口请求入参",
      * apiCaseExpectedResult":"预期结果",
      * apiCaseActualResult":"实际结果",
+     * isPassed":"是否通过",
      * apiCaseRemark":"备注"
      */
     @Override
     public void addApiCase(ApiTestCaseDTO apiTestCaseDTO) {
-
-        // 校验请求方法是否正确
-        if (!RegexUtil.isRequestMethodRight(apiTestCaseDTO.getApiCaseRequestMethod())) {
-            throw new BusinessException("请求方法填写错误：请填写POST、GET、PUT、DELETE中的一个，并注意大小写！");
-        }
 
         // 校验用例编号
         List<ApiTestCaseEntity> byApiCaseNum = apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum());
@@ -93,64 +82,6 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         Date nowTime = new Date();
         UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
 
-        /**
-         * 业务逻辑：先判断系统是否存在
-         *          系统存在：再判断模块是否存在
-         *              模块存在：再判断接口是否存在
-         *                  接口存在：拿到接口编号，塞给case，保存入库
-         *                  接口不存在：先新增接口，然后拿到接口编号，塞给case，再保存入库
-         *              模块不存在：先拿到系统编号，去新增模块，然后拿到新增后的模块编号，再去新增接口，再拿到接口编号，最后去新增case
-         *          系统不存在：拿到case传的系统名去新增系统，然后拿到系统编号，去新增模块，最后拿到新增后的模块编号，再去新增接口，再拿到接口编号，最后去新增case
-         */
-
-        String objectSystemName = apiTestCaseDTO.getObjectSystemName();
-        List<ObjectSystemEntity> objectSystemEntityList = objectSystemRepository.findByObjectSystem(objectSystemName);
-        ObjectSystemEntity objectSystemEntity;
-
-        // 先判断系统表是否有数据，如果系统表无数据
-        if (objectSystemEntityList.size() == 0) {
-            // 添加系统表记录
-            ObjectSystemDTO systemDTO = new ObjectSystemDTO();
-            systemDTO.setObjectSystem(apiTestCaseDTO.getObjectSystemName());
-            objectSystemEntity = objectSystemService.addObjectSystem(systemDTO);
-        } else {
-            objectSystemEntity = objectSystemEntityList.get(0);
-        }
-
-        // 判断模块是否存在
-        String moduleName = apiTestCaseDTO.getObjectModuleName();
-        List<ObjectModuleEntity> objectModuleEntityList = objectModuleRepository.findByModuleNameAndAndObjsystemId(moduleName, objectSystemEntity.getId());
-        ObjectModuleEntity objectModuleEntity;
-        // 如果模块表记录不存在
-        if (objectModuleEntityList.size() == 0) {
-            // 添加模块表记录
-            ObjectModuleDTO moduleDTO = new ObjectModuleDTO();
-            moduleDTO.setModuleName(moduleName);
-            moduleDTO.setObjsystemId(objectSystemEntity.getId());
-            objectModuleEntity = objectModuleService.addModule(moduleDTO);
-        } else {
-            objectModuleEntity = objectModuleEntityList.get(0);
-        }
-
-        // 判断接口表记录是否存在
-        String objectApiName = apiTestCaseDTO.getObjectApiName();
-        List<ObjectApiEntity> objectApiEntityList = objectApiRepository.findByModuleIdAndApiName(objectModuleEntity.getId(), objectApiName);
-        ObjectApiEntity objectApiEntity;
-        // 如果接口表记录不存在
-        if (objectApiEntityList.size() == 0) {
-            // 添加接口表记录
-            ObjectApiDTO objectApiDTO = new ObjectApiDTO();
-            objectApiDTO.setApiName(objectApiName);
-            objectApiDTO.setApiAddress(apiTestCaseDTO.getApiCaseRequestAddress());
-            objectApiDTO.setApiMethod(apiTestCaseDTO.getApiCaseRequestMethod());
-            objectApiDTO.setModuleId(objectModuleEntity.getId());
-            objectApiEntity = objectApiService.addObjectApi(objectApiDTO);
-        } else {
-            objectApiEntity = objectApiEntityList.get(0);
-        }
-
-        // 添加用例
-        apiCaseEntity.setObjectApiId(objectApiEntity.getId());
         apiCaseEntity.setCreatedTime(nowTime);
         apiCaseEntity.setUpdatedTime(nowTime);
         apiCaseEntity.setCreator(user.getUsername());
@@ -163,10 +94,10 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         if (idList.size() == 0) {
             return;
         }
-        for (Integer apiCaseId : idList){
+        for (Integer apiCaseId : idList) {
             try {
                 apiTestCaseRepository.deleteById(apiCaseId);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new BusinessException("id为" + apiCaseId + "的接口用例不存在！");
             }
         }
@@ -177,23 +108,33 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
         UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
 
         ApiTestCaseEntity apiTestCaseEntity = apiTestCaseRepository.getOne(apiCaseId);
-        if (!apiTestCaseEntity.getApiCaseName().equals(apiTestCaseDTO.getObjectApiName()) &&
-                apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum()).size() != 0){
+        if (!apiTestCaseEntity.getApiCaseNum().equals(apiTestCaseDTO.getApiCaseNum()) &&
+                apiTestCaseRepository.findByApiCaseNum(apiTestCaseDTO.getApiCaseNum()).size() != 0) {
             throw new BusinessException("该案例编号已存在！");
         }
 
-        apiTestCaseEntity = apiTestCaseDTO.getEntity();
+        apiTestCaseEntity.setApiCaseName(apiTestCaseDTO.getApiCaseName());
+        apiTestCaseEntity.setApiCaseNum(apiTestCaseDTO.getApiCaseNum());
+        apiTestCaseEntity.setApiCaseDescription(apiTestCaseDTO.getApiCaseDescription());
+        apiTestCaseEntity.setApiCaseRequestHeader(apiTestCaseDTO.getApiCaseRequestHeader());
+        apiTestCaseEntity.setApiCaseRequestParam(apiTestCaseDTO.getApiCaseRequestParam());
+        apiTestCaseEntity.setApiCaseExpectedResult(apiTestCaseDTO.getApiCaseExpectedResult());
+        apiTestCaseEntity.setApiCaseActualResult(apiTestCaseDTO.getApiCaseActualResult());
+        apiTestCaseEntity.setIsPassed(apiTestCaseDTO.getIsPassed());
+        apiTestCaseEntity.setApiCaseRemark(apiTestCaseDTO.getApiCaseRemark());
         apiTestCaseEntity.setUpdatedTime(new Date());
         apiTestCaseEntity.setUpdatedBy(user.getUsername());
         apiTestCaseRepository.save(apiTestCaseEntity);
     }
 
-
-    /**
-     * 入参-查询条件：系统名、模块名、接口名、案例名
-     */
     @Override
-    public List<ApiTestCaseEntity> queryApiCase(Map<String, Object> map) {
+    public List<ApiTestCaseEntity> queryApiCase(Integer apiId) {
+        List<ApiTestCaseEntity> apiTestCaseEntityList = apiTestCaseRepository.findByObjectApiId(apiId);
+        return apiTestCaseEntityList;
+    }
+
+    @Override
+    public List<ApiTestCaseEntity> queryAllApiCases(Map<String, Object> map) {
         Integer systemId = (Integer) map.get("systemId");
         Integer moduleId = (Integer) map.get("moduleId");
         Integer apiId = (Integer) map.get("apiId");
@@ -263,60 +204,106 @@ public class ApiTestCaseServiceImpl implements ApiTestCaseService {
     }
 
     @Override
-    public void runApiCase(Integer apiCaseId) {
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> runApiCase(Integer apiCaseId, boolean isDebug) {
+        Map<String, Object> result = new HashMap<>();
         ApiTestCaseEntity apiTestCaseEntity = apiTestCaseRepository.getOne(apiCaseId);
+
         Integer objectApiId = apiTestCaseEntity.getObjectApiId();
         ObjectApiEntity objectApiEntity = objectApiRepository.getOne(objectApiId);
-        try {
 
-            HttpUtil httpUtil = new HttpUtil(objectApiEntity.getApiAddress(), objectApiEntity.getApiMethod());
-            // 设置请求头
-            String apiCaseRequestHeader = apiTestCaseEntity.getApiCaseRequestHeader();
-            if (!StringUtil.isEmpty(apiCaseRequestHeader)) {
-                Map<String, Object> requestHeader = StringUtil.toMap(apiCaseRequestHeader);
-                for (String key : requestHeader.keySet()) {
-                    httpUtil.setHeader(key, (String) requestHeader.get(key));
-                }
-            }
+        // 请求地址
+        String url = objectApiEntity.getApiAddress();
+        // 请求方式
+        String method = objectApiEntity.getApiMethod();
+        // 请求头
+        Map<String, String> headers = new HashMap<>();
+        // 请求体
+        String body = null;
+        // 实际响应结果
+        String response = null;
+        // 是否通过
+        boolean isPass = true;
+        // 备注
+        String remark = null;
 
-            String send = httpUtil.send(apiTestCaseEntity.getApiCaseRequestParam());
-            Map<String, Object> actualResult = StringUtil.toMap(send);
-            Map<String, Object> expectedResult = StringUtil.toMap(apiTestCaseEntity.getApiCaseExpectedResult());
-
-
-            // 比对结果
-            String isPass = "Pass";
-            for (String key : expectedResult.keySet()) {
-                if (!actualResult.containsKey(key) || !actualResult.get(key).equals(expectedResult.get(key))) {
-                    isPass = "Failed";
-                    break;
-                }
-            }
-            apiTestCaseEntity.setIsPassed(isPass);
-            apiTestCaseEntity.setApiCaseActualResult(send);
-        } catch (Exception e) {
-            apiTestCaseEntity.setIsPassed("Failed");
-
-            // 404
-            if (e.getClass() == FileNotFoundException.class) {
-                apiTestCaseEntity.setApiCaseActualResult("404");
-            } else {
-                apiTestCaseEntity.setApiCaseActualResult(e.getMessage());
-            }
-        } finally {
-            apiTestCaseRepository.save(apiTestCaseEntity);
+        // 解析请求头
+        String apiCaseRequestHeader = apiTestCaseEntity.getApiCaseRequestHeader();
+        if (!StringUtil.isEmpty(apiCaseRequestHeader)) {
+            headers = JSON.parseObject(apiCaseRequestHeader, Map.class);
         }
 
-        apiTestCaseRepository.save(new ApiTestCaseEntity());
+        // 解析请求参数
+        String apiCaseRequestParam = apiTestCaseEntity.getApiCaseRequestParam();
+        if (!StringUtil.isEmpty(apiCaseRequestParam)) {
+            List<Object> list = JSON.parseObject(apiCaseRequestParam, List.class);
+            for (Object item : list) {
+                Map<String, Object> itemMap = JSON.parseObject(item.toString(), Map.class);
+                String type = itemMap.get("type") == null ? "" : itemMap.get("type").toString();
+                String content = itemMap.get("content") == null ? "" : itemMap.get("content").toString();
+
+                // params : url中的参数
+                if ("params".equals(type)) {
+                    url = url + GetRequestUrl.getRequestUrl(content);
+                }
+
+                // body
+                if ("body".equals(type)) {
+                    body = content;
+                }
+            }
+        }
+
+        // 发送请求
+        HttpUtil httpUtil;
+        try {
+            httpUtil = new HttpUtil(url, method);
+            httpUtil.setHeader(headers);
+            // 实际响应结果
+            response = httpUtil.send(body);
+            Map<String, Object> responseJson = JSON.parseObject(response, Map.class);
+
+            // 比对预期结果
+            String apiCaseExpectedResult = apiTestCaseEntity.getApiCaseExpectedResult();
+            Map<String, Object> apiCaseExpectedResultJson = JSON.parseObject(apiCaseExpectedResult, Map.class);
+            Set<String> keySet = apiCaseExpectedResultJson.keySet();
+            for (String key : keySet) {
+                String value = apiCaseExpectedResultJson.get(key).toString();
+                String value2 = responseJson.get(key) == null ? "" : responseJson.get(key).toString();
+                if (!value.equals(value2)) {
+                    throw new Exception("实际结果与预期结果不一致");
+                }
+            }
+        } catch (Exception e) {
+            isPass = false;
+            remark = e.getMessage();
+        } finally {
+            // 如果是调试模式，不进行入库
+            if (!isDebug) {
+                apiTestCaseEntity.setApiCaseActualResult(response);
+                if (isPass) {
+                    apiTestCaseEntity.setIsPassed("Pass");
+                } else {
+                    apiTestCaseEntity.setIsPassed("Failed");
+                }
+                apiTestCaseEntity.setApiCaseRemark(remark);
+                apiTestCaseRepository.save(apiTestCaseEntity);
+            }
+
+            result.put("response", response);
+            result.put("remark", remark);
+        }
+
+        return result;
     }
 
     @Override
-    public void runApiCase(List<Integer> apiCaseIds) {
-        for (Integer integer : apiCaseIds) {
-            if (integer == null) {
+    public void runApiCase(List<Integer> apiCaseIdList) {
+        for (Integer apiCaseId : apiCaseIdList) {
+            if (apiCaseId == null) {
                 continue;
             }
-            runApiCase(integer);
+            runApiCase(apiCaseId, false);
         }
     }
 

@@ -14,8 +14,10 @@ public class FunctionalTestCaseController {
     @Resource
     private FunctionalTestCaseService functionalTestCaseService;
 
-    @GetMapping
-    public ResponseEntity query(Integer id) {
+    @PostMapping
+    public ResponseEntity add(@RequestBody(required = false) FunctionalTestCaseDTO functionalTestCaseDTO) {
+        functionalTestCaseDTO.check();
+        functionalTestCaseService.addFunctionalCase(functionalTestCaseDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
@@ -25,10 +27,17 @@ public class FunctionalTestCaseController {
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
-    @PostMapping
-    public ResponseEntity add(FunctionalTestCaseDTO functionalTestCaseDTO) {
+    @PutMapping("{id}")
+    public ResponseEntity edit(@PathVariable Integer id, @RequestBody FunctionalTestCaseDTO functionalTestCaseDTO) {
         functionalTestCaseDTO.check();
-        functionalTestCaseService.addFunctionalCase(functionalTestCaseDTO);
+        functionalTestCaseService.editFunctionalCase(id, functionalTestCaseDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
+
+    @GetMapping
+    public ResponseEntity query(Integer id) {
+        return ResponseEntity.normalReturn("success", 200, null);
+    }
+
+
 }

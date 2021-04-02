@@ -3,7 +3,6 @@ package com.sunny.service;
 import com.sunny.dto.ApiTestCaseDTO;
 import com.sunny.entity.ApiTestCaseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +15,12 @@ public interface ApiTestCaseService {
 
     void editApiCase(Integer apiCaseId, ApiTestCaseDTO apiTestCaseDTO);
 
-    List<ApiTestCaseEntity> queryApiCase(Map<String, Object> map);
+    List<ApiTestCaseEntity> queryApiCase(Integer apiId);
 
-    void runApiCase(Integer apiCaseId);
+    List<ApiTestCaseEntity> queryAllApiCases(Map<String, Object> map);
 
-    void runApiCase(List<Integer> apiCaseIds);
+    Map<String, Object> runApiCase(Integer apiCaseId, boolean isDebug);
+
+    void runApiCase(List<Integer> apiCaseIdList);
 
 }

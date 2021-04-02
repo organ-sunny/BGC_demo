@@ -15,6 +15,8 @@ public interface ApiTestCaseRepository extends JpaRepository<ApiTestCaseEntity, 
 
     List<ApiTestCaseEntity> findByApiCaseNameAndObjectApiId(String apiCaseName, Integer objectApiId);
 
+    List<ApiTestCaseEntity> findByObjectApiId(Integer objectApiId);
+
     List<ApiTestCaseEntity> findByApiCaseName(String apiCaseName);
 
     @Query("from ObjectApiEntity where id = ?1")

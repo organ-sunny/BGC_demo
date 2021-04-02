@@ -8,6 +8,8 @@ public class ObjectSystemDTO extends ParentDTO<ObjectSystemEntity> {
     @NotNull
     private String objectSystem;
 
+    private Integer id;
+
     @Override
     public String toString() {
         return "ObjectSystemDTO{" +
@@ -22,4 +24,13 @@ public class ObjectSystemDTO extends ParentDTO<ObjectSystemEntity> {
     public void setObjectSystem(String objectSystem) {
         this.objectSystem = objectSystem;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 }

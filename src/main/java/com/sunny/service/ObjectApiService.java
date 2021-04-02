@@ -3,7 +3,6 @@ package com.sunny.service;
 import com.sunny.dto.ObjectApiDTO;
 import com.sunny.entity.ObjectApiEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -18,5 +17,7 @@ public interface ObjectApiService {
     List<ObjectApiEntity> queryObjectApi(ObjectApiDTO objectApiDTO);
 
     List<ObjectApiEntity> getByModuleId(Integer moduleId);
+
+    List<ObjectApiEntity> query(ObjectApiDTO objectApiDTO);
 
 }

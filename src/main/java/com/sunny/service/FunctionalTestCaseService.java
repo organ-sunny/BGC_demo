@@ -14,5 +14,7 @@ public interface FunctionalTestCaseService {
 
     void deleteFunctionalCase(Integer id);
 
+    void editFunctionalCase(Integer id, FunctionalTestCaseDTO functionalTestCaseDTO);
+
     List<FunctionalTestCaseEntity> queryFunctionalTestCase(Map<String, Object> map);
 }

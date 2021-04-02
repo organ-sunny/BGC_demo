@@ -38,7 +38,7 @@ public class ObjectSystemController {
 
     @GetMapping("query")
     public ResponseEntity queryObjectSystem(ObjectSystemDTO objectSystemDTO) {
-        List<ObjectSystemEntity> result = objectSystemService.queryObjectSystem(objectSystemDTO);
+        List<ObjectSystemEntity> result = objectSystemService.query(objectSystemDTO);
         return ResponseEntity.normalReturn("success", 200, result);
     }
 }

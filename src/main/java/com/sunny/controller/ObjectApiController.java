@@ -5,7 +5,6 @@ import com.sunny.entity.ObjectApiEntity;
 import com.sunny.entity.ResponseEntity;
 import com.sunny.service.ObjectApiService;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -40,7 +39,8 @@ public class ObjectApiController {
     // 查询接口
     @GetMapping
     public ResponseEntity queryObjectApi(ObjectApiDTO objectApiDTO) {
-        List<ObjectApiEntity> objectApiEntityList = objectApiService.queryObjectApi(objectApiDTO);
+        List<ObjectApiEntity> objectApiEntityList = objectApiService.query(objectApiDTO);
         return ResponseEntity.normalReturn("success", 200, objectApiEntityList);
     }
+
 }

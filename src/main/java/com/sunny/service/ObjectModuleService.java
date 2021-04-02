@@ -18,4 +18,7 @@ public interface ObjectModuleService {
     List<ObjectModuleEntity> queryObjectModule(ObjectModuleDTO objectModuleDTO);
 
     List<ObjectModuleEntity> getBySystemId(Integer systemId);
+
+    List<ObjectModuleEntity> query(ObjectModuleDTO objectModuleDTO);
+
 }

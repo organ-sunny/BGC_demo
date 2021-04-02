@@ -7,9 +7,15 @@ import com.sunny.exception.BusinessException;
 import com.sunny.repository.ObjectModuleRepository;
 import com.sunny.repository.ObjectSystemRepository;
 import com.sunny.service.ObjectModuleService;
+import com.sunny.util.StringUtil;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -139,4 +145,32 @@ public class ObjectModuleServiceImpl implements ObjectModuleService {
     public List<ObjectModuleEntity> getBySystemId(Integer systemId) {
         return objectModuleRepository.findByObjsystemId(systemId);
     }
+
+    @Override
+    public List<ObjectModuleEntity> query(ObjectModuleDTO objectModuleDTO) {
+        return objectModuleRepository.findAll((Specification<ObjectModuleEntity>) (root, criteriaQuery, criteriaBuilder) -> {
+            Predicate restriction = criteriaQuery.where().getRestriction();
+
+            // id
+            Integer id = objectModuleDTO.getId();
+            if (id != null) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("id").as(Integer.class), id));
+            }
+
+            // objsystemId
+            Integer objsystemId = objectModuleDTO.getObjsystemId();
+            if (objsystemId != null) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("objsystemId").as(Integer.class), objsystemId));
+            }
+
+            // moduleName
+            String moduleName = objectModuleDTO.getModuleName();
+            if (!StringUtil.isEmpty(moduleName)) {
+                restriction = criteriaBuilder.and(restriction, criteriaBuilder.equal(root.get("moduleName").as(String.class), moduleName));
+            }
+
+            return restriction;
+        });
+    }
+
 }

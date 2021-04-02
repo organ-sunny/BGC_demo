@@ -36,7 +36,8 @@ public class ObjectModuleController {
 
     @GetMapping("query")
     public ResponseEntity queryModule(ObjectModuleDTO objectModuleDTO) {
-        List<ObjectModuleEntity> result = objectModuleService.queryObjectModule(objectModuleDTO);
+        List<ObjectModuleEntity> result = objectModuleService.query(objectModuleDTO);
         return ResponseEntity.normalReturn("success", 200, result);
     }
+
 }

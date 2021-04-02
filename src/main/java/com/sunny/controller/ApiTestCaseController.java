@@ -17,7 +17,7 @@ public class ApiTestCaseController {
     @Resource
     private ApiTestCaseService apiTestCaseService;
 
-    @PostMapping("add")
+    @PostMapping
     public ResponseEntity addApiCase(@RequestBody(required = false) ApiTestCaseDTO apiTestCaseDTO) {
         apiTestCaseDTO.check();
         apiTestCaseService.addApiCase(apiTestCaseDTO);
@@ -25,28 +25,44 @@ public class ApiTestCaseController {
     }
 
     @DeleteMapping
-    public ResponseEntity deleteApiCase(@RequestBody(required = false) List<Integer> idList){
+    public ResponseEntity deleteApiCase(@RequestBody(required = false) List<Integer> idList) {
         apiTestCaseService.deleteApiCase(idList);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity editApiCase(@PathVariable Integer apiId,@RequestBody(required = false) ApiTestCaseDTO apiTestCaseDTO){
+    @PutMapping("{apiCaseId}")
+    public ResponseEntity editApiCase(@PathVariable Integer apiCaseId, @RequestBody(required = false) ApiTestCaseDTO apiTestCaseDTO) {
         apiTestCaseDTO.check();
-        apiTestCaseService.editApiCase(apiId, apiTestCaseDTO);
+        apiTestCaseService.editApiCase(apiCaseId, apiTestCaseDTO);
         return ResponseEntity.normalReturn("success", 200, null);
     }
 
-    @PostMapping("query")
-    public ResponseEntity queryApiCase(@RequestBody(required = false) Map<String, Object> map) {
+    @GetMapping("{apiId}")
+    public ResponseEntity queryApiCase(@PathVariable Integer apiId) {
         // 执行查询
-        List<ApiTestCaseEntity> apiTestCaseEntityList = apiTestCaseService.queryApiCase(map);
+        List<ApiTestCaseEntity> apiTestCaseEntityList = apiTestCaseService.queryApiCase(apiId);
+        return ResponseEntity.normalReturn("success", 200, apiTestCaseEntityList);
+    }
+
+    @GetMapping
+    public ResponseEntity queryAllApiCases(@RequestBody(required = false) Map<String, Object> map) {
+        // 执行查询
+        List<ApiTestCaseEntity> apiTestCaseEntityList = apiTestCaseService.queryAllApiCases(map);
         return ResponseEntity.normalReturn("success", 200, apiTestCaseEntityList);
     }
 
     @PostMapping("runApiCase")
-    public ResponseEntity runApiCase(@RequestBody(required = false) List<Integer> integerList) {
-        apiTestCaseService.runApiCase(integerList);
+    public ResponseEntity runApiCase(@RequestBody(required = false) List<Integer> apiCaseIdList) {
+        apiTestCaseService.runApiCase(apiCaseIdList);
         return ResponseEntity.normalReturn("success", 200, null);
     }
+
+    /**
+     * 调试
+     * */
+    @PostMapping("debug")
+    public ResponseEntity debug(@RequestBody(required = false) Map<String, Object> RequestBody) {
+        return ResponseEntity.normalReturn("success", 200, apiTestCaseService.runApiCase((Integer) RequestBody.get("id"), true));
+    }
+
 }

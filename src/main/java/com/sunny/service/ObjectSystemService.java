@@ -18,4 +18,7 @@ public interface ObjectSystemService {
     List<ObjectSystemEntity> queryObjectSystem(ObjectSystemDTO objectSystemDTO);
 
     ObjectSystemEntity getById(Integer id);
+
+    List<ObjectSystemEntity> query(ObjectSystemDTO objectSystemDTO);
+
 }

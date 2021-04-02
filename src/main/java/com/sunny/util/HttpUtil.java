@@ -60,6 +60,16 @@ public final class HttpUtil {
         headers.put(key, value);
     }
 
+    public void setHeader(Map<String, String> map) {
+        if (map == null) {
+            return;
+        }
+        Set<String> strings = map.keySet();
+        for (String s : strings) {
+            this.setHeader(s, map.get(s));
+        }
+    }
+
     /**
      * 发送请求
      *

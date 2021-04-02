@@ -121,6 +121,22 @@ public class FunctionalTestCaseServiceImpl implements FunctionalTestCaseService 
     }
 
     @Override
+    public void editFunctionalCase(Integer id, FunctionalTestCaseDTO functionalTestCaseDTO) {
+        UserEntity user = (UserEntity) httpServletRequest.getAttribute("user");
+
+        FunctionalTestCaseEntity functionalTestCaseEntity = functionalTestCaseRepository.getOne(id);
+        if (!functionalTestCaseEntity.getCaseNum().equals(functionalTestCaseDTO.getCaseNum()) &&
+                functionalTestCaseRepository.findByCaseNum(functionalTestCaseDTO.getCaseNum()).size() != 0) {
+            throw new BusinessException("该案例编号已存在！");
+        }
+
+        functionalTestCaseEntity = functionalTestCaseDTO.getEntity();
+        functionalTestCaseEntity.setUpdatedTime(new Date());
+        functionalTestCaseEntity.setUpdatedBy(user.getUsername());
+        functionalTestCaseRepository.save(functionalTestCaseEntity);
+    }
+
+    @Override
     public List<FunctionalTestCaseEntity> queryFunctionalTestCase(Map<String, Object> map) {
         Integer systemId = (Integer) map.get("systemId");
         Integer moduleId = (Integer) map.get("moduleId");
