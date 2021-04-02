@@ -70,6 +70,15 @@ export default {
         apiClick(api) {
             this.$emit("apiClick", this.module, api);
         }
+    },
+
+    watch: {
+        "apiActionId": function (newV) {
+            if (!variableUtil.isEmpty(newV) && this.actionId === this.module.id) {
+                this.isOpen = true;
+                this.getApi();
+            }
+        }
     }
 }
 </script>

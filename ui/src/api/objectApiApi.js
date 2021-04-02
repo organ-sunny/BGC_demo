@@ -11,6 +11,7 @@ export default {
             urlData,
             check: {
                 urlData: {
+                    id: "",
                     moduleId: ""
                 }
             }
@@ -26,6 +27,31 @@ export default {
             check: {
                 data: {
                     moduleId: "",
+                    apiName: "",
+                    apiAddress: "",
+                    apiMethod: ""
+                }
+            }
+        });
+    },
+
+    delete(idList) {
+        return baseApi.send({
+            url: `${u}`,
+            type: "DELETE",
+            header: baseApi.getHeader(),
+            data: idList
+        });
+    },
+
+    update(id, data) {
+        return baseApi.send({
+            url: `${u}/${id}`,
+            type: "PUT",
+            header: baseApi.getHeader(),
+            data: data,
+            check: {
+                data: {
                     apiName: "",
                     apiAddress: "",
                     apiMethod: ""

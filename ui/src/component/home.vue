@@ -244,8 +244,8 @@ export default {
         },
 
         logout() {
-            window.location.href = pageConfig.index;
             user.delete();
+            window.location.href = pageConfig.index;
         }
     },
 

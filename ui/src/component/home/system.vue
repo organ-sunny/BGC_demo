@@ -1,11 +1,11 @@
 <template>
     <div style="width: 100%;height: 100%;display: flex;">
         <div style="width: 13%;height: 100%;border-right: 1px solid #e6e6e6;background-color: white;">
-            <div style="padding: 20px;" class="title">
+            <div style="padding: 20px;border-bottom: 1px solid rgb(230, 230, 230);" class="title">
                 系统配置
             </div>
 
-            <div style="padding-left: 40px;">
+            <div style="">
                 <ep-menu :default-index="tab" class="ep-menu-demo-vertical" theme="light">
                     <ep-menu-item style="border: none;" @click="tab = 'project'" index="project" icon="navicon-round">
                         项目管理

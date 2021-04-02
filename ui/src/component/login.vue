@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 100%;height: 100%;background-image: url('../image/80.jpg')">
+    <div style="width: 100%;height: 100%;">
         <!--        <div style="height: 5%;background-color: #2296F3;display: flex;">-->
         <!--            <div style="width: 10%;color: white;font-weight: bold;font-size: 18px;" class="center">-->
         <!--                BGC_demo-->
@@ -41,6 +41,7 @@ import alterUtil from "../util/alterUtil.js";
 import user from "../js/user.js";
 import pageConfig from "../config/pageConfig.js";
 import baseConfig from "../config/baseConfig.js";
+import variableUtil from "../util/variableUtil.js";
 
 export default {
     name: "login.vue",
@@ -73,8 +74,15 @@ export default {
             if (e.key === "Enter") {
                 this.loginMethod();
             }
-
         });
+
+        let u = user.get();
+        if (!variableUtil.isEmpty(u)) {
+            let token = u.token;
+            if (!variableUtil.isEmpty(token)) {
+                window.location = pageConfig.home;
+            }
+        }
     }
 }
 </script>

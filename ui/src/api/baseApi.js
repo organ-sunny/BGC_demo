@@ -1,5 +1,6 @@
 import pageConfig from "../config/pageConfig.js";
 import user from "../js/user.js";
+import variableUtil from "../util/variableUtil.js";
 
 let host = process.env.NODE_ENV === "development" ? "http://192.168.12.104:1001/api" : "/api";
 
@@ -12,6 +13,7 @@ export default {
 
                 // token失效
                 if (responseJson.code === 101) {
+                    user.delete();
                     window.location.href = pageConfig.index;
                     return;
                 }
@@ -28,6 +30,9 @@ export default {
     getHeader() {
         let result = {};
         let userJson = user.get();
+        if (variableUtil.isEmpty(userJson)) {
+            window.location.href = pageConfig.index;
+        }
 
         result.token = userJson.token;
         return result;
@@ -101,9 +106,10 @@ function _send(option) {
                 for (let key in dataCheck) {
                     if (dataCheck.hasOwnProperty(key)) {
                         let v = data[key];
-                        if (!isEmpty(v)) {
-                            sendData.data[key] = v;
+                        if (v === undefined) {
+                            v = dataCheck[key];
                         }
+                        sendData.data[key] = v;
                     }
                 }
             }

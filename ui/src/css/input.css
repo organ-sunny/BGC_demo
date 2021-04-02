@@ -1,3 +1,7 @@
 .noBorder > .ep-input > .ep-input__inner {
     border: none;
 }
+
+.noBorder > .ep-select > .ep-input > .ep-input__inner {
+    border: none;
+}
