@@ -2,6 +2,7 @@
 
 cd ui
 rm -rf build
+npm install
 npm run build
 cd ..
 
