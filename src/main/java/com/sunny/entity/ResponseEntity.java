@@ -49,4 +49,13 @@ public class ResponseEntity {
         responseEntity.setData(data);
         return responseEntity;
     }
+
+    public static ResponseEntity returnTrue(Object data) {
+        return ResponseEntity.normalReturn("", 200, data);
+    }
+
+    public static ResponseEntity returnTrue() {
+        return ResponseEntity.returnTrue(null);
+    }
+
 }

@@ -9,6 +9,9 @@
                 <div :class="path === '/apiTest' ? 'action' : ''" @click="switchMenu('/apiTest')" class="menu-item">
                     接口测试
                 </div>
+                <div :class="path === '/autoTest' ? 'action' : ''" @click="switchMenu('/autoTest')" class="menu-item">
+                    自动化测试
+                </div>
                 <div :class="path === '/system' ? 'action' : ''" @click="switchMenu('/system')" class="menu-item">
                     系统配置
                 </div>

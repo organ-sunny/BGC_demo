@@ -86,6 +86,13 @@
             <version>2.1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.zj0724</groupId>
+            <artifactId>zj0724-common</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/zj0724-common.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
@@ -93,7 +100,40 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>com.sunny.BgcDemoApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-install-plugin</artifactId>-->
+<!--                <version>2.5.2</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>zj0724-common</id>-->
+<!--                        <phase>clean</phase>-->
+<!--                        <configuration>-->
+<!--                            <file>${project.basedir}/lib/zj0724-common.jar</file>-->
+<!--                            <groupId>com.zj0724</groupId>-->
+<!--                            <artifactId>zj0724-common</artifactId>-->
+<!--                            <version>1.0.0</version>-->
+<!--                            <packaging>jar</packaging>-->
+<!--                        </configuration>-->
+<!--                        <goals>-->
+<!--                            <goal>install-file</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

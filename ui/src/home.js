@@ -4,6 +4,7 @@ import home from "./component/home.vue";
 import VueRouter from "vue-router";
 import home_system from "./component/home/system.vue";
 import home_apiTest from "./component/home/apiTest.vue";
+import autoTest from "./component/home/autoTest.vue";
 
 new Vue({
     el: "#main",
@@ -15,6 +16,13 @@ new Vue({
                 component: home_apiTest,
                 meta: {
                     title: `接口测试`
+                }
+            },
+            {
+                path: "/autoTest",
+                component: autoTest,
+                meta: {
+                    title: `自动化测试`
                 }
             },
             {

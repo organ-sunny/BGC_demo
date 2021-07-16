@@ -2,7 +2,7 @@ import pageConfig from "../config/pageConfig.js";
 import user from "../js/user.js";
 import variableUtil from "../util/variableUtil.js";
 
-let host = process.env.NODE_ENV === "development" ? "http://192.168.12.104:1001/api" : "/api";
+let host = process.env.NODE_ENV === "development" ? "http://localhost:1001/api" : "/api";
 
 export default {
     send(option) {
@@ -50,6 +50,9 @@ function _send(option) {
         }
 
         function isFile(data) {
+            if (data === null) {
+                return false;
+            }
             return data.__proto__ === File.prototype;
         }
 

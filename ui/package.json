@@ -4,7 +4,7 @@
     "dependencies": {
         "bootstrap": "^3.4.1",
         "element-ui": "^2.15.0",
-        "ep-ui": "^2.4.1",
+        "ep-ui": "^2.6.7",
         "jquery": "^3.4.0",
         "vue": "^2.6.12",
         "vue-router": "^3.4.8",
